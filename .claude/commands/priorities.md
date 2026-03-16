@@ -1,0 +1,1 @@
+Read `context/current-priorities.md` and display it as a clean numbered list with status indicators. For each priority, add one line on what the immediate next action is. Flag anything that's been blocked or hasn't moved.

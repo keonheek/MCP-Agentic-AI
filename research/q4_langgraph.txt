@@ -1,0 +1,9 @@
+**No new releases or updates for LangGraph, LangChain, or CrewAI were announced during March 9-16, 2026, based on available sources.**
+
+Search results discuss general 2026 developments but lack specifics on announcements this week:
+- LangChain's stable **v0.3.0** release with LangGraph enhancements is noted for Q1 2026 (January-March), emphasizing production readiness, low latency (200-500ms LLM calls), and 500+ integrations, without a precise date in the period.[4]
+- LangGraph is referenced at **v1.0** (2025 release) or **v1.0.9** (post-October 2025 GA), highlighting checkpointing, time-travel debugging, and graph-based orchestration, with no March 2026 updates.[1][2][6][7]
+- CrewAI mentions **v1.10.1**, tied to 44,600 GitHub stars and prototyping speed (40% faster than LangGraph), but no release timing this week.[6]
+- No breaking changes, new features, or GitHub release links are tied to March 9-16, 2026; sources focus on comparisons, strengths (e.g., LangGraph's observability via LangSmith), and benchmarks.[1][2][3][4][5][6][7]
+
+Sources are blog posts from early 2026 or general overviews, with no evidence of weekly announcements; results may be incomplete for real-time GitHub activity.
