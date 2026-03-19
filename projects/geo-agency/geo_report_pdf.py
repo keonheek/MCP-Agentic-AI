@@ -211,10 +211,49 @@ def generate_pdf(audit: dict, recommendations: list[str] | None = None, before_t
     pdf.line(18, pdf.get_y(), 192, pdf.get_y())
     pdf.ln(5)
 
+    # 3-metric summary row (client-facing)
+    sov_s = breakdown.get("share_of_voice", 0)
+    ai_bot_s = breakdown.get("ai_bot_access", breakdown.get("crawler_access", crawler))
+    ai_policy_s = breakdown.get("ai_policy_file", breakdown.get("llms_txt", 0))
+    org_schema_s = breakdown.get("org_schema", 0)
+    content_schema_s = breakdown.get("content_schema", 0)
+    naver_s = breakdown.get("naver_presence", 0)
+    kr_sync_s = breakdown.get("kr_platform_sync", 0)
+    brand_s = breakdown.get("brand_mention", brand)
+    sentiment_s = breakdown.get("sentiment_quality", 0)
+
+    content_pct = round((citability + content_schema_s + brand_s) / 65 * 100)
+    access_pct = round((ai_bot_s + ai_policy_s + org_schema_s) / 45 * 100)
+    presence_pct = round((sov_s + naver_s + kr_sync_s + sentiment_s) / 40 * 100)
+
+    def _pct_color(pct):
+        return GREEN if pct >= 70 else (YELLOW if pct >= 40 else RED)
+
+    summary_y = pdf.get_y()
+    for col_i, (metric, pct) in enumerate([
+        ("Content Quality", content_pct),
+        ("Technical Access", access_pct),
+        ("Market Presence", presence_pct),
+    ]):
+        x = 18 + col_i * 58
+        pdf.set_xy(x, summary_y)
+        pdf._set_font("", 8)
+        pdf.set_text_color(*MID_GRAY)
+        pdf.cell(55, 5, metric)
+        pdf.set_xy(x, summary_y + 5)
+        pdf._set_font("B", 14)
+        pdf.set_text_color(*_pct_color(pct))
+        pdf.cell(55, 8, f"{pct}%")
+
+    pdf.ln(16)
+    pdf.set_draw_color(*MID_GRAY)
+    pdf.line(18, pdf.get_y(), 192, pdf.get_y())
+    pdf.ln(5)
+
     # Score breakdown bars
     pdf._set_font("B", 10)
     pdf.set_text_color(*DARK)
-    pdf.cell(0, 6, "Score Breakdown")
+    pdf.cell(0, 6, "Score Breakdown (Technical Detail)")
     pdf.ln(6)
     pdf.ln(2)
 
