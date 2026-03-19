@@ -220,6 +220,8 @@ def generate_pdf(audit: dict, recommendations: list[str] | None = None, before_t
 
     schema = breakdown.get("schema_org", 0)
     llms = breakdown.get("llms_txt", 0)
+    korean = breakdown.get("korean_presence", 0)
+    sov = breakdown.get("share_of_voice", 0)
 
     _bar(pdf, "AI Citability", citability, 40, 18, pdf.get_y())
     pdf.ln(9)
@@ -230,6 +232,10 @@ def generate_pdf(audit: dict, recommendations: list[str] | None = None, before_t
     _bar(pdf, "Schema.org", schema, 20, 18, pdf.get_y())
     pdf.ln(9)
     _bar(pdf, "llms.txt", llms, 10, 18, pdf.get_y())
+    pdf.ln(9)
+    _bar(pdf, "Korean Presence", korean, 20, 18, pdf.get_y())
+    pdf.ln(9)
+    _bar(pdf, "Share of Voice", sov, 10, 18, pdf.get_y())
     pdf.ln(12)
 
     # Divider

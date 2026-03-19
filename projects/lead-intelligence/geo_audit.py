@@ -1,14 +1,16 @@
 """
 GEO Audit Agent — Project B: Lead Intelligence
 
-Checks each company's AI discoverability across five dimensions:
-  - Citability Score     (0-40): structured content on website
-  - Crawler Access Score (0-30): robots.txt GPTBot/ClaudeBot/PerplexityBot + llms.txt
-  - Brand Mention Score  (0-30): Perplexity brand visibility
-  - Schema.org Score     (0-20): JSON-LD structured data (Organization, FAQ, HowTo)
-  - llms.txt Score       (0-10): LLM permissions file at site root (emerging standard)
+Checks each company's AI discoverability across seven dimensions:
+  - Citability Score      (0-40): structured content on website
+  - Crawler Access Score  (0-30): robots.txt GPTBot/ClaudeBot/PerplexityBot + llms.txt
+  - Brand Mention Score   (0-30): Perplexity brand visibility
+  - Schema.org Score      (0-20): JSON-LD structured data (Organization, FAQ, HowTo)
+  - llms.txt Score        (0-10): LLM permissions file at site root (emerging standard)
+  - Korean Presence Score (0-20): Naver profile (10), 사업자등록번호 (5), Kakao Map (5)
+  - Share of Voice Score  (0-10): competitive AI citation vs industry peers
 
-Total GEO score = sum of five (max 130, normalized to /100 in audit_company_geo).
+Total GEO score = sum of seven (max 150, normalized to /100 in audit_company_geo).
 """
 
 import os
@@ -298,6 +300,89 @@ def _score_llms_txt(website_url: str | None) -> int:
         return 0
 
 
+def _score_korean_presence(corp_name: str, website_url: str | None) -> int:
+    """
+    Check Korean-specific GEO signals:
+      - Naver Business Profile presence (10 pts): Perplexity query for 네이버 플레이스/지도 listing
+      - 사업자등록번호 on website (5 pts): fetch homepage, look for 10-digit business registration number
+      - Kakao Map listing (5 pts): Perplexity query for 카카오맵 listing
+
+    Max = 20 pts.
+    """
+    score = 0
+
+    # 1. Naver Business Profile
+    naver_prompt = f"{corp_name} 네이버 플레이스 OR 네이버 지도 등록 기업"
+    naver_resp = _perplexity_query(naver_prompt)
+    if naver_resp and corp_name in naver_resp:
+        score += 10
+        print(f"    [korean] Naver profile found → +10")
+    else:
+        print(f"    [korean] Naver profile not found → 0")
+
+    # 2. 사업자등록번호 on website
+    if website_url:
+        try:
+            import re
+            resp = requests.get(
+                website_url,
+                timeout=REQUEST_TIMEOUT,
+                headers={"User-Agent": "Mozilla/5.0"},
+                allow_redirects=True,
+            )
+            if resp.status_code == 200:
+                # Korean business registration number: 10 digits in xxx-xx-xxxxx format
+                if re.search(r'\d{3}-\d{2}-\d{5}', resp.text):
+                    score += 5
+                    print(f"    [korean] 사업자등록번호 found on website → +5")
+                else:
+                    print(f"    [korean] 사업자등록번호 not found → 0")
+        except Exception as e:
+            print(f"    [korean] website fetch for 사업자등록번호 error: {e}")
+
+    # 3. Kakao Map listing
+    kakao_prompt = f"{corp_name} 카카오맵 OR 카카오 지도"
+    kakao_resp = _perplexity_query(kakao_prompt)
+    if kakao_resp and corp_name in kakao_resp:
+        score += 5
+        print(f"    [korean] Kakao Map found → +5")
+    else:
+        print(f"    [korean] Kakao Map not found → 0")
+
+    print(f"    [korean presence] total → {score}/20")
+    return score
+
+
+def _score_share_of_voice(corp_name: str) -> dict:
+    """
+    Competitive Share of Voice: query Perplexity for the company's industry/category,
+    check how often the target company is cited vs competitors.
+
+    Returns {"sov_score": int 0-10, "competitors_found": list[str], "cited": bool}
+    """
+    # First find the industry context
+    industry_prompt = f"{corp_name} 경쟁사 OR 동종업계 OR 업종 한국 기업"
+    industry_resp = _perplexity_query(industry_prompt)
+
+    if not industry_resp:
+        print(f"    [sov] Perplexity failed → 0")
+        return {"sov_score": 0, "competitors_found": [], "cited": False}
+
+    # Check if target company is mentioned in the competitor context
+    cited = corp_name in industry_resp
+
+    # Extract other company names mentioned (crude heuristic: Korean corp suffixes)
+    import re
+    corp_patterns = re.findall(r'[\uAC00-\uD7A3]+(?:주식회사|㈜|코리아|전자|중공업|화학|제약|물산|건설|에너지|반도체|소재)?', industry_resp)
+    competitors = [c for c in corp_patterns if c != corp_name and len(c) > 1][:5]
+
+    sov_score = 7 if cited else 2
+    print(f"    [sov] '{corp_name}' cited in competitor context: {cited} → {sov_score}/10")
+    print(f"    [sov] Competitors mentioned: {competitors[:3]}")
+
+    return {"sov_score": sov_score, "competitors_found": competitors, "cited": cited}
+
+
 def audit_company_geo(company: dict) -> dict:
     """
     Takes company dict with at minimum: corp_name, readiness_score.
@@ -315,7 +400,7 @@ def audit_company_geo(company: dict) -> dict:
     website_url = _find_website_url(corp_name)
     print(f"  URL: {website_url}")
 
-    # Step 2: Run five checks
+    # Step 2: Run seven checks
     print(f"  Check 1 — Citability...")
     citability = _score_citability(website_url)
 
@@ -331,9 +416,16 @@ def audit_company_geo(company: dict) -> dict:
     print(f"  Check 5 — llms.txt...")
     llms_score = _score_llms_txt(website_url)
 
-    # Raw total out of 130, normalize to /100
-    raw_total = citability + crawler_access + brand_mention + schema_score + llms_score
-    geo_score = round(raw_total / 130 * 100)
+    print(f"  Check 6 — Korean Presence (Naver/사업자등록번호/Kakao)...")
+    korean_score = _score_korean_presence(corp_name, website_url)
+
+    print(f"  Check 7 — Share of Voice (competitive AI citation)...")
+    sov_data = _score_share_of_voice(corp_name)
+    sov_score = sov_data["sov_score"]
+
+    # Raw total out of 150, normalize to /100
+    raw_total = citability + crawler_access + brand_mention + schema_score + llms_score + korean_score + sov_score
+    geo_score = round(raw_total / 150 * 100)
 
     result = {**company}
     result["geo_score"] = geo_score
@@ -343,10 +435,18 @@ def audit_company_geo(company: dict) -> dict:
         "brand_mention": brand_mention,
         "schema_org": schema_score,
         "llms_txt": llms_score,
+        "korean_presence": korean_score,
+        "share_of_voice": sov_score,
     }
+    result["sov_competitors"] = sov_data.get("competitors_found", [])
+    result["sov_cited"] = sov_data.get("cited", False)
     result["website_url"] = website_url
 
-    print(f"  GEO Score: {geo_score}/100 (raw {raw_total}/130 | citability={citability}, crawler={crawler_access}, brand={brand_mention}, schema={schema_score}, llms={llms_score})")
+    print(
+        f"  GEO Score: {geo_score}/100 (raw {raw_total}/150 | "
+        f"citability={citability}, crawler={crawler_access}, brand={brand_mention}, "
+        f"schema={schema_score}, llms={llms_score}, korean={korean_score}, sov={sov_score})"
+    )
     return result
 
 
