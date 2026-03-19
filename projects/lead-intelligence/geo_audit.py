@@ -16,7 +16,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 
-load_dotenv(dotenv_path=Path(__file__).parent.parent.parent / '.env')
+for _p in [Path(__file__).parent / '.env', Path(__file__).parent.parent / '.env', Path(__file__).parent.parent.parent / '.env']:
+    if _p.exists():
+        load_dotenv(dotenv_path=_p)
+        break
 
 PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
 if not PERPLEXITY_API_KEY:
@@ -63,11 +66,13 @@ def _find_website_url(corp_name: str) -> str | None:
     # Prefer .co.kr or .com domains that aren't social media or news
     skip_domains = {'naver', 'daum', 'google', 'kakao', 'instagram', 'facebook', 'linkedin', 'youtube'}
     for url in urls:
-        parsed = urlparse(url)
-        host = parsed.netloc.lower()
-        if not any(skip in host for skip in skip_domains):
-            # Clean trailing punctuation
-            url = url.rstrip('.,;)')
+        url = url.rstrip('.,;)')
+        try:
+            parsed = urlparse(url)
+            host = parsed.netloc.lower()
+        except ValueError:
+            continue
+        if host and not any(skip in host for skip in skip_domains):
             return url
     return None
 
@@ -242,6 +247,16 @@ def audit_company_geo(company: dict) -> dict:
 
     print(f"  GEO Score: {geo_score}/100 (citability={citability}, crawler={crawler_access}, brand={brand_mention})")
     return result
+
+
+def audit_single_company(company_name: str) -> dict:
+    """
+    Audit any company by name only — no DART data required.
+    Works for startups, SMEs, any company with a website.
+    Returns a full GEO audit dict compatible with audit_company_geo() output.
+    """
+    company = {"corp_name": company_name, "readiness_score": None}
+    return audit_company_geo(company)
 
 
 def run_geo_audit(companies: list[dict]) -> list[dict]:
