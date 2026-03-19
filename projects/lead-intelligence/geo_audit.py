@@ -1,12 +1,14 @@
 """
 GEO Audit Agent — Project B: Lead Intelligence
 
-Checks each company's AI discoverability across three dimensions:
-  - Citability Score    (0-40): structured content on website
-  - Crawler Access Score (0-30): robots.txt GPTBot/ClaudeBot/PerplexityBot rules
+Checks each company's AI discoverability across five dimensions:
+  - Citability Score     (0-40): structured content on website
+  - Crawler Access Score (0-30): robots.txt GPTBot/ClaudeBot/PerplexityBot + llms.txt
   - Brand Mention Score  (0-30): Perplexity brand visibility
+  - Schema.org Score     (0-20): JSON-LD structured data (Organization, FAQ, HowTo)
+  - llms.txt Score       (0-10): LLM permissions file at site root (emerging standard)
 
-Total GEO score = sum of three (max 100).
+Total GEO score = sum of five (max 130, normalized to /100 in audit_company_geo).
 """
 
 import os
@@ -34,6 +36,12 @@ PERPLEXITY_MODEL = "sonar"
 
 REQUEST_TIMEOUT = 8
 ROBOTS_TIMEOUT = 5
+
+# Schema.org types that matter for GEO (each found = +5 points, max 20)
+SCHEMA_TYPES = ["Organization", "FAQPage", "HowTo", "Article", "Product", "LocalBusiness"]
+
+# llms.txt scoring
+LLMS_TXT_SCORE = 10  # full score if file exists at /llms.txt
 
 
 def _perplexity_query(prompt: str) -> str:
@@ -66,13 +74,16 @@ def _find_website_url(corp_name: str) -> str | None:
     # Prefer .co.kr or .com domains that aren't social media or news
     skip_domains = {'naver', 'daum', 'google', 'kakao', 'instagram', 'facebook', 'linkedin', 'youtube'}
     for url in urls:
-        url = url.rstrip('.,;)')
+        # Strip non-ASCII and trailing non-URL chars (Korean/markdown artifacts)
+        import re as _re
+        url = _re.split(r'[^a-zA-Z0-9\-\.\/\:\?=&#%_~]', url)[0]
+        url = url.rstrip('.,;)/\\')
         try:
             parsed = urlparse(url)
             host = parsed.netloc.lower()
         except ValueError:
             continue
-        if host and not any(skip in host for skip in skip_domains):
+        if host and '.' in host and not any(skip in host for skip in skip_domains):
             return url
     return None
 
@@ -207,6 +218,86 @@ def _score_brand_mention(corp_name: str) -> int:
         return 5
 
 
+def _score_schema_org(website_url: str | None) -> int:
+    """
+    Fetch homepage HTML and check for schema.org JSON-LD structured data.
+    Score = min(types_found * 5, 20).
+    Returns 0 if no URL or fetch fails.
+    """
+    if not website_url:
+        return 0
+
+    try:
+        resp = requests.get(
+            website_url,
+            timeout=REQUEST_TIMEOUT,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; GEOBot/1.0)"},
+            allow_redirects=True,
+        )
+        if resp.status_code not in (200, 301, 302):
+            print(f"    [schema.org] HTTP {resp.status_code} — 0")
+            return 0
+        html = resp.text
+    except Exception as e:
+        print(f"    [schema.org fetch error] {e}")
+        return 0
+
+    import re, json as _json
+    # Find all JSON-LD script blocks
+    ld_blocks = re.findall(
+        r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
+        html,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+
+    found_types = set()
+    for block in ld_blocks:
+        try:
+            data = _json.loads(block.strip())
+            # Handle both single object and @graph arrays
+            items = data if isinstance(data, list) else [data]
+            for item in items:
+                t = item.get("@type", "")
+                types = t if isinstance(t, list) else [t]
+                for schema_type in types:
+                    if schema_type in SCHEMA_TYPES:
+                        found_types.add(schema_type)
+        except Exception:
+            continue
+
+    score = min(len(found_types) * 5, 20)
+    print(f"    [schema.org] found: {list(found_types) or 'none'} → {score}/20")
+    return score
+
+
+def _score_llms_txt(website_url: str | None) -> int:
+    """
+    Check if the site has an llms.txt file at the root (emerging LLM permissions standard).
+    Returns LLMS_TXT_SCORE (10) if found and non-empty, 0 otherwise.
+    """
+    if not website_url:
+        return 0
+
+    parsed = urlparse(website_url)
+    llms_url = f"{parsed.scheme}://{parsed.netloc}/llms.txt"
+
+    try:
+        resp = requests.get(
+            llms_url,
+            timeout=ROBOTS_TIMEOUT,
+            headers={"User-Agent": "Mozilla/5.0"},
+        )
+        if resp.status_code == 200 and len(resp.text.strip()) > 10:
+            print(f"    [llms.txt] found at {llms_url} → {LLMS_TXT_SCORE}/10")
+            return LLMS_TXT_SCORE
+        else:
+            print(f"    [llms.txt] not found (HTTP {resp.status_code}) → 0")
+            return 0
+    except Exception as e:
+        print(f"    [llms.txt error] {e} → 0")
+        return 0
+
+
 def audit_company_geo(company: dict) -> dict:
     """
     Takes company dict with at minimum: corp_name, readiness_score.
@@ -224,7 +315,7 @@ def audit_company_geo(company: dict) -> dict:
     website_url = _find_website_url(corp_name)
     print(f"  URL: {website_url}")
 
-    # Step 2: Run three checks
+    # Step 2: Run five checks
     print(f"  Check 1 — Citability...")
     citability = _score_citability(website_url)
 
@@ -234,7 +325,15 @@ def audit_company_geo(company: dict) -> dict:
     print(f"  Check 3 — Brand Mention...")
     brand_mention = _score_brand_mention(corp_name)
 
-    geo_score = citability + crawler_access + brand_mention
+    print(f"  Check 4 — Schema.org structured data...")
+    schema_score = _score_schema_org(website_url)
+
+    print(f"  Check 5 — llms.txt...")
+    llms_score = _score_llms_txt(website_url)
+
+    # Raw total out of 130, normalize to /100
+    raw_total = citability + crawler_access + brand_mention + schema_score + llms_score
+    geo_score = round(raw_total / 130 * 100)
 
     result = {**company}
     result["geo_score"] = geo_score
@@ -242,10 +341,12 @@ def audit_company_geo(company: dict) -> dict:
         "citability": citability,
         "crawler_access": crawler_access,
         "brand_mention": brand_mention,
+        "schema_org": schema_score,
+        "llms_txt": llms_score,
     }
     result["website_url"] = website_url
 
-    print(f"  GEO Score: {geo_score}/100 (citability={citability}, crawler={crawler_access}, brand={brand_mention})")
+    print(f"  GEO Score: {geo_score}/100 (raw {raw_total}/130 | citability={citability}, crawler={crawler_access}, brand={brand_mention}, schema={schema_score}, llms={llms_score})")
     return result
 
 

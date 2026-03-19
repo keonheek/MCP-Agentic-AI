@@ -218,11 +218,18 @@ def generate_pdf(audit: dict, recommendations: list[str] | None = None, before_t
     pdf.ln(6)
     pdf.ln(2)
 
+    schema = breakdown.get("schema_org", 0)
+    llms = breakdown.get("llms_txt", 0)
+
     _bar(pdf, "AI Citability", citability, 40, 18, pdf.get_y())
     pdf.ln(9)
     _bar(pdf, "Crawler Access", crawler, 30, 18, pdf.get_y())
     pdf.ln(9)
     _bar(pdf, "Brand Mention", brand, 30, 18, pdf.get_y())
+    pdf.ln(9)
+    _bar(pdf, "Schema.org", schema, 20, 18, pdf.get_y())
+    pdf.ln(9)
+    _bar(pdf, "llms.txt", llms, 10, 18, pdf.get_y())
     pdf.ln(12)
 
     # Divider
