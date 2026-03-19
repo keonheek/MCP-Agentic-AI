@@ -463,7 +463,7 @@ def audit_company_geo(company: dict) -> dict:
     cat3_total = org_schema + content_schema  # max 30
 
     # --- Category 4: Local Sync — KR Platforms ---
-    print(f"  [Cat 4] Local Sync — KR Platforms...")
+    print(f"  [Cat 4] Local Sync - KR Platforms...")
     kr_data = _score_kr_platform_sync(corp_name, website_url)
     naver_presence = kr_data["naver_presence"]
     kr_platform_sync = kr_data["kr_platform_sync"]
