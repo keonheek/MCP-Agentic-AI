@@ -460,6 +460,82 @@ def audit_single_company(company_name: str) -> dict:
     return audit_company_geo(company)
 
 
+def generate_dynamic_recommendations(breakdown: dict, corp_name: str = "") -> list[str]:
+    """
+    Generate company-specific recommendations based on which dimensions scored low.
+    Returns 3-5 actionable recommendations in Korean, ordered by impact.
+    """
+    recs = []
+
+    # Priority 1: Crawler access (quick win, high impact)
+    crawler = breakdown.get("crawler_access", 30)
+    if crawler < 20:
+        recs.append(
+            f"robots.txt에 GPTBot, ClaudeBot, PerplexityBot 허용 규칙 추가 "
+            f"(현재 {crawler}/30점 — AI 크롤러가 웹사이트에 접근하지 못하면 AI 추천에 포함될 수 없습니다)"
+        )
+
+    # Priority 2: llms.txt (5-minute fix, immediate signal)
+    llms = breakdown.get("llms_txt", 0)
+    if llms == 0:
+        recs.append(
+            "웹사이트 루트에 llms.txt 파일 생성 — AI 시스템에 콘텐츠 접근을 명시적으로 허용하는 신규 표준입니다. "
+            "5분 내 적용 가능하며, AI 검색 결과 노출에 직접적인 영향을 줍니다"
+        )
+
+    # Priority 3: Schema.org (technical but high-leverage)
+    schema = breakdown.get("schema_org", 0)
+    if schema < 10:
+        recs.append(
+            "홈페이지에 Organization JSON-LD 구조화 데이터 추가 — "
+            "AI 시스템이 기업명, 설립연도, 주요 제품, 위치 정보를 정확히 인식할 수 있게 합니다. "
+            "FAQPage 스키마도 함께 추가하면 AI 질의 응답에 직접 인용됩니다"
+        )
+
+    # Priority 4: Citability (content quality)
+    citability = breakdown.get("citability", 40)
+    if citability < 20:
+        recs.append(
+            "주요 페이지(회사 소개, 제품/서비스)에 50단어 이상의 구체적 텍스트 블록 추가 — "
+            "AI 시스템은 구조화된 긴 문단을 인용합니다. 현재 웹사이트는 AI가 인용할 만한 콘텐츠가 부족합니다"
+        )
+
+    # Priority 5: Korean presence (Naver/Kakao ecosystem)
+    korean = breakdown.get("korean_presence", 20)
+    if korean < 10:
+        recs.append(
+            "네이버 비즈니스 프로필 및 카카오맵 등록/업데이트 — "
+            "한국 AI 생태계(네이버 클로바, 카카오 i)에서의 가시성을 높이고, "
+            "사업자등록번호를 웹사이트에 표시하여 신뢰도를 강화하세요"
+        )
+
+    # Priority 6: Brand mention (content strategy)
+    brand = breakdown.get("brand_mention", 30)
+    if brand < 10:
+        recs.append(
+            f"'{corp_name}' 브랜드가 AI 검색에서 거의 언급되지 않습니다. "
+            "업계 관련 질문에 대한 답변이 될 수 있는 전문 콘텐츠(블로그, 사례 연구, 백서)를 발행하세요"
+        )
+
+    # Priority 7: Share of Voice
+    sov = breakdown.get("share_of_voice", 10)
+    if sov < 5:
+        recs.append(
+            "경쟁사 대비 AI 인용 빈도가 낮습니다. 업계 키워드(제품명, 서비스 카테고리)에서 "
+            "AI 시스템이 귀사를 추천하도록 '답변형 콘텐츠'(질문-답변, 비교 분석, 가이드) 전략이 필요합니다"
+        )
+
+    # If somehow everything scores well, give general advice
+    if not recs:
+        recs = [
+            "전체적으로 높은 점수입니다. 월간 SoV(Share of Voice) 모니터링을 통해 경쟁사 대비 AI 가시성을 유지하세요",
+            "분기별 콘텐츠 업데이트로 AI 시스템의 최신 정보 반영을 유도하세요",
+            "신규 제품/서비스 출시 시 구조화된 페이지를 즉시 추가하여 AI 인덱싱 속도를 높이세요",
+        ]
+
+    return recs[:5]
+
+
 def run_geo_audit(companies: list[dict]) -> list[dict]:
     """Run GEO audit on all companies. Adds 2s sleep between companies."""
     results = []

@@ -81,6 +81,7 @@ if run and company_name:
     st.markdown(f"<h1 style='color:{color}'>{geo_score}/100 — {label}</h1>", unsafe_allow_html=True)
     st.caption(f"웹사이트: {website}")
 
+    # Row 1: 3 main metrics
     col_c, col_r, col_b = st.columns(3)
     with col_c:
         st.metric("AI Citability", f"{breakdown.get('citability', 0)}/40")
@@ -88,6 +89,27 @@ if run and company_name:
         st.metric("Crawler Access", f"{breakdown.get('crawler_access', 0)}/30")
     with col_b:
         st.metric("Brand Mention", f"{breakdown.get('brand_mention', 0)}/30")
+
+    # Row 2: 4 additional metrics
+    col_s, col_l, col_k, col_v = st.columns(4)
+    with col_s:
+        st.metric("Schema.org", f"{breakdown.get('schema_org', 0)}/20")
+    with col_l:
+        st.metric("llms.txt", f"{breakdown.get('llms_txt', 0)}/10")
+    with col_k:
+        st.metric("Korean Presence", f"{breakdown.get('korean_presence', 0)}/20")
+    with col_v:
+        st.metric("Share of Voice", f"{breakdown.get('share_of_voice', 0)}/10")
+
+    # Competitors from SoV
+    sov_competitors = audit.get("sov_competitors", [])
+    sov_cited = audit.get("sov_cited", False)
+    if sov_competitors:
+        cited_label = "포함됨" if sov_cited else "미포함"
+        st.markdown(
+            f"**경쟁사 AI 인용 현황:** {', '.join(sov_competitors[:5])} "
+            f"| 귀사 인용 여부: **{cited_label}**"
+        )
 
     st.session_state["audit"] = audit
 
@@ -104,12 +126,9 @@ if run and company_name:
     st.info(before[:800] + ("..." if len(before) > 800 else ""))
     st.session_state["before"] = before
 
-    # Auto-generate recommendations
-    recs = [
-        f"robots.txt에 GPTBot, ClaudeBot, PerplexityBot 허용 규칙 추가 (현재 {breakdown.get('crawler_access', 0)}/30점)",
-        "홈페이지 주요 페이지에 구조화된 FAQ 섹션 추가 — 질문/답변 형식으로 AI 인덱싱 최적화",
-        "회사 소개 및 제품 페이지에 구체적 수치 포함 (연간 매출, 고객사 수, 주요 제품 스펙)",
-    ]
+    # Dynamic recommendations based on actual scores
+    from geo_audit import generate_dynamic_recommendations
+    recs = generate_dynamic_recommendations(breakdown, company_name)
     st.session_state["recs"] = recs
 
     st.markdown("### GEO 최적화 후 예상 AI 응답 (After)")

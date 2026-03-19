@@ -242,24 +242,27 @@ def generate_pdf(audit: dict, recommendations: list[str] | None = None, before_t
     pdf.line(18, pdf.get_y(), 192, pdf.get_y())
     pdf.ln(5)
 
-    # What is GEO box
+    # What is GEO box — draw background first, then text
     pdf.set_fill_color(*LIGHT_GRAY)
-    pdf.set_xy(18, pdf.get_y())
     box_y = pdf.get_y()
+    # Pre-calculate box height: title (7) + body (~20) + padding (4)
+    box_h = 31
+    pdf.rect(18, box_y, 174, box_h, "F")
+    pdf.set_xy(20, box_y + 2)
     pdf._set_font("B", 10)
     pdf.set_text_color(*DARK)
-    pdf.cell(0, 7, "  What is GEO?")
+    pdf.cell(0, 7, "What is GEO?")
     pdf.ln(7)
     pdf._set_font("", 9)
-    pdf.set_x(18)
+    pdf.set_x(20)
     pdf.multi_cell(
-        174, 5,
+        170, 5,
         "Generative Engine Optimization (GEO) makes your business visible to AI systems like ChatGPT, "
         "Perplexity, and Claude. When customers ask AI for recommendations, GEO-optimized businesses "
         "get cited. This is the next generation of digital marketing.",
         border=0
     )
-    pdf.rect(18, box_y, 174, pdf.get_y() - box_y, "DF")
+    pdf.set_y(box_y + box_h)
     pdf.ln(5)
 
     # Current AI visibility
@@ -312,10 +315,41 @@ def generate_pdf(audit: dict, recommendations: list[str] | None = None, before_t
 
     pdf.ln(4)
     pdf.line(18, pdf.get_y(), 192, pdf.get_y())
-    pdf.ln(6)
+    pdf.ln(5)
 
-    # Expected improvement
-    new_score = min(100, geo_score + 30)
+    # --- Competitive Landscape (Gap 3) ---
+    sov_competitors = audit.get("sov_competitors", [])
+    sov_cited = audit.get("sov_cited", False)
+    if sov_competitors:
+        pdf._set_font("B", 10)
+        pdf.set_text_color(*DARK)
+        pdf.cell(0, 6, "Competitive AI Landscape")
+        pdf.ln(6)
+        pdf._set_font("", 9)
+        pdf.set_text_color(*MID_GRAY)
+        cited_label = "Yes" if sov_cited else "No"
+        pdf.multi_cell(
+            174, 5,
+            f"When AI is asked about your industry, these competitors are mentioned: "
+            f"{', '.join(sov_competitors[:5])}.\n"
+            f"Is {corp_name} cited alongside them? {cited_label}.",
+        )
+        pdf.ln(3)
+        pdf.line(18, pdf.get_y(), 192, pdf.get_y())
+        pdf.ln(5)
+
+    # --- Expected improvement (Gap 4: realistic calculation) ---
+    # Calculate recoverable points based on dimensions below max
+    max_scores = {"citability": 40, "crawler_access": 30, "brand_mention": 30,
+                  "schema_org": 20, "llms_txt": 10, "korean_presence": 20, "share_of_voice": 10}
+    recoverable_raw = 0
+    for dim, max_val in max_scores.items():
+        current = breakdown.get(dim, 0)
+        if current < max_val * 0.7:  # only count dimensions with significant room
+            recoverable_raw += int((max_val - current) * 0.6)  # assume 60% recovery
+    projected_improvement = round(recoverable_raw / 150 * 100)
+    new_score = min(100, geo_score + projected_improvement)
+
     pdf._set_font("B", 10)
     pdf.set_text_color(*DARK)
     pdf.cell(0, 6, "Expected Impact After Optimization")
@@ -338,9 +372,26 @@ def generate_pdf(audit: dict, recommendations: list[str] | None = None, before_t
     pdf.cell(0, 6, f"{new_score}/100 (estimated)")
     pdf.ln(6)
 
-    pdf.ln(6)
+    pdf.ln(3)
     pdf.line(18, pdf.get_y(), 192, pdf.get_y())
+    pdf.ln(5)
+
+    # --- Implementation Roadmap (Gap 5) ---
+    pdf._set_font("B", 10)
+    pdf.set_text_color(*DARK)
+    pdf.cell(0, 6, "Implementation Roadmap")
     pdf.ln(6)
+    pdf._set_font("", 9)
+    pdf.set_text_color(*MID_GRAY)
+    pdf.multi_cell(
+        174, 5,
+        "Phase 1 (Week 1): robots.txt + llms.txt + schema.org markup\n"
+        "Phase 2 (Weeks 2-3): Content restructure + FAQ sections + About page rewrite\n"
+        "Phase 3 (Ongoing): Monthly SoV tracking + competitive monitoring + content updates",
+    )
+    pdf.ln(3)
+    pdf.line(18, pdf.get_y(), 192, pdf.get_y())
+    pdf.ln(5)
 
     # Next steps CTA
     pdf.set_fill_color(*ACCENT)
@@ -357,10 +408,10 @@ def generate_pdf(audit: dict, recommendations: list[str] | None = None, before_t
     pdf.set_x(18)
     pdf.multi_cell(
         174, 6,
-        "1. Schedule a 30-minute strategy call to review these findings\n"
-        "2. We implement all 3 recommendations (estimated 1 week)\n"
+        "1. 30-minute strategy call to review these findings\n"
+        "2. Implementation of all recommendations (Phase 1: 1 week)\n"
         "3. Re-audit in 30 days to measure improvement\n\n"
-        "Contact: Keonhee Kim  |  SKKU Business Administration  |  AI Consulting Specialist",
+        "Contact: Keonhee Kim  |  SKKU Business Administration  |  GEO Consulting",
         border=0,
         fill=True
     )
