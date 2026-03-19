@@ -218,24 +218,56 @@ def generate_pdf(audit: dict, recommendations: list[str] | None = None, before_t
     pdf.ln(6)
     pdf.ln(2)
 
-    schema = breakdown.get("schema_org", 0)
-    llms = breakdown.get("llms_txt", 0)
-    korean = breakdown.get("korean_presence", 0)
     sov = breakdown.get("share_of_voice", 0)
+    ai_bot = breakdown.get("ai_bot_access", breakdown.get("crawler_access", crawler))
+    ai_policy = breakdown.get("ai_policy_file", breakdown.get("llms_txt", 0))
+    org_schema = breakdown.get("org_schema", breakdown.get("schema_org", 0))
+    content_schema = breakdown.get("content_schema", 0)
+    naver = breakdown.get("naver_presence", 0)
+    kr_sync = breakdown.get("kr_platform_sync", 0)
+    brand_mention = breakdown.get("brand_mention", breakdown.get("brand_mention", brand))
+    sentiment_quality = breakdown.get("sentiment_quality", 0)
 
-    _bar(pdf, "AI Citability", citability, 40, 18, pdf.get_y())
+    # Category labels
+    cat_y = pdf.get_y()
+    pdf._set_font("B", 8)
+    pdf.set_text_color(*MID_GRAY)
+
+    def _cat_label(label: str):
+        pdf.set_x(18)
+        pdf._set_font("B", 8)
+        pdf.set_text_color(*ACCENT)
+        pdf.cell(0, 5, label)
+        pdf.ln(5)
+
+    _cat_label("Category 1 — AI Citability & Share of Voice")
+    _bar(pdf, "  Citability", citability, 40, 18, pdf.get_y())
     pdf.ln(9)
-    _bar(pdf, "Crawler Access", crawler, 30, 18, pdf.get_y())
+    _bar(pdf, "  Share of Voice", sov, 10, 18, pdf.get_y())
     pdf.ln(9)
-    _bar(pdf, "Brand Mention", brand, 30, 18, pdf.get_y())
+
+    _cat_label("Category 2 — Crawler & Agent Accessibility")
+    _bar(pdf, "  AI Bot Access", ai_bot, 20, 18, pdf.get_y())
     pdf.ln(9)
-    _bar(pdf, "Schema.org", schema, 20, 18, pdf.get_y())
+    _bar(pdf, "  AI Policy File", ai_policy, 10, 18, pdf.get_y())
     pdf.ln(9)
-    _bar(pdf, "llms.txt", llms, 10, 18, pdf.get_y())
+
+    _cat_label("Category 3 — Schema & Structured Data")
+    _bar(pdf, "  Org Schema", org_schema, 15, 18, pdf.get_y())
     pdf.ln(9)
-    _bar(pdf, "Korean Presence", korean, 20, 18, pdf.get_y())
+    _bar(pdf, "  Content Schema", content_schema, 15, 18, pdf.get_y())
     pdf.ln(9)
-    _bar(pdf, "Share of Voice", sov, 10, 18, pdf.get_y())
+
+    _cat_label("Category 4 — Local Sync: KR Platforms")
+    _bar(pdf, "  Naver Presence", naver, 10, 18, pdf.get_y())
+    pdf.ln(9)
+    _bar(pdf, "  KR Platform Sync", kr_sync, 10, 18, pdf.get_y())
+    pdf.ln(9)
+
+    _cat_label("Category 5 — Brand Sentiment & Mention Quality")
+    _bar(pdf, "  Brand Mention", brand_mention, 10, 18, pdf.get_y())
+    pdf.ln(9)
+    _bar(pdf, "  Sentiment Quality", sentiment_quality, 10, 18, pdf.get_y())
     pdf.ln(12)
 
     # Divider
@@ -340,13 +372,19 @@ def generate_pdf(audit: dict, recommendations: list[str] | None = None, before_t
 
     # --- Expected improvement (Gap 4: realistic calculation) ---
     # Calculate recoverable points based on dimensions below max
-    max_scores = {"citability": 40, "crawler_access": 30, "brand_mention": 30,
-                  "schema_org": 20, "llms_txt": 10, "korean_presence": 20, "share_of_voice": 10}
+    max_scores = {
+        "citability": 40, "share_of_voice": 10,
+        "ai_bot_access": 20, "ai_policy_file": 10,
+        "org_schema": 15, "content_schema": 15,
+        "naver_presence": 10, "kr_platform_sync": 10,
+        "brand_mention": 10, "sentiment_quality": 10,
+    }
     recoverable_raw = 0
     for dim, max_val in max_scores.items():
-        current = breakdown.get(dim, 0)
-        if current < max_val * 0.7:  # only count dimensions with significant room
-            recoverable_raw += int((max_val - current) * 0.6)  # assume 60% recovery
+        # Fallback to legacy keys for backward compat
+        current = breakdown.get(dim, breakdown.get("crawler_access" if dim == "ai_bot_access" else dim, 0))
+        if current < max_val * 0.7:
+            recoverable_raw += int((max_val - current) * 0.6)
     projected_improvement = round(recoverable_raw / 150 * 100)
     new_score = min(100, geo_score + projected_improvement)
 

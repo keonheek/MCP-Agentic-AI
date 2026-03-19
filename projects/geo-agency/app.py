@@ -81,25 +81,68 @@ if run and company_name:
     st.markdown(f"<h1 style='color:{color}'>{geo_score}/100 — {label}</h1>", unsafe_allow_html=True)
     st.caption(f"웹사이트: {website}")
 
-    # Row 1: 3 main metrics
-    col_c, col_r, col_b = st.columns(3)
-    with col_c:
-        st.metric("AI Citability", f"{breakdown.get('citability', 0)}/40")
-    with col_r:
-        st.metric("Crawler Access", f"{breakdown.get('crawler_access', 0)}/30")
-    with col_b:
-        st.metric("Brand Mention", f"{breakdown.get('brand_mention', 0)}/30")
+    # 5-category GEO breakdown
+    st.markdown("#### 5-Category GEO Breakdown")
 
-    # Row 2: 4 additional metrics
-    col_s, col_l, col_k, col_v = st.columns(4)
-    with col_s:
-        st.metric("Schema.org", f"{breakdown.get('schema_org', 0)}/20")
-    with col_l:
-        st.metric("llms.txt", f"{breakdown.get('llms_txt', 0)}/10")
-    with col_k:
-        st.metric("Korean Presence", f"{breakdown.get('korean_presence', 0)}/20")
-    with col_v:
-        st.metric("Share of Voice", f"{breakdown.get('share_of_voice', 0)}/10")
+    # Category 1: AI Citability & Share of Voice (max 50)
+    citability = breakdown.get("citability", 0)
+    sov = breakdown.get("share_of_voice", 0)
+    cat1 = citability + sov
+    col_c1, col_c2, col_cat1 = st.columns([2, 2, 1])
+    with col_c1:
+        st.metric("AI Citability", f"{citability}/40")
+    with col_c2:
+        st.metric("Share of Voice", f"{sov}/10")
+    with col_cat1:
+        st.metric("Cat 1 Total", f"{cat1}/50")
+
+    # Category 2: Crawler & Agent Accessibility (max 30)
+    ai_bot = breakdown.get("ai_bot_access", breakdown.get("crawler_access", 0))
+    ai_policy = breakdown.get("ai_policy_file", breakdown.get("llms_txt", 0))
+    cat2 = ai_bot + ai_policy
+    col_c3, col_c4, col_cat2 = st.columns([2, 2, 1])
+    with col_c3:
+        st.metric("AI Bot Access", f"{ai_bot}/20")
+    with col_c4:
+        st.metric("AI Policy File (llms.txt)", f"{ai_policy}/10")
+    with col_cat2:
+        st.metric("Cat 2 Total", f"{cat2}/30")
+
+    # Category 3: Schema & Structured Data (max 30)
+    org_schema = breakdown.get("org_schema", 0)
+    content_schema = breakdown.get("content_schema", 0)
+    cat3 = org_schema + content_schema
+    col_c5, col_c6, col_cat3 = st.columns([2, 2, 1])
+    with col_c5:
+        st.metric("Org Schema", f"{org_schema}/15")
+    with col_c6:
+        st.metric("Content Schema", f"{content_schema}/15")
+    with col_cat3:
+        st.metric("Cat 3 Total", f"{cat3}/30")
+
+    # Category 4: Local Sync — KR Platforms (max 20)
+    naver = breakdown.get("naver_presence", 0)
+    kr_sync = breakdown.get("kr_platform_sync", breakdown.get("korean_presence", 0) - breakdown.get("naver_presence", 0))
+    cat4 = naver + kr_sync
+    col_c7, col_c8, col_cat4 = st.columns([2, 2, 1])
+    with col_c7:
+        st.metric("Naver Presence", f"{naver}/10")
+    with col_c8:
+        st.metric("KR Platform Sync", f"{kr_sync}/10")
+    with col_cat4:
+        st.metric("Cat 4 Total", f"{cat4}/20")
+
+    # Category 5: Brand Sentiment & Mention Quality (max 20)
+    brand_mention = breakdown.get("brand_mention", 0)
+    sentiment_quality = breakdown.get("sentiment_quality", 0)
+    cat5 = brand_mention + sentiment_quality
+    col_c9, col_c10, col_cat5 = st.columns([2, 2, 1])
+    with col_c9:
+        st.metric("Brand Mention", f"{brand_mention}/10")
+    with col_c10:
+        st.metric("Sentiment Quality", f"{sentiment_quality}/10")
+    with col_cat5:
+        st.metric("Cat 5 Total", f"{cat5}/20")
 
     # Competitors from SoV
     sov_competitors = audit.get("sov_competitors", [])
