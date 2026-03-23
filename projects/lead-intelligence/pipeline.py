@@ -13,7 +13,10 @@ import time
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=Path(__file__).parent.parent.parent / ".env")
+for _p in [Path(__file__).parent / '.env', Path(__file__).parent.parent / '.env', Path(__file__).parent.parent.parent / '.env']:
+    if _p.exists():
+        load_dotenv(dotenv_path=_p)
+        break
 
 from dart_screener import screen_companies
 from ai_readiness_scorer import rank_companies
@@ -138,7 +141,7 @@ if __name__ == "__main__":
 
     companies, excel_path = run_full_pipeline(
         min_revenue_bn_krw=50,
-        max_revenue_bn_krw=1000,
+        max_revenue_bn_krw=100000,
         top_n=10,
     )
 

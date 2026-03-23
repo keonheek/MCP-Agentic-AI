@@ -11,10 +11,9 @@ for _p in [Path(__file__).parent / '.env', Path(__file__).parent.parent / '.env'
         break
 
 DART_API_KEY = os.getenv("DARTFSS_API_KEY")
-if not DART_API_KEY:
-    raise EnvironmentError("DARTFSS_API_KEY not found in .env")
-
-dart.set_api_key(DART_API_KEY)
+if DART_API_KEY:
+    dart.set_api_key(DART_API_KEY)
+# Key will be validated at runtime in screen_companies() if missing
 
 
 @functools.lru_cache(maxsize=1)
@@ -23,8 +22,8 @@ def _get_corp_list():
     return dart.get_corp_list()
 
 
-# 5 companies for reliable Streamlit Cloud demo (extract_fs is slow per company)
-SAMPLE_COMPANIES = [
+# Fallback company list used only when DART keyword search returns no results
+_FALLBACK_COMPANIES = [
     "삼성전기", "솔브레인", "현대모비스", "LG이노텍", "DB하이텍",
 ]
 
@@ -130,7 +129,8 @@ def _extract_financials(corp) -> list[dict]:
 def screen_companies(
     sector: str,
     min_revenue_bn_krw: float = 100,
-    max_revenue_bn_krw: float = 500
+    max_revenue_bn_krw: float = 100000,
+    top_n: int = 5,
 ) -> list[dict]:
     """
     Search DART for Korean companies matching ICP criteria.
@@ -142,10 +142,23 @@ def screen_companies(
     sector: Korean sector name e.g. "제조업" (informational; DART search is by name)
     min/max_revenue: in billions KRW — filters on the most recent year available
     """
+    # Ensure DART API key is set (handles Streamlit Cloud where secrets load after module import)
+    key = os.getenv("DARTFSS_API_KEY")
+    if not key:
+        raise EnvironmentError("DARTFSS_API_KEY not set. Add it to Streamlit Cloud secrets.")
+    dart.set_api_key(key)
     corp_list = _get_corp_list()
     results = []
 
-    for name in SAMPLE_COMPANIES:
+    # Build candidate list from DART keyword search on sector, fall back to hardcoded list
+    sector_results = corp_list.find_by_corp_name(sector, exactly=False)
+    candidate_names = (
+        [c.corp_name for c in sector_results[:max(top_n * 3, 15)]]
+        if sector_results
+        else _FALLBACK_COMPANIES
+    )
+
+    for name in candidate_names:
         try:
             corps = corp_list.find_by_corp_name(name, exactly=True)
             if not corps:
@@ -182,6 +195,7 @@ def screen_companies(
             print(f"  [error] {name}: {e}")
             continue
 
+    results = results[:top_n]
     print(f"\nScreener done: {len(results)} companies passed filter ({sector}, {min_revenue_bn_krw}-{max_revenue_bn_krw}B KRW)")
     return results
 

@@ -13,6 +13,15 @@ for _p in [Path(__file__).parent / '.env', Path(__file__).parent.parent / '.env'
 
 import streamlit as st
 
+# Streamlit Cloud: load secrets into env before any pipeline imports
+import os
+for _key in ["PERPLEXITY_API_KEY", "ANTHROPIC_API_KEY", "DARTFSS_API_KEY"]:
+    if not os.environ.get(_key):
+        try:
+            os.environ[_key] = st.secrets[_key]
+        except (KeyError, FileNotFoundError):
+            pass
+
 st.set_page_config(
     page_title="Korean SME Lead Intelligence",
     page_icon="🔍",
@@ -30,17 +39,17 @@ with st.sidebar:
     min_revenue = st.slider(
         "Min Revenue (Billion KRW)",
         min_value=10,
-        max_value=500,
+        max_value=5000,
         value=50,
-        step=10,
+        step=50,
     )
 
     max_revenue = st.slider(
         "Max Revenue (Billion KRW)",
         min_value=100,
-        max_value=2000,
-        value=1000,
-        step=50,
+        max_value=100000,
+        value=5000,
+        step=500,
     )
 
     top_n = st.slider(

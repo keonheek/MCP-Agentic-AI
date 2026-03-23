@@ -56,6 +56,21 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 _STATUS_FILE = _PROJECT_ROOT / "agents" / "status.json"
 
 
+_LOG_FILE = _PROJECT_ROOT / "tools" / "discord-bot" / "discord_log.md"
+
+
+def _write_to_log(author: str, content: str) -> None:
+    """Append message to discord_log.md — VS Code auto-refreshes the open file."""
+    try:
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        entry = f"\n**[{timestamp}] {author}:**\n{content}\n\n---\n"
+        with open(_LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(entry)
+    except Exception as e:
+        print(f"[log] write failed: {e}")
+
+
 def _write_status(status: str, task: str) -> None:
     """Write Discord bot status to the shared status.json."""
     try:
@@ -120,13 +135,12 @@ def _call_claude(channel_id: int, user_message: str) -> str:
 # ---------------------------------------------------------------------------
 import discord
 
-# Fix asyncio event loop issue on Windows Python 3.10+
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+# Python 3.14 removed implicit event loop — create one explicitly
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
-intents = discord.Intents.default()
-intents.message_content = True
-client = discord.Client(intents=intents)
+intents = discord.Intents.all()
+client = discord.Client(intents=intents, loop=loop)
 
 
 @client.event
@@ -142,8 +156,12 @@ async def on_message(message: discord.Message):
     if message.author == client.user:
         return
 
+    # Debug: log all incoming messages with channel ID
+    print(f"[debug] channel={message.channel.id} author={message.author} content={message.content[:40]!r}")
+
     # Only respond in the configured channel
     if message.channel.id != DISCORD_CHANNEL_ID:
+        print(f"[debug] ignoring — expected {DISCORD_CHANNEL_ID}, got {message.channel.id}")
         return
 
     user_input = message.content.strip()
@@ -152,6 +170,9 @@ async def on_message(message: discord.Message):
 
     print(f"[msg] {message.author}: {user_input[:80]}")
     _write_status("working", f"Replying to: {user_input[:60]}")
+
+    # Option 1: also write message to file in VS Code workspace (auto-refreshes in editor)
+    _write_to_log(str(message.author), user_input)
 
     # Show typing indicator while calling Claude
     async with message.channel.typing():
@@ -167,6 +188,7 @@ async def on_message(message: discord.Message):
             await message.channel.send(reply[i:i+1900])
 
     print(f"[reply] {reply[:80]}...")
+    _write_to_log("Claude_Agent", reply)
     _write_status("idle", "Waiting for messages")
 
 

@@ -23,8 +23,8 @@ _HERE = Path(__file__).resolve().parent          # agents/
 PROJECT_ROOT = _HERE.parent                       # MCP_Agentic AI/
 STATUS_FILE = PROJECT_ROOT / "agents" / "status.json"
 
-VALID_AGENTS = ["GEO", "Lead Intel", "SME Diag", "Consulting", "Next Role"]
-VALID_STATUSES = ["working", "idle", "done"]
+VALID_AGENTS = ["GEO", "Lead Intel", "SME Diag", "Consulting", "Next Role", "Discord Bot"]
+VALID_STATUSES = ["working", "idle", "done", "blocked"]
 
 
 def update(agent_name: str, status: str, task: str) -> None:
