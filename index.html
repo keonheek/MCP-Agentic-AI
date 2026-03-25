@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>온기 카페 — 마포구 핸드메이드 크로플</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:    #FFF8F0;
+      --brown:    #3D2314;
+      --green:    #7C9A6A;
+      --warm-mid: #C8A882;
+      --light-brown: #8B6347;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--cream);
+      color: var(--brown);
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 40px;
+      background: rgba(255,248,240,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(61,35,20,0.08);
+    }
+    .nav-logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--brown);
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--light-brown);
+      transition: color 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .nav-links a:hover { color: var(--brown); }
+
+    /* ─── HERO ────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #three-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 0 24px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    .hero-title {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--brown);
+      margin-bottom: 16px;
+    }
+    .hero-title span { color: var(--green); }
+    .hero-sub {
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      font-weight: 300;
+      color: var(--light-brown);
+      letter-spacing: 0.04em;
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--brown);
+      color: var(--cream);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.25s, transform 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .hero-cta:hover {
+      background: var(--green);
+      transform: translateY(-2px);
+    }
+    .hero-cta svg { width: 18px; height: 18px; fill: currentColor; }
+
+    /* scroll hint */
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--warm-mid);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      animation: nudge 2.4s ease-in-out infinite;
+      z-index: 10;
+    }
+    .scroll-hint::after {
+      content: '';
+      width: 1px;
+      height: 40px;
+      background: var(--warm-mid);
+      animation: grow 2.4s ease-in-out infinite;
+    }
+    @keyframes nudge { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+    @keyframes grow  { 0%,100%{opacity:0.4;height:30px} 50%{opacity:1;height:50px} }
+
+    /* ─── SECTION BASE ────────────────────────────────── */
+    section { padding: 100px 40px; }
+    .section-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 14px;
+    }
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--brown);
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--light-brown);
+      line-height: 1.8;
+      max-width: 520px;
+      margin-bottom: 56px;
+    }
+
+    /* ─── MENU ────────────────────────────────────────── */
+    #menu { background: var(--brown); }
+    #menu .section-tag { color: var(--warm-mid); }
+    #menu h2,
+    #menu .section-desc { color: var(--cream); }
+    #menu .section-desc { color: rgba(255,248,240,0.65); }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .menu-card {
+      background: rgba(255,248,240,0.06);
+      border: 1px solid rgba(255,248,240,0.12);
+      border-radius: 20px;
+      padding: 36px 32px;
+      transition: background 0.25s, transform 0.2s;
+      cursor: default;
+    }
+    .menu-card:hover {
+      background: rgba(255,248,240,0.1);
+      transform: translateY(-4px);
+    }
+    .menu-icon {
+      font-size: 2.4rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .menu-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .menu-card p {
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: rgba(255,248,240,0.65);
+      line-height: 1.7;
+    }
+    .menu-price {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── STORY ───────────────────────────────────────── */
+    #story {
+      display: flex;
+      align-items: center;
+      gap: 80px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .story-visual {
+      flex: 0 0 340px;
+      height: 380px;
+      background: linear-gradient(135deg, var(--warm-mid) 0%, var(--brown) 100%);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      box-shadow: 0 24px 60px rgba(61,35,20,0.18);
+    }
+    .story-text .section-desc { margin-bottom: 28px; }
+    .story-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .story-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--light-brown);
+    }
+    .story-list li::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    /* ─── CLASS ───────────────────────────────────────── */
+    #class {
+      background: linear-gradient(135deg, #FDF3E6 0%, #F4E4CE 100%);
+      text-align: center;
+    }
+    .class-inner { max-width: 640px; margin: 0 auto; }
+    .class-inner .section-desc { margin: 0 auto 40px; text-align: center; }
+    .class-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .class-tag-chip {
+      background: var(--cream);
+      border: 1px solid rgba(61,35,20,0.15);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--brown);
+    }
+    .class-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .class-cta:hover { background: #657f55; transform: translateY(-2px); }
+
+    /* ─── CONTACT / CTA ───────────────────────────────── */
+    #contact {
+      background: var(--green);
+      text-align: center;
+      padding: 100px 40px;
+    }
+    #contact h2 { color: #fff; margin-bottom: 12px; }
+    #contact .section-desc { color: rgba(255,255,255,0.75); margin: 0 auto 40px; text-align: center; }
+    .kakao-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #FEE500;
+      color: #3C1E1E;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 16px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    .kakao-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+    .kakao-icon { font-size: 1.2rem; }
+    .contact-detail {
+      margin-top: 24px;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────── */
+    footer {
+      background: var(--brown);
+      color: rgba(255,248,240,0.45);
+      text-align: center;
+      padding: 28px 40px;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+    footer span { color: rgba(255,248,240,0.7); font-weight: 500; }
+
+    /* ─── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { gap: 20px; }
+      section { padding: 80px 24px; }
+      #story {
+        flex-direction: column;
+        gap: 40px;
+      }
+      .story-visual { flex: none; width: 100%; height: 220px; font-size: 4rem; }
+    }
+    @media (max-width: 480px) {
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">온기 카페</div>
+  <ul class="nav-links">
+    <li><a href="#menu">메뉴</a></li>
+    <li><a href="#story">스토리</a></li>
+    <li><a href="#class">베이킹 클래스</a></li>
+    <li><a href="#contact">예약</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="three-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge">서울 마포구 · 핸드메이드 베이커리</div>
+    <h1 class="hero-title">온기<span>가</span> 있는<br/>커피 한 잔</h1>
+    <p class="hero-sub">
+      직접 만든 크로플과 계절 라떼로<br/>하루를 따뜻하게 채워드립니다
+    </p>
+    <a href="#menu" class="hero-cta">
+      <svg viewBox="0 0 24 24"><path d="M11 5L5 11l6 6M5 11h14"/></svg>
+      메뉴 보기
+    </a>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div style="max-width:1100px;margin:0 auto;">
+    <p class="section-tag">Our Menu</p>
+    <h2>정성껏 만든 메뉴</h2>
+    <p class="section-desc">모든 메뉴는 당일 직접 만들어 가장 신선할 때 드립니다.</p>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <span class="menu-icon">🥐</span>
+        <h3>시그니처 크로플</h3>
+        <p>겹겹이 쌓인 크루아상 반죽을 와플 틀에 구워 바삭하게. 생크림과 딸기잼 선택 가능.</p>
+        <span class="menu-price">₩ 6,500</span>
+      </div>
+      <div class="menu-card">
+        <span class="menu-icon">🍵</span>
+        <h3>계절 시그니처 라떼</h3>
+        <p>봄엔 벚꽃, 여름엔 유자, 가을엔 흑임자, 겨울엔 얼그레이 로열밀크티. 계절마다 달라집니다.</p>
+        <span class="menu-price">₩ 7,000</span>
+      </div>
+      <div class="menu-card">
+        <span class="menu-icon">☕</span>
+        <h3>핸드드립 아메리카노</h3>
+        <p>싱글오리진 원두를 소량 로스팅. 산미와 단맛의 균형이 깔끔합니다.</p>
+        <span class="menu-price">₩ 5,500</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section>
+  <div id="story">
+    <div class="story-visual">☕</div>
+    <div class="story-text">
+      <p class="section-tag">Our Story</p>
+      <h2>작지만 진심인<br/>동네 카페</h2>
+      <p class="section-desc">
+        온기는 "따뜻함"이라는 뜻입니다. 크고 화려한 공간은 아니지만, 올 때마다
+        반갑고 마실 때마다 편안한 곳을 만들고 싶었습니다.
+      </p>
+      <ul class="story-list">
+        <li>매일 아침 7시 — 직접 반죽하는 크로플</li>
+        <li>주 3회 원두 로스팅 — 항상 신선한 커피</li>
+        <li>제철 재료로 매월 바뀌는 계절 메뉴</li>
+        <li>반려동물 동반 가능 (테라스 한정)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CLASS -->
+<section id="class">
+  <div class="class-inner">
+    <p class="section-tag">Baking Class</p>
+    <h2>베이킹 클래스</h2>
+    <p class="section-desc">
+      주말 소규모 클래스로 크로플 · 스콘 · 파운드케이크를 직접 만들어 보세요.
+      초보자도 누구나 환영합니다.
+    </p>
+    <div class="class-tags">
+      <span class="class-tag-chip">🥐 크로플 클래스</span>
+      <span class="class-tag-chip">🍰 스콘 & 버터크림</span>
+      <span class="class-tag-chip">🧁 파운드케이크</span>
+      <span class="class-tag-chip">☕ 홈브루 커피</span>
+    </div>
+    <a href="#contact" class="class-cta">클래스 신청하기 →</a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <h2>예약 & 문의</h2>
+  <p class="section-desc">
+    테이블 예약, 케이터링, 베이킹 클래스 모두<br/>카카오톡으로 편하게 문의 주세요.
+  </p>
+  <a href="https://open.kakao.com/o/example" class="kakao-btn">
+    <span class="kakao-icon">💬</span>
+    카카오톡 문의
+  </a>
+  <p class="contact-detail">
+    서울 마포구 온기길 12 · 화–일 10:00–20:00 (월요일 휴무)
+  </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  &copy; 2025 온기 카페 — 서울 마포구<br/>
+  <span>디자인 by 김건희 AI Lab</span>
+</footer>
+
+<!-- ─── THREE.JS ──────────────────────────────────────── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function() {
+  const canvas = document.getElementById('three-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.set(0, 0, 30);
+
+  // ── Palette ──────────────────────────────────────────
+  const CREAM  = new THREE.Color('#FFF8F0');
+  const BROWN  = new THREE.Color('#3D2314');
+  const GREEN  = new THREE.Color('#7C9A6A');
+  const MID    = new THREE.Color('#C8A882');
+
+  // ── Fog ──────────────────────────────────────────────
+  scene.fog = new THREE.Fog(0xFFF8F0, 20, 90);
+
+  // ── Ambient + Directional lights ─────────────────────
+  scene.add(new THREE.AmbientLight(0xFFF8F0, 0.6));
+  const sunLight = new THREE.DirectionalLight(0xF4DFC0, 1.2);
+  sunLight.position.set(10, 20, 10);
+  scene.add(sunLight);
+  const rimLight = new THREE.DirectionalLight(0x7C9A6A, 0.4);
+  rimLight.position.set(-10, -5, -8);
+  scene.add(rimLight);
+
+  // ── Helper: random range ──────────────────────────────
+  const rr = (a, b) => a + Math.random() * (b - a);
+
+  // ── Floating orbs (warm tones) ────────────────────────
+  const orbGroup = new THREE.Group();
+  const orbColors = [CREAM, MID, GREEN, BROWN, new THREE.Color('#E8C89A'), new THREE.Color('#A8C896')];
+  const orbs = [];
+
+  for (let i = 0; i < 28; i++) {
+    const r = rr(0.3, 1.6);
+    const geo = new THREE.SphereGeometry(r, 24, 24);
+    const mat = new THREE.MeshStandardMaterial({
+      color: orbColors[Math.floor(Math.random() * orbColors.length)],
+      roughness: 0.35,
+      metalness: 0.05,
+      transparent: true,
+      opacity: rr(0.55, 0.92)
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(rr(-20, 20), rr(-14, 14), rr(-18, 5));
+    const speed  = rr(0.3, 0.8);
+    const offset = rr(0, Math.PI * 2);
+    const range  = rr(0.6, 1.8);
+    orbs.push({ mesh, speed, offset, range, baseY: mesh.position.y, baseX: mesh.position.x });
+    orbGroup.add(mesh);
+  }
+  scene.add(orbGroup);
+
+  // ── Torus rings (coffee ring aesthetic) ──────────────
+  const ringGroup = new THREE.Group();
+  for (let i = 0; i < 5; i++) {
+    const geo = new THREE.TorusGeometry(rr(2.5, 5.5), rr(0.06, 0.16), 16, 80);
+    const mat = new THREE.MeshStandardMaterial({
+      color: i % 2 === 0 ? MID : GREEN,
+      roughness: 0.6,
+      metalness: 0.1,
+      transparent: true,
+      opacity: rr(0.18, 0.38)
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(rr(-12, 12), rr(-8, 8), rr(-15, 0));
+    mesh.rotation.set(rr(0, Math.PI), rr(0, Math.PI), 0);
+    ringGroup.add(mesh);
+  }
+  scene.add(ringGroup);
+
+  // ── Central hero piece — stylised cup ────────────────
+  // Cup body (cylinder)
+  const cupBody = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.2, 1.0, 2.6, 64),
+    new THREE.MeshStandardMaterial({ color: CREAM, roughness: 0.2, metalness: 0.08 })
+  );
+  cupBody.position.set(0, 0, -2);
+  // Cup saucer
+  const saucer = new THREE.Mesh(
+    new THREE.CylinderGeometry(2.0, 1.8, 0.2, 64),
+    new THREE.MeshStandardMaterial({ color: MID, roughness: 0.3, metalness: 0.04 })
+  );
+  saucer.position.set(0, -1.5, -2);
+  // Coffee surface (dark disc)
+  const coffeeTop = new THREE.Mesh(
+    new THREE.CircleGeometry(1.15, 64),
+    new THREE.MeshStandardMaterial({ color: BROWN, roughness: 0.8 })
+  );
+  coffeeTop.rotation.x = -Math.PI / 2;
+  coffeeTop.position.set(0, 1.31, -2);
+  // Steam particles
+  const steamGeo = new THREE.BufferGeometry();
+  const steamPositions = [];
+  for (let i = 0; i < 80; i++) {
+    steamPositions.push(rr(-0.8, 0.8), rr(1.5, 4.0), -2 + rr(-0.3, 0.3));
+  }
+  steamGeo.setAttribute('position', new THREE.Float32BufferAttribute(steamPositions, 3));
+  const steamMat = new THREE.PointsMaterial({ color: CREAM, size: 0.08, transparent: true, opacity: 0.4 });
+  const steam = new THREE.Points(steamGeo, steamMat);
+
+  const cupGroup = new THREE.Group();
+  cupGroup.add(cupBody, saucer, coffeeTop, steam);
+  cupGroup.position.set(0, 1.5, 0);
+  scene.add(cupGroup);
+
+  // ── Particle dust ─────────────────────────────────────
+  const dustGeo = new THREE.BufferGeometry();
+  const dustPos = [];
+  for (let i = 0; i < 200; i++) {
+    dustPos.push(rr(-25, 25), rr(-18, 18), rr(-20, 8));
+  }
+  dustGeo.setAttribute('position', new THREE.Float32BufferAttribute(dustPos, 3));
+  const dustMat = new THREE.PointsMaterial({ color: MID, size: 0.06, transparent: true, opacity: 0.35 });
+  scene.add(new THREE.Points(dustGeo, dustMat));
+
+  // ── Resize handler ────────────────────────────────────
+  window.addEventListener('resize', () => {
+    const w = window.innerWidth, h = window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+
+  // ── Mouse parallax ────────────────────────────────────
+  let mx = 0, my = 0;
+  window.addEventListener('mousemove', e => {
+    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+    my = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  // ── Animate ───────────────────────────────────────────
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.012;
+
+    // floating orbs
+    orbs.forEach(o => {
+      o.mesh.position.y = o.baseY + Math.sin(t * o.speed + o.offset) * o.range;
+      o.mesh.position.x = o.baseX + Math.cos(t * o.speed * 0.7 + o.offset) * (o.range * 0.4);
+    });
+
+    // ring slow rotation
+    ringGroup.children.forEach((r, i) => {
+      r.rotation.z += 0.0015 * (i % 2 === 0 ? 1 : -1);
+      r.rotation.x += 0.0008;
+    });
+
+    // cup gentle float + parallax nudge
+    cupGroup.position.y = 1.5 + Math.sin(t * 0.6) * 0.25;
+    cupGroup.rotation.y = Math.sin(t * 0.3) * 0.08;
+
+    // steam drift
+    const sp = steam.geometry.attributes.position;
+    for (let i = 1; i < sp.count * 3; i += 3) {
+      sp.array[i] += 0.005;
+      if (sp.array[i] > 5) sp.array[i] = 1.5;
+    }
+    sp.needsUpdate = true;
+
+    // camera parallax
+    camera.position.x += (mx * 1.5 - camera.position.x) * 0.04;
+    camera.position.y += (-my * 1.0 - camera.position.y) * 0.04;
+    camera.lookAt(0, 1.5, 0);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
+
+</body>
+</html>
