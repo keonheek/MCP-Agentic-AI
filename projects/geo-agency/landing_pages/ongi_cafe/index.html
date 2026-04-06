@@ -3,30 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>온기 카페 — 마포구 핸드메이드 크로플</title>
+  <title>온기 카페 — 마포구 핸드메이드 크로플 & 계절 라떼</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --cream:    #FFF8F0;
-      --brown:    #3D2314;
-      --green:    #7C9A6A;
-      --warm-mid: #C8A882;
-      --light-brown: #8B6347;
+      --espresso:  #120A05;
+      --brown:     #2C1810;
+      --amber:     #C8882A;
+      --amber-lt:  #E8A84A;
+      --cream:     #FDF6EE;
+      --cream-dim: rgba(253,246,238,0.7);
+      --sage:      #7C9A6A;
+      --warm-mid:  #C8A882;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Noto Sans KR', sans-serif;
-      background: var(--cream);
-      color: var(--brown);
+      background: var(--espresso);
+      color: var(--cream);
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ─── NAV ─────────────────────────────────────────── */
+    /* ── FILM GRAIN OVERLAY ─────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      mix-blend-mode: overlay;
+    }
+
+    /* ── NAV ────────────────────────────────────────── */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -34,470 +51,773 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 18px 40px;
-      background: rgba(255,248,240,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(61,35,20,0.08);
+      padding: 20px 48px;
+      background: rgba(18,10,5,0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(200,136,42,0.12);
+      transition: background 0.4s;
     }
     .nav-logo {
-      font-size: 1.2rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
       font-weight: 700;
-      letter-spacing: 0.04em;
-      color: var(--brown);
+      color: var(--cream);
+      letter-spacing: 0.02em;
     }
+    .nav-logo span { color: var(--amber); }
     .nav-links {
       display: flex;
-      gap: 32px;
+      gap: 36px;
       list-style: none;
     }
     .nav-links a {
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 500;
-      color: var(--light-brown);
+      color: var(--warm-mid);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       transition: color 0.2s;
-      letter-spacing: 0.03em;
     }
-    .nav-links a:hover { color: var(--brown); }
+    .nav-links a:hover { color: var(--amber); }
+    .nav-reserve {
+      background: var(--amber);
+      color: var(--espresso) !important;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-weight: 700 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-reserve:hover { background: var(--amber-lt) !important; transform: translateY(-1px); }
 
-    /* ─── HERO ────────────────────────────────────────── */
+    /* ── HERO ───────────────────────────────────────── */
     #hero {
       position: relative;
       height: 100vh;
+      min-height: 680px;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
     }
+
+    /* Cinematic scroll-driven gradient background */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 30% 40%, rgba(200,136,42,0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 75% 70%, rgba(124,154,106,0.12) 0%, transparent 55%),
+        linear-gradient(160deg, #1A0A02 0%, #120A05 40%, #0D0705 100%);
+      will-change: transform;
+      transform-origin: center;
+      transition: background 0.1s;
+    }
+
+    /* Three.js canvas */
     #three-canvas {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
+      opacity: 0.75;
     }
+
+    /* Dark vignette over canvas */
+    .hero-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 90% 90% at 50% 50%, transparent 30%, rgba(12,6,2,0.65) 100%);
+      pointer-events: none;
+    }
+
+    /* Bottom fade into next section */
+    .hero-fade {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 180px;
+      background: linear-gradient(to bottom, transparent, var(--espresso));
+      pointer-events: none;
+    }
+
     .hero-content {
       position: relative;
       z-index: 10;
       text-align: center;
       padding: 0 24px;
+      max-width: 760px;
     }
-    .hero-badge {
-      display: inline-block;
-      background: var(--green);
-      color: #fff;
-      font-size: 0.7rem;
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(200,136,42,0.12);
+      border: 1px solid rgba(200,136,42,0.3);
+      backdrop-filter: blur(8px);
+      color: var(--amber);
+      font-size: 0.68rem;
       font-weight: 700;
-      letter-spacing: 0.12em;
-      padding: 6px 14px;
-      border-radius: 20px;
-      margin-bottom: 20px;
+      letter-spacing: 0.18em;
+      padding: 7px 16px;
+      border-radius: 50px;
+      margin-bottom: 28px;
       text-transform: uppercase;
     }
+    .hero-eyebrow::before { content: '●'; font-size: 0.4rem; animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
     .hero-title {
-      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 6rem);
       font-weight: 700;
-      line-height: 1.08;
+      line-height: 1.05;
       letter-spacing: -0.02em;
-      color: var(--brown);
-      margin-bottom: 16px;
+      color: var(--cream);
+      margin-bottom: 12px;
+      animation: hero-fadein 1.2s ease both;
     }
-    .hero-title span { color: var(--green); }
+    .hero-title em {
+      font-style: italic;
+      color: var(--amber);
+      display: inline-block;
+      animation: hero-slide 1.4s cubic-bezier(0.16,1,0.3,1) 0.2s both;
+    }
+    @keyframes hero-fadein { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+    @keyframes hero-slide  { from{opacity:0;transform:translateX(-16px)} to{opacity:1;transform:none} }
     .hero-sub {
-      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
       font-weight: 300;
-      color: var(--light-brown);
+      color: var(--cream-dim);
       letter-spacing: 0.04em;
-      margin-bottom: 36px;
-      line-height: 1.7;
+      line-height: 1.8;
+      margin-bottom: 40px;
+      animation: hero-fadein 1.2s ease 0.4s both;
     }
+
+    /* Liquid glass CTA — Viktor Oddy signature */
     .hero-cta {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      background: var(--brown);
-      color: var(--cream);
+      background: rgba(200,136,42,0.15);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(200,136,42,0.4);
+      color: var(--amber);
       font-size: 0.9rem;
-      font-weight: 600;
+      font-weight: 700;
+      padding: 15px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: background 0.3s, border-color 0.3s, transform 0.2s, box-shadow 0.3s;
+      box-shadow: 0 0 0 0 rgba(200,136,42,0);
+      animation: cta-glow 3s ease-in-out infinite;
+    }
+    @keyframes cta-glow {
+      0%,100% { box-shadow: 0 0 0 0 rgba(200,136,42,0); }
+      50%      { box-shadow: 0 0 28px 4px rgba(200,136,42,0.2); }
+    }
+    .hero-cta:hover {
+      background: rgba(200,136,42,0.3);
+      border-color: rgba(200,136,42,0.7);
+      transform: translateY(-3px);
+    }
+    .hero-cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid rgba(253,246,238,0.2);
+      color: var(--cream-dim);
+      font-size: 0.85rem;
+      font-weight: 400;
       padding: 14px 28px;
       border-radius: 50px;
       text-decoration: none;
-      transition: background 0.25s, transform 0.2s;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
+      transition: border-color 0.2s, color 0.2s;
+      margin-left: 12px;
     }
-    .hero-cta:hover {
-      background: var(--green);
-      transform: translateY(-2px);
-    }
-    .hero-cta svg { width: 18px; height: 18px; fill: currentColor; }
+    .hero-cta-secondary:hover { border-color: rgba(253,246,238,0.5); color: var(--cream); }
 
-    /* scroll hint */
+    .hero-cta-group { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
+
+    /* Social proof row */
+    .hero-proof {
+      margin-top: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .proof-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--warm-mid);
+      letter-spacing: 0.03em;
+    }
+    .proof-stars { color: var(--amber); letter-spacing: -1px; }
+    .proof-divider { width: 1px; height: 20px; background: rgba(200,168,130,0.25); }
+
+    /* ── SCROLL PROGRESS BAR (top) ─── */
+    #scroll-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--amber), var(--amber-lt));
+      z-index: 200;
+      transition: width 0.05s linear;
+    }
+
+    /* Clip-path section heading reveal */
+    .clip-reveal {
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.85s cubic-bezier(0.16,1,0.3,1);
+    }
+    .clip-reveal.visible { clip-path: inset(0 0% 0 0); }
+
+    /* Scroll hint */
     .scroll-hint {
       position: absolute;
-      bottom: 32px;
+      bottom: 36px;
       left: 50%;
       transform: translateX(-50%);
+      z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
-      color: var(--warm-mid);
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      animation: nudge 2.4s ease-in-out infinite;
-      z-index: 10;
+      gap: 8px;
+      color: rgba(200,168,130,0.5);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
     }
-    .scroll-hint::after {
-      content: '';
+    .scroll-line {
       width: 1px;
-      height: 40px;
-      background: var(--warm-mid);
-      animation: grow 2.4s ease-in-out infinite;
+      height: 0;
+      background: linear-gradient(to bottom, var(--amber), transparent);
+      animation: scroll-grow 2.5s ease-in-out infinite;
     }
-    @keyframes nudge { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
-    @keyframes grow  { 0%,100%{opacity:0.4;height:30px} 50%{opacity:1;height:50px} }
+    @keyframes scroll-grow { 0%{height:0;opacity:0} 50%{height:48px;opacity:0.8} 100%{height:0;opacity:0} }
 
-    /* ─── SECTION BASE ────────────────────────────────── */
-    section { padding: 100px 40px; }
+    /* ── SECTION BASE ────────────────────────────────── */
+    section { padding: 110px 48px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
     .section-tag {
       display: inline-block;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 700;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 14px;
+      color: var(--amber);
+      margin-bottom: 16px;
     }
     h2 {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
       line-height: 1.15;
-      color: var(--brown);
-      margin-bottom: 16px;
+      color: var(--cream);
+      margin-bottom: 20px;
     }
     .section-desc {
       font-size: 1rem;
       font-weight: 300;
-      color: var(--light-brown);
-      line-height: 1.8;
-      max-width: 520px;
+      color: var(--cream-dim);
+      line-height: 1.85;
+      max-width: 500px;
       margin-bottom: 56px;
     }
 
-    /* ─── MENU ────────────────────────────────────────── */
-    #menu { background: var(--brown); }
-    #menu .section-tag { color: var(--warm-mid); }
-    #menu h2,
-    #menu .section-desc { color: var(--cream); }
-    #menu .section-desc { color: rgba(255,248,240,0.65); }
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
 
+    /* ── MENU ────────────────────────────────────────── */
+    #menu {
+      background: linear-gradient(180deg, var(--espresso) 0%, var(--brown) 100%);
+      border-top: 1px solid rgba(200,136,42,0.1);
+    }
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
     }
     .menu-card {
-      background: rgba(255,248,240,0.06);
-      border: 1px solid rgba(255,248,240,0.12);
-      border-radius: 20px;
-      padding: 36px 32px;
-      transition: background 0.25s, transform 0.2s;
+      background: rgba(253,246,238,0.04);
+      border: 1px solid rgba(200,136,42,0.15);
+      border-radius: 24px;
+      padding: 40px 36px;
+      transition: background 0.3s, transform 0.25s, border-color 0.3s;
       cursor: default;
+      will-change: transform;
     }
     .menu-card:hover {
-      background: rgba(255,248,240,0.1);
-      transform: translateY(-4px);
+      background: rgba(200,136,42,0.08);
+      border-color: rgba(200,136,42,0.35);
+      transform: translateY(-6px);
     }
     .menu-icon {
-      font-size: 2.4rem;
-      margin-bottom: 16px;
+      font-size: 2.6rem;
+      margin-bottom: 20px;
       display: block;
     }
     .menu-card h3 {
-      font-size: 1.2rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--cream);
-      margin-bottom: 8px;
-      letter-spacing: -0.01em;
+      margin-bottom: 10px;
     }
     .menu-card p {
       font-size: 0.85rem;
       font-weight: 300;
-      color: rgba(255,248,240,0.65);
-      line-height: 1.7;
+      color: var(--cream-dim);
+      line-height: 1.75;
     }
     .menu-price {
       display: inline-block;
-      margin-top: 16px;
-      font-size: 0.8rem;
+      margin-top: 20px;
+      font-size: 0.82rem;
       font-weight: 700;
-      color: var(--green);
-      letter-spacing: 0.04em;
+      color: var(--amber);
+      letter-spacing: 0.05em;
+      background: rgba(200,136,42,0.1);
+      padding: 4px 12px;
+      border-radius: 50px;
     }
 
-    /* ─── STORY ───────────────────────────────────────── */
-    #story {
-      display: flex;
-      align-items: center;
+    /* ── STORY ───────────────────────────────────────── */
+    #story { background: var(--espresso); }
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 80px;
-      max-width: 1100px;
-      margin: 0 auto;
+      align-items: center;
     }
     .story-visual {
-      flex: 0 0 340px;
-      height: 380px;
-      background: linear-gradient(135deg, var(--warm-mid) 0%, var(--brown) 100%);
-      border-radius: 24px;
+      position: relative;
+      height: 420px;
+      border-radius: 28px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1E0F06 0%, #2C1810 50%, #1A0F06 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 5rem;
-      box-shadow: 0 24px 60px rgba(61,35,20,0.18);
     }
-    .story-text .section-desc { margin-bottom: 28px; }
+    .story-visual-inner {
+      font-size: 6rem;
+      filter: drop-shadow(0 20px 40px rgba(200,136,42,0.4));
+      animation: float-cup 4s ease-in-out infinite;
+    }
+    @keyframes float-cup { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    .story-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 50% 80%, rgba(200,136,42,0.15), transparent);
+    }
+    .story-visual-border {
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      border: 1px solid rgba(200,136,42,0.2);
+      pointer-events: none;
+    }
     .story-list {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      margin-top: 8px;
     }
     .story-list li {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.9rem;
-      color: var(--light-brown);
-    }
-    .story-list li::before {
-      content: '';
-      display: block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-      flex-shrink: 0;
-    }
-
-    /* ─── CLASS ───────────────────────────────────────── */
-    #class {
-      background: linear-gradient(135deg, #FDF3E6 0%, #F4E4CE 100%);
-      text-align: center;
-    }
-    .class-inner { max-width: 640px; margin: 0 auto; }
-    .class-inner .section-desc { margin: 0 auto 40px; text-align: center; }
-    .class-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 40px;
-    }
-    .class-tag-chip {
-      background: var(--cream);
-      border: 1px solid rgba(61,35,20,0.15);
-      border-radius: 50px;
-      padding: 8px 18px;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--brown);
-    }
-    .class-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--green);
-      color: #fff;
+      align-items: flex-start;
+      gap: 14px;
       font-size: 0.88rem;
-      font-weight: 600;
-      padding: 14px 28px;
-      border-radius: 50px;
-      text-decoration: none;
-      transition: background 0.25s, transform 0.2s;
+      font-weight: 400;
+      color: var(--cream-dim);
+      line-height: 1.5;
     }
-    .class-cta:hover { background: #657f55; transform: translateY(-2px); }
+    .story-dot {
+      flex-shrink: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      margin-top: 7px;
+    }
 
-    /* ─── CONTACT / CTA ───────────────────────────────── */
-    #contact {
-      background: var(--green);
-      text-align: center;
-      padding: 100px 40px;
+    /* ── REVIEWS ─────────────────────────────────────── */
+    #reviews {
+      background: linear-gradient(180deg, var(--espresso) 0%, #0D0705 100%);
+      border-top: 1px solid rgba(200,136,42,0.08);
     }
-    #contact h2 { color: #fff; margin-bottom: 12px; }
-    #contact .section-desc { color: rgba(255,255,255,0.75); margin: 0 auto 40px; text-align: center; }
+    #reviews .section-inner { text-align: center; }
+    #reviews h2 { margin-bottom: 8px; }
+    #reviews .section-desc { margin: 0 auto 56px; text-align: center; }
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      text-align: left;
+    }
+    .review-card {
+      background: rgba(253,246,238,0.04);
+      border: 1px solid rgba(200,136,42,0.12);
+      border-radius: 20px;
+      padding: 32px 28px;
+      transition: transform 0.25s, border-color 0.3s;
+    }
+    .review-card:hover { transform: translateY(-4px); border-color: rgba(200,136,42,0.28); }
+    .review-stars { color: var(--amber); font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 14px; }
+    .review-text {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--cream-dim);
+      line-height: 1.75;
+      margin-bottom: 18px;
+      font-style: italic;
+    }
+    .review-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .review-name { font-size: 0.8rem; font-weight: 600; color: var(--warm-mid); }
+    .review-source {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--sage);
+      background: rgba(124,154,106,0.1);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    /* ── CONTACT / CTA ──────────────────────────────── */
+    #contact {
+      background: linear-gradient(135deg, #0D0705 0%, var(--brown) 100%);
+      border-top: 1px solid rgba(200,136,42,0.12);
+      text-align: center;
+    }
+    #contact .section-inner { max-width: 640px; }
+    #contact h2 { margin-bottom: 16px; }
+    #contact .section-desc { margin: 0 auto 40px; text-align: center; max-width: 420px; }
+
+    /* Liquid glass kakao button */
     .kakao-btn {
       display: inline-flex;
       align-items: center;
       gap: 10px;
       background: #FEE500;
-      color: #3C1E1E;
+      color: #1A0A00;
       font-size: 0.95rem;
-      font-weight: 700;
-      padding: 16px 32px;
+      font-weight: 800;
+      padding: 17px 36px;
       border-radius: 50px;
       text-decoration: none;
+      letter-spacing: 0.02em;
+      box-shadow: 0 8px 32px rgba(254,229,0,0.25);
       transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     }
     .kakao-btn:hover {
       transform: translateY(-3px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
-    }
-    .kakao-icon { font-size: 1.2rem; }
-    .contact-detail {
-      margin-top: 24px;
-      font-size: 0.82rem;
-      color: rgba(255,255,255,0.6);
-      letter-spacing: 0.04em;
+      box-shadow: 0 14px 40px rgba(254,229,0,0.35);
     }
 
-    /* ─── FOOTER ──────────────────────────────────────── */
+    .contact-info {
+      margin-top: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .contact-info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--warm-mid);
+      letter-spacing: 0.03em;
+    }
+    .contact-info-item span { font-size: 0.9rem; }
+
+    /* ── FOOTER ──────────────────────────────────────── */
     footer {
-      background: var(--brown);
-      color: rgba(255,248,240,0.45);
+      background: var(--espresso);
+      border-top: 1px solid rgba(200,136,42,0.08);
+      color: rgba(253,246,238,0.3);
       text-align: center;
-      padding: 28px 40px;
-      font-size: 0.75rem;
-      letter-spacing: 0.04em;
+      padding: 32px 48px;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      line-height: 1.9;
     }
-    footer span { color: rgba(255,248,240,0.7); font-weight: 500; }
+    footer a { color: var(--amber); text-decoration: none; opacity: 0.7; }
+    footer a:hover { opacity: 1; }
 
-    /* ─── RESPONSIVE ──────────────────────────────────── */
+    /* ── STICKY FLOATING CTA ────────────────────────── */
+    #sticky-cta {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 150;
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    #sticky-cta.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .sticky-cta-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--amber);
+      color: var(--espresso);
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 13px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      box-shadow: 0 8px 32px rgba(200,136,42,0.45);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .sticky-cta-btn:hover { background: var(--amber-lt); transform: translateY(-2px); }
+
+    /* ── SECTION DIVIDER LINE ────────────────────────── */
+    .amber-line {
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+      margin: 0 auto 0;
+      transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
+    }
+    .amber-line.visible { width: 60%; }
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 900px) {
+      .story-grid { grid-template-columns: 1fr; gap: 40px; }
+      .story-visual { height: 260px; }
+    }
     @media (max-width: 768px) {
       nav { padding: 16px 24px; }
-      .nav-links { gap: 20px; }
+      .nav-links { display: none; }
       section { padding: 80px 24px; }
-      #story {
-        flex-direction: column;
-        gap: 40px;
-      }
-      .story-visual { flex: none; width: 100%; height: 220px; font-size: 4rem; }
     }
     @media (max-width: 480px) {
-      .nav-links { display: none; }
+      .hero-cta-secondary { display: none; }
+      .hero-proof { gap: 14px; }
+      .proof-divider { display: none; }
+    }
+
+    /* Disable Three.js on low-end / prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-line, .hero-eyebrow::before, .hero-cta { animation: none; }
     }
   </style>
 </head>
 <body>
 
+<!-- SCROLL PROGRESS BAR -->
+<div id="scroll-bar"></div>
+
+<!-- STICKY CTA -->
+<div id="sticky-cta">
+  <a href="#contact" class="sticky-cta-btn">💬 지금 예약하기</a>
+</div>
+
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">온기 카페</div>
+  <div class="nav-logo">온기<span>.</span></div>
   <ul class="nav-links">
     <li><a href="#menu">메뉴</a></li>
     <li><a href="#story">스토리</a></li>
-    <li><a href="#class">베이킹 클래스</a></li>
-    <li><a href="#contact">예약</a></li>
+    <li><a href="#reviews">리뷰</a></li>
+    <li><a href="#contact" class="nav-reserve">예약하기</a></li>
   </ul>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
+  <div class="hero-bg" id="hero-bg"></div>
   <canvas id="three-canvas"></canvas>
+  <div class="hero-vignette"></div>
+  <div class="hero-fade"></div>
+
   <div class="hero-content">
-    <div class="hero-badge">서울 마포구 · 핸드메이드 베이커리</div>
-    <h1 class="hero-title">온기<span>가</span> 있는<br/>커피 한 잔</h1>
+    <div class="hero-eyebrow">서울 마포구 · 핸드메이드 베이커리 카페</div>
+    <h1 class="hero-title">
+      따뜻함이<br/><em>머무는 곳</em>
+    </h1>
     <p class="hero-sub">
-      직접 만든 크로플과 계절 라떼로<br/>하루를 따뜻하게 채워드립니다
+      평범한 홈페이지는 손님을 놓칩니다.<br/>
+      온기 카페는 방문 전부터 마음을 사로잡습니다.
     </p>
-    <a href="#menu" class="hero-cta">
-      <svg viewBox="0 0 24 24"><path d="M11 5L5 11l6 6M5 11h14"/></svg>
-      메뉴 보기
-    </a>
+    <div class="hero-cta-group">
+      <a href="#contact" class="hero-cta">방문 예약하기</a>
+      <a href="#menu" class="hero-cta-secondary">메뉴 보기 ↓</a>
+    </div>
+    <div class="hero-proof">
+      <div class="proof-item">
+        <span class="proof-stars">★★★★★</span>
+        <span>네이버 4.9 · 리뷰 347개</span>
+      </div>
+      <div class="proof-divider"></div>
+      <div class="proof-item">☕ 4년째 운영</div>
+      <div class="proof-divider"></div>
+      <div class="proof-item">🐾 반려동물 동반 가능</div>
+    </div>
   </div>
-  <div class="scroll-hint">SCROLL</div>
+
+  <div class="scroll-hint">
+    SCROLL
+    <div class="scroll-line"></div>
+  </div>
 </section>
+
+<!-- AMBER DIVIDER -->
+<div class="amber-line reveal"></div>
 
 <!-- MENU -->
 <section id="menu">
-  <div style="max-width:1100px;margin:0 auto;">
-    <p class="section-tag">Our Menu</p>
-    <h2>정성껏 만든 메뉴</h2>
-    <p class="section-desc">모든 메뉴는 당일 직접 만들어 가장 신선할 때 드립니다.</p>
+  <div class="section-inner">
+    <p class="section-tag reveal">Our Menu</p>
+    <h2 class="reveal">정성껏 만든<br/>시그니처 메뉴</h2>
+    <p class="section-desc reveal">모든 메뉴는 당일 아침 직접 만들어 가장 신선할 때 드립니다. 냉동 재료는 사용하지 않습니다.</p>
     <div class="menu-grid">
-      <div class="menu-card">
+      <div class="menu-card reveal">
         <span class="menu-icon">🥐</span>
         <h3>시그니처 크로플</h3>
-        <p>겹겹이 쌓인 크루아상 반죽을 와플 틀에 구워 바삭하게. 생크림과 딸기잼 선택 가능.</p>
+        <p>겹겹이 쌓인 크루아상 반죽을 와플 틀에 구워 바삭하게. 생크림과 딸기잼 선택 가능. 매일 아침 7시 직접 반죽합니다.</p>
         <span class="menu-price">₩ 6,500</span>
       </div>
-      <div class="menu-card">
+      <div class="menu-card reveal">
         <span class="menu-icon">🍵</span>
         <h3>계절 시그니처 라떼</h3>
-        <p>봄엔 벚꽃, 여름엔 유자, 가을엔 흑임자, 겨울엔 얼그레이 로열밀크티. 계절마다 달라집니다.</p>
+        <p>봄엔 벚꽃, 여름엔 유자, 가을엔 흑임자, 겨울엔 얼그레이 로열밀크티. 계절마다 달라지는 온기만의 맛.</p>
         <span class="menu-price">₩ 7,000</span>
       </div>
-      <div class="menu-card">
+      <div class="menu-card reveal">
         <span class="menu-icon">☕</span>
         <h3>핸드드립 아메리카노</h3>
-        <p>싱글오리진 원두를 소량 로스팅. 산미와 단맛의 균형이 깔끔합니다.</p>
+        <p>싱글오리진 원두를 소량 로스팅. 산미와 단맛의 균형이 깔끔합니다. 주 3회 직접 로스팅합니다.</p>
         <span class="menu-price">₩ 5,500</span>
       </div>
     </div>
   </div>
 </section>
 
+<!-- AMBER DIVIDER -->
+<div class="amber-line reveal"></div>
+
 <!-- STORY -->
-<section>
-  <div id="story">
-    <div class="story-visual">☕</div>
-    <div class="story-text">
-      <p class="section-tag">Our Story</p>
-      <h2>작지만 진심인<br/>동네 카페</h2>
-      <p class="section-desc">
-        온기는 "따뜻함"이라는 뜻입니다. 크고 화려한 공간은 아니지만, 올 때마다
-        반갑고 마실 때마다 편안한 곳을 만들고 싶었습니다.
-      </p>
-      <ul class="story-list">
-        <li>매일 아침 7시 — 직접 반죽하는 크로플</li>
-        <li>주 3회 원두 로스팅 — 항상 신선한 커피</li>
-        <li>제철 재료로 매월 바뀌는 계절 메뉴</li>
-        <li>반려동물 동반 가능 (테라스 한정)</li>
-      </ul>
+<section id="story">
+  <div class="section-inner">
+    <div class="story-grid">
+      <div class="story-visual reveal">
+        <div class="story-visual-inner">☕</div>
+        <div class="story-visual-border"></div>
+      </div>
+      <div class="story-text">
+        <p class="section-tag reveal">Our Story</p>
+        <h2 class="reveal">작지만 진심인<br/>동네 카페</h2>
+        <p class="section-desc reveal">
+          온기는 "따뜻함"이라는 뜻입니다. 크고 화려한 공간은 아니지만, 올 때마다
+          반갑고 마실 때마다 편안한 곳을 만들고 싶었습니다.
+        </p>
+        <ul class="story-list reveal">
+          <li><span class="story-dot"></span>매일 아침 7시 — 직접 반죽하는 크로플</li>
+          <li><span class="story-dot"></span>주 3회 원두 로스팅 — 항상 신선한 커피</li>
+          <li><span class="story-dot"></span>제철 재료로 매월 바뀌는 계절 메뉴</li>
+          <li><span class="story-dot"></span>반려동물 동반 가능 (테라스 한정)</li>
+          <li><span class="story-dot"></span>베이킹 클래스 주말 소규모 운영</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- CLASS -->
-<section id="class">
-  <div class="class-inner">
-    <p class="section-tag">Baking Class</p>
-    <h2>베이킹 클래스</h2>
-    <p class="section-desc">
-      주말 소규모 클래스로 크로플 · 스콘 · 파운드케이크를 직접 만들어 보세요.
-      초보자도 누구나 환영합니다.
-    </p>
-    <div class="class-tags">
-      <span class="class-tag-chip">🥐 크로플 클래스</span>
-      <span class="class-tag-chip">🍰 스콘 & 버터크림</span>
-      <span class="class-tag-chip">🧁 파운드케이크</span>
-      <span class="class-tag-chip">☕ 홈브루 커피</span>
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="section-inner">
+    <p class="section-tag reveal">Reviews</p>
+    <h2 class="reveal">손님들의 이야기</h2>
+    <p class="section-desc reveal">347개의 네이버 리뷰 중에서 — 평균 4.9점</p>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"크로플이 정말 바삭하고 맛있어요. 아침 일찍 가서 갓 구운 걸 먹으니 너무 행복했습니다. 라떼도 달지 않고 깔끔해서 자주 오고 싶은 카페예요."</p>
+        <div class="review-meta">
+          <span class="review-name">김*진 님</span>
+          <span class="review-source">NAVER</span>
+        </div>
+      </div>
+      <div class="review-card reveal">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"테라스에서 강아지랑 같이 커피 마셨는데 직원분들이 정말 친절하게 대해주셨어요. 분위기도 너무 따뜻하고 음악도 좋았습니다. 또 올게요!"</p>
+        <div class="review-meta">
+          <span class="review-name">이*현 님</span>
+          <span class="review-source">NAVER</span>
+        </div>
+      </div>
+      <div class="review-card reveal">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"계절 라떼가 진짜 맛있어요. 지금은 유자인데 너무 향긋하고 달달합니다. 가격도 적당하고 공간도 아늑해서 혼자 오기도 좋아요."</p>
+        <div class="review-meta">
+          <span class="review-name">박*아 님</span>
+          <span class="review-source">NAVER</span>
+        </div>
+      </div>
     </div>
-    <a href="#contact" class="class-cta">클래스 신청하기 →</a>
   </div>
 </section>
 
 <!-- CONTACT -->
 <section id="contact">
-  <h2>예약 & 문의</h2>
-  <p class="section-desc">
-    테이블 예약, 케이터링, 베이킹 클래스 모두<br/>카카오톡으로 편하게 문의 주세요.
-  </p>
-  <a href="https://open.kakao.com/o/example" class="kakao-btn">
-    <span class="kakao-icon">💬</span>
-    카카오톡 문의
-  </a>
-  <p class="contact-detail">
-    서울 마포구 온기길 12 · 화–일 10:00–20:00 (월요일 휴무)
-  </p>
+  <div class="section-inner">
+    <p class="section-tag reveal">Reserve</p>
+    <h2 class="reveal">예약 & 문의</h2>
+    <p class="section-desc reveal">
+      테이블 예약, 케이터링, 베이킹 클래스 모두<br/>카카오톡으로 편하게 문의 주세요.
+    </p>
+    <a href="https://open.kakao.com/o/example" class="kakao-btn reveal">
+      💬&nbsp; 카카오톡으로 예약하기
+    </a>
+    <div class="contact-info reveal">
+      <div class="contact-info-item"><span>📍</span> 서울 마포구 온기길 12</div>
+      <div class="contact-info-item"><span>🕙</span> 화–일 10:00 – 20:00 (월 휴무)</div>
+      <div class="contact-info-item"><span>📸</span> <a href="#">@ongi.cafe</a></div>
+    </div>
+  </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
   &copy; 2025 온기 카페 — 서울 마포구<br/>
-  <span>디자인 by 김건희 AI Lab</span>
+  <span style="color:rgba(200,136,42,0.4)">Design mockup by 김건희 AI Lab · Made with Claude Code</span>
 </footer>
 
-<!-- ─── THREE.JS ──────────────────────────────────────── -->
+<!-- THREE.JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function() {
@@ -507,124 +827,118 @@
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
-  camera.position.set(0, 0, 30);
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.set(0, 0, 28);
 
-  // ── Palette ──────────────────────────────────────────
-  const CREAM  = new THREE.Color('#FFF8F0');
-  const BROWN  = new THREE.Color('#3D2314');
-  const GREEN  = new THREE.Color('#7C9A6A');
-  const MID    = new THREE.Color('#C8A882');
+  // Palette
+  const ESPRESSO = new THREE.Color('#120A05');
+  const AMBER    = new THREE.Color('#C8882A');
+  const AMBER_LT = new THREE.Color('#E8A84A');
+  const CREAM    = new THREE.Color('#FDF6EE');
+  const SAGE     = new THREE.Color('#7C9A6A');
+  const MID      = new THREE.Color('#C8A882');
 
-  // ── Fog ──────────────────────────────────────────────
-  scene.fog = new THREE.Fog(0xFFF8F0, 20, 90);
+  // Fog — deep espresso
+  scene.fog = new THREE.FogExp2(0x120A05, 0.018);
 
-  // ── Ambient + Directional lights ─────────────────────
-  scene.add(new THREE.AmbientLight(0xFFF8F0, 0.6));
-  const sunLight = new THREE.DirectionalLight(0xF4DFC0, 1.2);
-  sunLight.position.set(10, 20, 10);
-  scene.add(sunLight);
-  const rimLight = new THREE.DirectionalLight(0x7C9A6A, 0.4);
-  rimLight.position.set(-10, -5, -8);
-  scene.add(rimLight);
+  // Lights
+  scene.add(new THREE.AmbientLight(0xFFF0DC, 0.5));
+  const key = new THREE.DirectionalLight(0xF4C870, 1.4);
+  key.position.set(8, 16, 12);
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0x7C9A6A, 0.35);
+  fill.position.set(-12, -4, -6);
+  scene.add(fill);
+  const back = new THREE.PointLight(0xC8882A, 0.8, 40);
+  back.position.set(0, 0, -10);
+  scene.add(back);
 
-  // ── Helper: random range ──────────────────────────────
   const rr = (a, b) => a + Math.random() * (b - a);
 
-  // ── Floating orbs (warm tones) ────────────────────────
-  const orbGroup = new THREE.Group();
-  const orbColors = [CREAM, MID, GREEN, BROWN, new THREE.Color('#E8C89A'), new THREE.Color('#A8C896')];
+  // ── Floating bokeh orbs ──────────────────────────────
+  const orbColors = [AMBER, AMBER_LT, MID, CREAM, SAGE, new THREE.Color('#A86828')];
   const orbs = [];
-
-  for (let i = 0; i < 28; i++) {
-    const r = rr(0.3, 1.6);
-    const geo = new THREE.SphereGeometry(r, 24, 24);
+  for (let i = 0; i < 32; i++) {
+    const r = rr(0.15, 1.2);
     const mat = new THREE.MeshStandardMaterial({
       color: orbColors[Math.floor(Math.random() * orbColors.length)],
-      roughness: 0.35,
+      roughness: 0.1,
       metalness: 0.05,
       transparent: true,
-      opacity: rr(0.55, 0.92)
+      opacity: rr(0.3, 0.75),
+      emissive: AMBER,
+      emissiveIntensity: rr(0.0, 0.15),
     });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(rr(-20, 20), rr(-14, 14), rr(-18, 5));
-    const speed  = rr(0.3, 0.8);
-    const offset = rr(0, Math.PI * 2);
-    const range  = rr(0.6, 1.8);
-    orbs.push({ mesh, speed, offset, range, baseY: mesh.position.y, baseX: mesh.position.x });
-    orbGroup.add(mesh);
+    const mesh = new THREE.Mesh(new THREE.SphereGeometry(r, 20, 20), mat);
+    mesh.position.set(rr(-22, 22), rr(-14, 14), rr(-22, 2));
+    orbs.push({
+      mesh,
+      speed: rr(0.25, 0.7),
+      offset: rr(0, Math.PI * 2),
+      range: rr(0.5, 1.8),
+      baseY: mesh.position.y,
+      baseX: mesh.position.x,
+    });
+    scene.add(mesh);
   }
-  scene.add(orbGroup);
 
-  // ── Torus rings (coffee ring aesthetic) ──────────────
-  const ringGroup = new THREE.Group();
-  for (let i = 0; i < 5; i++) {
-    const geo = new THREE.TorusGeometry(rr(2.5, 5.5), rr(0.06, 0.16), 16, 80);
+  // ── Thin torus rings ─────────────────────────────────
+  const rings = [];
+  const ringCols = [AMBER, MID, SAGE];
+  for (let i = 0; i < 6; i++) {
     const mat = new THREE.MeshStandardMaterial({
-      color: i % 2 === 0 ? MID : GREEN,
+      color: ringCols[i % 3],
       roughness: 0.6,
-      metalness: 0.1,
       transparent: true,
-      opacity: rr(0.18, 0.38)
+      opacity: rr(0.1, 0.28),
     });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(rr(-12, 12), rr(-8, 8), rr(-15, 0));
+    const mesh = new THREE.Mesh(new THREE.TorusGeometry(rr(3, 7), rr(0.04, 0.12), 12, 100), mat);
+    mesh.position.set(rr(-14, 14), rr(-8, 8), rr(-18, -2));
     mesh.rotation.set(rr(0, Math.PI), rr(0, Math.PI), 0);
-    ringGroup.add(mesh);
+    rings.push({ mesh, speed: rr(0.0008, 0.0022), axis: i % 2 });
+    scene.add(mesh);
   }
-  scene.add(ringGroup);
 
-  // ── Central hero piece — stylised cup ────────────────
-  // Cup body (cylinder)
-  const cupBody = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.2, 1.0, 2.6, 64),
-    new THREE.MeshStandardMaterial({ color: CREAM, roughness: 0.2, metalness: 0.08 })
-  );
-  cupBody.position.set(0, 0, -2);
-  // Cup saucer
-  const saucer = new THREE.Mesh(
-    new THREE.CylinderGeometry(2.0, 1.8, 0.2, 64),
-    new THREE.MeshStandardMaterial({ color: MID, roughness: 0.3, metalness: 0.04 })
-  );
-  saucer.position.set(0, -1.5, -2);
-  // Coffee surface (dark disc)
-  const coffeeTop = new THREE.Mesh(
-    new THREE.CircleGeometry(1.15, 64),
-    new THREE.MeshStandardMaterial({ color: BROWN, roughness: 0.8 })
-  );
-  coffeeTop.rotation.x = -Math.PI / 2;
-  coffeeTop.position.set(0, 1.31, -2);
+  // ── Coffee cup (hero centerpiece) ────────────────────
+  const cupMat  = new THREE.MeshStandardMaterial({ color: CREAM, roughness: 0.25, metalness: 0.06 });
+  const saucMat = new THREE.MeshStandardMaterial({ color: MID,   roughness: 0.35, metalness: 0.03 });
+  const coffMat = new THREE.MeshStandardMaterial({ color: new THREE.Color('#1A0800'), roughness: 0.9 });
+
+  const cupBody  = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 0.95, 2.5, 72), cupMat);
+  const saucer   = new THREE.Mesh(new THREE.CylinderGeometry(2.1, 1.9, 0.18, 72), saucMat);
+  const coffTop  = new THREE.Mesh(new THREE.CircleGeometry(1.1, 64), coffMat);
+  coffTop.rotation.x = -Math.PI / 2;
+  coffTop.position.y = 1.26;
+  saucer.position.y  = -1.45;
+
+  // Amber glow under cup
+  const glowLight = new THREE.PointLight(0xC8882A, 1.2, 8);
+  glowLight.position.set(0, -2, 0);
+
   // Steam particles
+  const steamPos = [];
+  for (let i = 0; i < 90; i++) steamPos.push(rr(-0.7,0.7), rr(1.4,4.2), rr(-0.3,0.3));
   const steamGeo = new THREE.BufferGeometry();
-  const steamPositions = [];
-  for (let i = 0; i < 80; i++) {
-    steamPositions.push(rr(-0.8, 0.8), rr(1.5, 4.0), -2 + rr(-0.3, 0.3));
-  }
-  steamGeo.setAttribute('position', new THREE.Float32BufferAttribute(steamPositions, 3));
-  const steamMat = new THREE.PointsMaterial({ color: CREAM, size: 0.08, transparent: true, opacity: 0.4 });
-  const steam = new THREE.Points(steamGeo, steamMat);
+  steamGeo.setAttribute('position', new THREE.Float32BufferAttribute(steamPos, 3));
+  const steam = new THREE.Points(steamGeo, new THREE.PointsMaterial({ color: 0xFDF6EE, size: 0.065, transparent: true, opacity: 0.35 }));
 
-  const cupGroup = new THREE.Group();
-  cupGroup.add(cupBody, saucer, coffeeTop, steam);
-  cupGroup.position.set(0, 1.5, 0);
-  scene.add(cupGroup);
+  const cup = new THREE.Group();
+  cup.add(cupBody, saucer, coffTop, steam, glowLight);
+  cup.position.set(0, 1.5, -1);
+  scene.add(cup);
 
-  // ── Particle dust ─────────────────────────────────────
-  const dustGeo = new THREE.BufferGeometry();
+  // ── Dust ─────────────────────────────────────────────
   const dustPos = [];
-  for (let i = 0; i < 200; i++) {
-    dustPos.push(rr(-25, 25), rr(-18, 18), rr(-20, 8));
-  }
+  for (let i = 0; i < 220; i++) dustPos.push(rr(-28,28), rr(-18,18), rr(-22,6));
+  const dustGeo = new THREE.BufferGeometry();
   dustGeo.setAttribute('position', new THREE.Float32BufferAttribute(dustPos, 3));
-  const dustMat = new THREE.PointsMaterial({ color: MID, size: 0.06, transparent: true, opacity: 0.35 });
-  scene.add(new THREE.Points(dustGeo, dustMat));
+  scene.add(new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: MID, size: 0.05, transparent: true, opacity: 0.28 })));
 
-  // ── Resize handler ────────────────────────────────────
+  // ── Resize ────────────────────────────────────────────
   window.addEventListener('resize', () => {
-    const w = window.innerWidth, h = window.innerHeight;
-    camera.aspect = w / h;
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
+    renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
   // ── Mouse parallax ────────────────────────────────────
@@ -634,44 +948,119 @@
     my = (e.clientY / window.innerHeight - 0.5) * 2;
   });
 
-  // ── Animate ───────────────────────────────────────────
+  // ── Scroll-driven scene: Viktor Oddy JPEG-sequence equivalent ──────────
+  // As user scrolls through hero, Three.js scene transforms dramatically:
+  // scroll=0: wide shot, cool tones, orbs spread out
+  // scroll=50%: mid zoom, amber warms up, cup rises
+  // scroll=100%: close push-in, scene fades out to espresso black
+  const heroBg = document.getElementById('hero-bg');
+  let scrollProgress = 0; // 0..1 through hero
+
+  function onScroll() {
+    const heroH = document.getElementById('hero').offsetHeight;
+    const raw   = Math.max(0, Math.min(1, window.scrollY / (heroH * 0.8)));
+    scrollProgress = raw;
+    // Parallax on gradient bg
+    if (heroBg) heroBg.style.transform = `translateY(${window.scrollY * 0.4}px) scale(1.08)`;
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // ── Animate ──────────────────────────────────────────────────────────
   let t = 0;
   function animate() {
     requestAnimationFrame(animate);
-    t += 0.012;
+    t += 0.011;
 
-    // floating orbs
-    orbs.forEach(o => {
-      o.mesh.position.y = o.baseY + Math.sin(t * o.speed + o.offset) * o.range;
-      o.mesh.position.x = o.baseX + Math.cos(t * o.speed * 0.7 + o.offset) * (o.range * 0.4);
+    const sp = scrollProgress; // 0..1
+
+    // Scroll-driven camera zoom (Viktor Oddy push-in effect)
+    const targetZ = 28 - sp * 10;            // 28 → 18 (zoom in)
+    camera.position.z += (targetZ - camera.position.z) * 0.06;
+
+    // Scroll-driven fog density (scene deepens)
+    scene.fog.density = 0.018 + sp * 0.022;  // gets hazier as you scroll
+
+    // Orbs: condense inward + warm up as scroll increases
+    orbs.forEach((o, i) => {
+      const pull = sp * 0.4;
+      o.mesh.position.y = (o.baseY * (1 - pull)) + Math.sin(t * o.speed + o.offset) * o.range;
+      o.mesh.position.x = (o.baseX * (1 - pull)) + Math.cos(t * o.speed * 0.6 + o.offset) * (o.range * 0.3);
+      // Opacity fades out near end of scroll
+      o.mesh.material.opacity = Math.max(0, o.mesh.material.opacity + (((sp > 0.7 ? 0 : 0.6) - o.mesh.material.opacity) * 0.02));
     });
 
-    // ring slow rotation
-    ringGroup.children.forEach((r, i) => {
-      r.rotation.z += 0.0015 * (i % 2 === 0 ? 1 : -1);
-      r.rotation.x += 0.0008;
+    rings.forEach(r => {
+      if (r.axis === 0) r.mesh.rotation.z += r.speed * (1 + sp);
+      else r.mesh.rotation.x += r.speed * (1 + sp);
     });
 
-    // cup gentle float + parallax nudge
-    cupGroup.position.y = 1.5 + Math.sin(t * 0.6) * 0.25;
-    cupGroup.rotation.y = Math.sin(t * 0.3) * 0.08;
+    // Cup: rises and enlarges as scroll increases
+    cup.position.y = 1.5 + Math.sin(t * 0.55) * 0.22 + sp * 2.5;
+    cup.position.z = -1 + sp * 4;             // moves toward camera
+    cup.scale.setScalar(1 + sp * 0.3);        // grows slightly
+    cup.rotation.y = Math.sin(t * 0.28) * 0.06;
 
-    // steam drift
-    const sp = steam.geometry.attributes.position;
-    for (let i = 1; i < sp.count * 3; i += 3) {
-      sp.array[i] += 0.005;
-      if (sp.array[i] > 5) sp.array[i] = 1.5;
+    // Steam
+    const spp = steam.geometry.attributes.position;
+    for (let i = 1; i < spp.count * 3; i += 3) {
+      spp.array[i] += 0.004 + sp * 0.008;
+      if (spp.array[i] > 4.5) spp.array[i] = 1.4;
     }
-    sp.needsUpdate = true;
+    spp.needsUpdate = true;
 
-    // camera parallax
-    camera.position.x += (mx * 1.5 - camera.position.x) * 0.04;
-    camera.position.y += (-my * 1.0 - camera.position.y) * 0.04;
-    camera.lookAt(0, 1.5, 0);
+    // Pulsing amber glow intensifies with scroll
+    glowLight.intensity = 0.8 + Math.sin(t * 1.2) * 0.4 + sp * 1.2;
+
+    // Key light warms up as scroll increases
+    key.intensity = 1.4 + sp * 0.6;
+
+    // Mouse + scroll parallax on camera
+    camera.position.x += (mx * 1.8 * (1 - sp * 0.5) - camera.position.x) * 0.035;
+    camera.position.y += (-my * 1.1 * (1 - sp * 0.5) - camera.position.y) * 0.035;
+    camera.lookAt(0, 1.5 + sp * 1.5, 0);
 
     renderer.render(scene, camera);
   }
   animate();
+})();
+</script>
+
+<!-- SCROLL REVEAL + PROGRESS BAR + CLIP-PATH HEADINGS -->
+<script>
+(function() {
+  // Scroll progress bar + sticky CTA
+  const bar = document.getElementById('scroll-bar');
+  const stickyCta = document.getElementById('sticky-cta');
+  const heroEl = document.getElementById('hero');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    bar.style.width = Math.min(100, pct) + '%';
+    // Show sticky CTA after scrolling past hero
+    const pastHero = window.scrollY > (heroEl?.offsetHeight || 600) * 0.6;
+    stickyCta.classList.toggle('show', pastHero);
+  }, { passive: true });
+
+  // Add clip-reveal to all h2 elements for Viktor Oddy section heading effect
+  document.querySelectorAll('h2').forEach(h => {
+    h.classList.add('clip-reveal');
+  });
+
+  // IntersectionObserver: reveal + clip-path + stagger
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const isGrid = e.target.parentElement?.classList.contains('menu-grid') ||
+                       e.target.parentElement?.classList.contains('reviews-grid');
+        const delay = isGrid
+          ? Array.from(e.target.parentElement.children).indexOf(e.target) * 90
+          : 0;
+        setTimeout(() => e.target.classList.add('visible'), delay);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal, .clip-reveal').forEach(el => io.observe(el));
 })();
 </script>
 
