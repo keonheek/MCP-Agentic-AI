@@ -370,9 +370,12 @@
       transform: translateY(-6px);
     }
     .menu-icon {
-      font-size: 2.6rem;
-      margin-bottom: 20px;
       display: block;
+      width: 44px;
+      height: 2px;
+      background: var(--amber);
+      margin-bottom: 24px;
+      border-radius: 2px;
     }
     .menu-card h3 {
       font-family: 'Playfair Display', serif;
@@ -418,9 +421,31 @@
       justify-content: center;
     }
     .story-visual-inner {
-      font-size: 6rem;
-      filter: drop-shadow(0 20px 40px rgba(200,136,42,0.4));
+      width: 120px;
+      height: 160px;
+      position: relative;
       animation: float-cup 4s ease-in-out infinite;
+    }
+    /* CSS coffee cup */
+    .story-visual-inner::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 100px;
+      background: linear-gradient(160deg, var(--cream) 0%, var(--warm-mid) 100%);
+      border-radius: 6px 6px 18px 18px;
+      box-shadow: 0 20px 60px rgba(200,136,42,0.35);
+    }
+    .story-visual-inner::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 90px; height: 14px;
+      background: rgba(200,136,42,0.6);
+      border-radius: 50%;
+      filter: blur(6px);
     }
     @keyframes float-cup { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
     .story-visual::after {
@@ -683,9 +708,9 @@
         <span>네이버 4.9 · 리뷰 347개</span>
       </div>
       <div class="proof-divider"></div>
-      <div class="proof-item">☕ 4년째 운영</div>
+      <div class="proof-item">4년째 운영</div>
       <div class="proof-divider"></div>
-      <div class="proof-item">🐾 반려동물 동반 가능</div>
+      <div class="proof-item">반려동물 동반 가능</div>
     </div>
   </div>
 
@@ -706,19 +731,19 @@
     <p class="section-desc reveal">모든 메뉴는 당일 아침 직접 만들어 가장 신선할 때 드립니다. 냉동 재료는 사용하지 않습니다.</p>
     <div class="menu-grid">
       <div class="menu-card reveal">
-        <span class="menu-icon">🥐</span>
+        <span class="menu-icon"></span>
         <h3>시그니처 크로플</h3>
         <p>겹겹이 쌓인 크루아상 반죽을 와플 틀에 구워 바삭하게. 생크림과 딸기잼 선택 가능. 매일 아침 7시 직접 반죽합니다.</p>
         <span class="menu-price">₩ 6,500</span>
       </div>
       <div class="menu-card reveal">
-        <span class="menu-icon">🍵</span>
+        <span class="menu-icon"></span>
         <h3>계절 시그니처 라떼</h3>
         <p>봄엔 벚꽃, 여름엔 유자, 가을엔 흑임자, 겨울엔 얼그레이 로열밀크티. 계절마다 달라지는 온기만의 맛.</p>
         <span class="menu-price">₩ 7,000</span>
       </div>
       <div class="menu-card reveal">
-        <span class="menu-icon">☕</span>
+        <span class="menu-icon"></span>
         <h3>핸드드립 아메리카노</h3>
         <p>싱글오리진 원두를 소량 로스팅. 산미와 단맛의 균형이 깔끔합니다. 주 3회 직접 로스팅합니다.</p>
         <span class="menu-price">₩ 5,500</span>
@@ -735,7 +760,7 @@
   <div class="section-inner">
     <div class="story-grid">
       <div class="story-visual reveal">
-        <div class="story-visual-inner">☕</div>
+        <div class="story-visual-inner"></div>
         <div class="story-visual-border"></div>
       </div>
       <div class="story-text">
@@ -800,21 +825,20 @@
     <p class="section-desc reveal">
       테이블 예약, 케이터링, 베이킹 클래스 모두<br/>카카오톡으로 편하게 문의 주세요.
     </p>
-    <a href="https://open.kakao.com/o/example" class="kakao-btn reveal">
-      💬&nbsp; 카카오톡으로 예약하기
+    <a href="#" class="kakao-btn reveal">
+      카카오톡으로 예약하기
     </a>
     <div class="contact-info reveal">
-      <div class="contact-info-item"><span>📍</span> 서울 마포구 온기길 12</div>
-      <div class="contact-info-item"><span>🕙</span> 화–일 10:00 – 20:00 (월 휴무)</div>
-      <div class="contact-info-item"><span>📸</span> <a href="#">@ongi.cafe</a></div>
+      <div class="contact-info-item">서울 마포구 온기길 12</div>
+      <div class="contact-info-item">화–일 10:00 – 20:00 · 월요일 휴무</div>
+      <div class="contact-info-item"><a href="#">@ongi.cafe</a></div>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  &copy; 2025 온기 카페 — 서울 마포구<br/>
-  <span style="color:rgba(200,136,42,0.4)">Design mockup by 김건희 AI Lab · Made with Claude Code</span>
+  &copy; 2025 온기 카페 — 서울 마포구
 </footer>
 
 <!-- THREE.JS -->
