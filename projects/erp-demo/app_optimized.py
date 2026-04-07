@@ -11,12 +11,10 @@ Techniques to try:
 - Restructuring so heavy imports are deferred
 """
 
-# ── Eager imports (baseline — agent may convert these to lazy) ──
-import streamlit as st
-from db import init_db, DB_PATH, total_clients, open_quotes_value, monthly_revenue, conversion_rate
-
+# ── Lazy imports — streamlit deferred until functions are called ──
 
 def setup_page():
+    import streamlit as st
     st.set_page_config(
         page_title="GEO Agency ERP",
         page_icon=":material/dashboard:",
@@ -25,16 +23,23 @@ def setup_page():
     )
 
 
-@st.cache_resource
 def _init_once():
-    init_db()
-    if total_clients() == 0:
-        from seed import seed_all
-        seed_all()
-    return True
+    import streamlit as st
+    from db import init_db, total_clients
+
+    @st.cache_resource
+    def _inner():
+        init_db()
+        if total_clients() == 0:
+            from seed import seed_all
+            seed_all()
+        return True
+    return _inner()
 
 
 def build_sidebar():
+    import streamlit as st
+    from db import total_clients, open_quotes_value, monthly_revenue, conversion_rate
     with st.sidebar:
         st.markdown("""
         <div style="text-align:center; padding: 1rem 0;">
@@ -53,6 +58,7 @@ def build_sidebar():
 
 
 def build_nav():
+    import streamlit as st
     dashboard = st.Page("pages/dashboard.py", title="대시보드", icon=":material/dashboard:", default=True)
     clients = st.Page("pages/clients.py", title="고객 관리", icon=":material/people:")
     quotes = st.Page("pages/quotes.py", title="견적서", icon=":material/request_quote:")
