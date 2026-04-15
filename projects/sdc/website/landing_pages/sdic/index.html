@@ -332,50 +332,87 @@ requestAnimationFrame(function(){document.querySelectorAll(".reveal").forEach(fu
   var renderer,scene,camera,bgP,fgP,mouse={x:0,y:0};
   var BG_DARK=0x060C18, BG_LIGHT=0xF2F5FC;
 
-  function makeSprite(color){
+  function makeSprite(r,g,b,a){
     var c=document.createElement("canvas");c.width=64;c.height=64;
-    var ctx=c.getContext("2d"),g=ctx.createRadialGradient(32,32,0,32,32,32);
-    g.addColorStop(0,color);g.addColorStop(1,"rgba(0,0,0,0)");
-    ctx.fillStyle=g;ctx.fillRect(0,0,64,64);
+    var ctx=c.getContext("2d"),grd=ctx.createRadialGradient(32,32,0,32,32,32);
+    grd.addColorStop(0,"rgba("+r+","+g+","+b+","+a+")");
+    grd.addColorStop(1,"rgba("+r+","+g+","+b+",0)");
+    ctx.fillStyle=grd;ctx.fillRect(0,0,64,64);
     return new THREE.CanvasTexture(c);
   }
-  function makeP(count,spread,size,tex){
+
+  // Sprites: white for dark mode, dark navy for light mode
+  var spriteWhite, spriteDark, spriteGreen;
+
+  function makeP(count,spread,size,tex,blending){
     var geo=new THREE.BufferGeometry(),pos=new Float32Array(count*3);
     for(var i=0;i<count;i++){pos[i*3]=(Math.random()-.5)*spread;pos[i*3+1]=(Math.random()-.5)*spread;pos[i*3+2]=(Math.random()-.5)*spread*.4;}
     geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
-    return new THREE.Points(geo,new THREE.PointsMaterial({size:size,map:tex,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
+    return new THREE.Points(geo,new THREE.PointsMaterial({size:size,map:tex,transparent:true,blending:blending||THREE.AdditiveBlending,depthWrite:false,opacity:1}));
   }
 
   function applyTheme(theme){
-    if(!renderer||!scene)return;
+    if(!renderer||!scene||!bgP||!fgP)return;
     var isLight=theme==="light";
-    var bg=isLight?BG_LIGHT:BG_DARK;
-    renderer.setClearColor(bg,1);
-    scene.fog=new THREE.FogExp2(bg,.0012);
-    // In light mode use darker stars so they're visible on light bg
-    if(bgP){bgP.material.color.set(isLight?0x334466:0xffffff);}
+    // In light mode: transparent canvas, dark particles (visible on light bg)
+    // In dark mode: opaque dark canvas, white additive particles
+    renderer.setClearColor(isLight?BG_LIGHT:BG_DARK, isLight?0:1);
+    scene.fog = isLight ? null : new THREE.FogExp2(BG_DARK, 0.0006);
+    bgP.material.map=isLight?spriteDark:spriteWhite;
+    bgP.material.blending=isLight?THREE.NormalBlending:THREE.AdditiveBlending;
+    bgP.material.opacity=isLight?0.45:1;
+    bgP.material.needsUpdate=true;
+    fgP.material.opacity=isLight?0.6:1;
+    fgP.material.needsUpdate=true;
   }
   window._threeApplyTheme=applyTheme;
 
   try{
     var initTheme=document.documentElement.getAttribute("data-theme")||"dark";
     var isLightInit=initTheme==="light";
-    renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:false,antialias:false});
+
+    // Build sprites once
+    spriteWhite=makeSprite(255,255,255,0.9);
+    spriteDark=makeSprite(30,50,80,0.85);   // dark navy — visible on light bg
+    spriteGreen=makeSprite(61,218,112,0.9);
+
+    renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:false});
     renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
     renderer.setSize(window.innerWidth,window.innerHeight);
-    renderer.setClearColor(isLightInit?BG_LIGHT:BG_DARK,1);
+    renderer.setClearColor(isLightInit?BG_LIGHT:BG_DARK,isLightInit?0:1);
+
     scene=new THREE.Scene();
-    scene.fog=new THREE.FogExp2(isLightInit?BG_LIGHT:BG_DARK,.0012);
+    // No fog in light mode — let CSS bg handle depth; in dark mode fog adds depth
+    if(!isLightInit) scene.fog=new THREE.FogExp2(BG_DARK,0.0006);
+
     camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,.1,2000);
     camera.position.z=500;
-    bgP=makeP(2200,1600,3.5,makeSprite("rgba(255,255,255,.9)"));
-    if(isLightInit)bgP.material.color.set(0x334466);
-    fgP=makeP(280,800,5,makeSprite("rgba(61,218,112,.9)"));
+
+    // BG particles — white additive in dark, dark navy normal in light
+    bgP=makeP(2200,1600,3.5,isLightInit?spriteDark:spriteWhite,
+              isLightInit?THREE.NormalBlending:THREE.AdditiveBlending);
+    if(isLightInit){bgP.material.opacity=0.45;}
+
+    // FG green particles — works on both modes
+    fgP=makeP(280,800,5,spriteGreen,THREE.AdditiveBlending);
+    if(isLightInit){fgP.material.opacity=0.6;}
+
     scene.add(bgP);scene.add(fgP);
+
     document.addEventListener("mousemove",function(e){mouse.x=(e.clientX/window.innerWidth-.5)*2;mouse.y=(e.clientY/window.innerHeight-.5)*2;});
     window.addEventListener("resize",function(){camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+
     var ti=0;
-    (function animate(){requestAnimationFrame(animate);ti+=.0003;bgP.rotation.y=ti*.5;bgP.rotation.x=ti*.2;fgP.rotation.y=-ti*.8;camera.position.x+=(mouse.x*40-camera.position.x)*.04;camera.position.y+=(-mouse.y*30-camera.position.y)*.04;camera.lookAt(scene.position);renderer.render(scene,camera);})();
+    (function animate(){
+      requestAnimationFrame(animate);
+      ti+=.0003;
+      bgP.rotation.y=ti*.5;bgP.rotation.x=ti*.2;
+      fgP.rotation.y=-ti*.8;
+      camera.position.x+=(mouse.x*40-camera.position.x)*.04;
+      camera.position.y+=(-mouse.y*30-camera.position.y)*.04;
+      camera.lookAt(scene.position);
+      renderer.render(scene,camera);
+    })();
   }catch(e){if(canvas)canvas.style.display="none";}
 })();
 (function(){if(typeof gsap==="undefined")return;gsap.from(["#hero-line-0","#hero-line-1","#hero-line-2"],{y:40,opacity:0,duration:.9,stagger:.12,ease:"power3.out",delay:.2});})();
