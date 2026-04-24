@@ -1,0 +1,31 @@
+# Retention thresholds — update quarterly as YouTube algorithm shifts
+retention:
+  cliff_drop_pct: 5.0          # % drop within a 5-second window = cliff
+  hook_window_seconds: 15      # first N seconds = hook zone
+  hook_max_drop_pct: 30.0      # alert if >30% drop in hook zone
+  target_apv_shorts: 75.0      # Average Percentage Viewed target for Shorts (%)
+  target_apv_longform: 50.0    # AVD target for long-form (%)
+  rewatch_viral_threshold: 100 # loop rate > 100% = viral signal
+
+# Revenue thresholds
+revenue:
+  target_ctr_longform: 5.0     # thumbnail CTR target for long-form (%)
+  target_sub_per_1k_views: 1.0 # subscriber conversion rate target
+
+# Competitor analysis
+competitors:
+  viral_window_days: 30        # look back N days for viral video ranking
+  top_n_viral: 10              # top N videos per competitor to analyze
+  top_n_competitors: 5         # max competitors to track
+
+# API quota management
+quota:
+  daily_limit_units: 10000     # YouTube Data API v3 daily quota
+  search_list_cost: 100        # units per search.list call
+  videos_list_cost: 1          # units per video in videos.list
+  channels_list_cost: 1        # units per channel in channels.list
+
+# Self-critique pass thresholds
+self_critique:
+  pass_score: 8.0              # minimum score per dimension (0-10)
+  max_iterations: 2            # max regeneration attempts

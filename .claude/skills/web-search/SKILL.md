@@ -56,15 +56,18 @@ Just ask naturally:
 
 | Situation | Do this |
 |-----------|---------|
-| Quick lookup (1-2 questions) | Use WebSearch directly — done |
-| 3+ queries needed, needs synthesis | Escalate to /research skill (Perplexity API + saves report) |
+| Any lookup, any query count | Use WebSearch + WebFetch — free, no escalation needed |
+| Deep multi-hop research (5+ sub-questions, gap analysis) | Use /research Mode 3 (deep research loop, free) OR generate a Gemini 3.1 Pro Deep Research prompt for Keonhee to paste |
 | YouTube video content needed | Escalate to /notebooklm skill |
 | Korean-language source needed | Use Korean search terms; note if translation needed |
+| Terminal-side autoresearch/benchmark research (NOT project scripts) | Use WebSearch — do not call Perplexity |
+
+**Note:** Project scripts (`projects/sme-diagnostic-ai/agents/autoresearch.py`, `benchmark_research.py`) keep using Perplexity. The WebSearch-only rule applies to ad-hoc research requests in the Claude Code terminal.
 
 ---
 
 ## Notes
-- Gemini free tier is blocked in South Korea — web-search is the replacement
-- If results are thin or contradictory, escalate to research skill (Perplexity)
+- Gemini Deep Research (3.1 Pro) is the preferred deep-research path — Claude generates the prompt, Keonhee pastes it into Gemini
+- WebSearch is free and unlimited from Claude Code — no credit cost, no quota
 - Do not fabricate URLs — only cite links from actual search results
 - For job role lookups: also check LinkedIn Jobs, Saramin (Korean job board), and Himalayas

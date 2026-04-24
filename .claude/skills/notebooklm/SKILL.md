@@ -1,8 +1,12 @@
 # NotebookLM Skill
 
+> **Single-video learning:** Prefer the `youtube-transcript` MCP tool — it's instant, no browser, no auth required. Just give Claude a YouTube URL and ask questions.
+> **Use NotebookLM when:** combining 3+ videos/sources into one queryable notebook, or when you want to cross-reference across a corpus of sources over multiple sessions.
+
+
 Automate Google NotebookLM via the `notebooklm-py` library. Uses Playwright to drive a real browser session. Feed YouTube URLs, articles, and docs into NotebookLM to build knowledge bases for learning.
 
-Updated 2026-03-11: Added workflow integration with research skill and learning path suggestions.
+Updated 2026-03-18: Fixed API patterns confirmed working on Python 3.14 + notebooklm-py.
 
 ## Installation (already done)
 
@@ -37,24 +41,39 @@ Auth storage: `C:\Users\keonh\.notebooklm\storage_state.json`
 
 ---
 
+## CRITICAL: Correct API Pattern (confirmed 2026-03-18)
+
+`from_storage()` is an **async classmethod** — you must `await` it, then use the result as the context manager.
+**WRONG** (crashes): `async with NotebookLMClient.from_storage() as client:`
+**CORRECT**: `client = await NotebookLMClient.from_storage()` then `async with client:`
+
+Response object uses `.answer`, not `.text`.
+`wait_until_ready()` raises `SourceNotFoundError` intermittently — use `asyncio.sleep(15)` instead.
+Always add `sys.stdout.reconfigure(encoding="utf-8")` on Windows (Korean paths + em-dashes crash cp949).
+
+---
+
 ## Capabilities
 
-### 1. Add YouTube link to NotebookLM
+### 1. Add YouTube link to existing notebook
 
 ```python
-import asyncio
+import asyncio, sys
+sys.stdout.reconfigure(encoding="utf-8")
 from notebooklm import NotebookLMClient
 
 NOTEBOOK_ID = "your-notebook-id-here"
-YOUTUBE_URL = "https://www.youtube.com/watch?v=XXXXXXX"
+URL = "https://www.youtube.com/watch?v=XXXXXXX"
 
-async def add_youtube(notebook_id: str, url: str):
-    async with NotebookLMClient.from_storage() as client:
+async def add_source(notebook_id: str, url: str):
+    client = await NotebookLMClient.from_storage()
+    async with client:
         source = await client.sources.add_url(notebook_id, url)
-        await client.sources.wait_until_ready(notebook_id, [source.id])
-        print(f"Added source: {source.id}")
+        print(f"Added: {source.id} — {getattr(source, 'title', 'processing...')}")
+        await asyncio.sleep(15)  # wait for processing — wait_until_ready is unreliable
+        return source.id
 
-asyncio.run(add_youtube(NOTEBOOK_ID, YOUTUBE_URL))
+asyncio.run(add_source(NOTEBOOK_ID, URL))
 ```
 
 `add_url` accepts any URL — YouTube, news articles, blog posts, documentation pages.
@@ -64,19 +83,21 @@ asyncio.run(add_youtube(NOTEBOOK_ID, YOUTUBE_URL))
 ### 2. Create notebook from URL
 
 ```python
-import asyncio
+import asyncio, sys
+sys.stdout.reconfigure(encoding="utf-8")
 from notebooklm import NotebookLMClient
 
 async def create_notebook_from_url(title: str, url: str):
-    async with NotebookLMClient.from_storage() as client:
+    client = await NotebookLMClient.from_storage()
+    async with client:
         notebook = await client.notebooks.create(title=title)
         source = await client.sources.add_url(notebook.id, url)
-        await client.sources.wait_until_ready(notebook.id, [source.id])
-        print(f"Notebook created: {notebook.id}")
+        print(f"Notebook ID: {notebook.id}")
+        await asyncio.sleep(15)
         return notebook.id
 
 asyncio.run(create_notebook_from_url(
-    title="LangGraph Streaming — 2026",
+    title="LangGraph Advanced Patterns 2026",
     url="https://www.youtube.com/watch?v=XXXXXXX"
 ))
 ```
@@ -86,13 +107,15 @@ asyncio.run(create_notebook_from_url(
 ### 3. Query a notebook
 
 ```python
-import asyncio
+import asyncio, sys
+sys.stdout.reconfigure(encoding="utf-8")
 from notebooklm import NotebookLMClient
 
 async def ask_notebook(notebook_id: str, question: str):
-    async with NotebookLMClient.from_storage() as client:
+    client = await NotebookLMClient.from_storage()
+    async with client:
         response = await client.chat.ask(notebook_id, question)
-        print(response.text)
+        print(response.answer)  # .answer not .text
 
 asyncio.run(ask_notebook(NOTEBOOK_ID, "What are the main findings?"))
 ```
@@ -102,16 +125,37 @@ asyncio.run(ask_notebook(NOTEBOOK_ID, "What are the main findings?"))
 ### 4. List all notebooks
 
 ```python
-import asyncio
+import asyncio, sys
+sys.stdout.reconfigure(encoding="utf-8")
 from notebooklm import NotebookLMClient
 
 async def list_notebooks():
-    async with NotebookLMClient.from_storage() as client:
+    client = await NotebookLMClient.from_storage()
+    async with client:
         notebooks = await client.notebooks.list()
         for nb in notebooks:
-            print(f"{nb.title} — ID: {nb.id}")
+            print(f"{nb.title} -- ID: {nb.id}")
 
 asyncio.run(list_notebooks())
+```
+
+---
+
+### 5. List sources in a notebook
+
+```python
+import asyncio, sys
+sys.stdout.reconfigure(encoding="utf-8")
+from notebooklm import NotebookLMClient
+
+async def list_sources(notebook_id: str):
+    client = await NotebookLMClient.from_storage()
+    async with client:
+        sources = await client.sources.list(notebook_id)
+        for s in sources:
+            print(f"{getattr(s, 'title', s.id)}")
+
+asyncio.run(list_sources(NOTEBOOK_ID))
 ```
 
 ---

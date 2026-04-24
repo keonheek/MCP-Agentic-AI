@@ -6,9 +6,9 @@ _This file is read by the `/schedule` cron job. Do not run manually — use `/sc
 
 You are running an automated daily AI intelligence sweep for Keonhee Kim. Execute the following steps autonomously:
 
-### Step 1 — Research (Perplexity API)
+### Step 1 — Research (WebSearch + WebFetch)
 
-Use the research skill or Agent (research-agent) to query the following topics:
+Use WebSearch and WebFetch to query the following topics:
 - "Latest agentic AI developments in the past 24 hours"
 - "New MCP servers or Model Context Protocol tools released this week"
 - "Claude API or Anthropic updates in the past week"
@@ -50,6 +50,16 @@ Save to `research/YYYY-MM-DD-daily-ai-report.md` with this structure:
 
 If there are high-priority action items, append them to `tasks/todo.md`.
 
-### Step 5 — Done
+### Step 5 — Autoresearch quality loop
 
-Confirm: "Daily AI report saved to research/[DATE]-daily-ai-report.md — [N] implementable items found."
+Run autoresearch Mode 1 on the report content:
+- Score dimensions: relevance to Keonhee's stack, actionability, specificity (are sources cited?), no generic filler
+- Threshold: 8.0
+- Max iterations: 5
+- Scoring model: Claude Haiku (cheap)
+- If score < 8.0: rewrite the weakest sections and re-score. Repeat until 8.0+ or 5 iterations reached.
+- Once threshold met, overwrite the saved report file with the improved version.
+
+### Step 6 — Done
+
+Confirm: "Daily AI report saved to research/[DATE]-daily-ai-report.md — [N] implementable items found. Quality score: [X]/10."

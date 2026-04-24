@@ -1,0 +1,13 @@
+# Paste target business URLs here, one per line.
+# Lines starting with # are ignored.
+# Example:
+# https://example-restaurant.co.kr
+# https://someshop.modoo.at
+https://www.mealdo.co.kr
+https://www.plastic-bakery.com/
+https://coffeehanyakbang.com
+https://onionkr.com
+https://www.instagram.com/jeanboulangerie_kr
+https://www.instagram.com/standardbread_official/
+http://maker-seochon.com
+https://www.guud.com

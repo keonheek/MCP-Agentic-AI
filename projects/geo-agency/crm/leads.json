@@ -1,0 +1,15 @@
+{
+  "leads": [
+    {
+      "_comment": "DELETE THIS EXAMPLE. Copy this schema for real leads.",
+      "name": "사장님이름 or KakaoTalk handle",
+      "business": "카페봄봄",
+      "url": "https://cafebombom.com",
+      "geo_score": 42,
+      "status": "contacted",
+      "last_contact": "2026-03-26",
+      "last_message": "안녕하세요, 무료 진단 관심있어요",
+      "notes": "Instagram DM 먼저, 반응 빠름"
+    }
+  ]
+}

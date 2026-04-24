@@ -1,7 +1,7 @@
 """
 Discord bot — Keonhee's mobile Claude interface.
 
-Listens in a specific channel, calls Claude claude-sonnet-4-6, replies in Discord.
+Listens in a specific channel, calls Claude Haiku (cheap), replies in Discord.
 Also auto-updates agent status in agents/status.json.
 
 Run:
@@ -17,6 +17,7 @@ Requires in .env:
 import sys
 import os
 import asyncio
+import time
 from pathlib import Path
 from collections import deque
 
@@ -57,6 +58,9 @@ _STATUS_FILE = _PROJECT_ROOT / "agents" / "status.json"
 
 
 _LOG_FILE = _PROJECT_ROOT / "tools" / "discord-bot" / "discord_log.md"
+_INBOX_FILE = _PROJECT_ROOT / "tasks" / "discord_inbox.json"
+_OUTBOX_FILE = _PROJECT_ROOT / "tasks" / "discord_outbox.json"
+_LOOP_CONTROL_FILE = _PROJECT_ROOT / "tasks" / "loop_control.json"
 
 
 def _write_to_log(author: str, content: str) -> None:
@@ -93,6 +97,106 @@ def _write_status(status: str, task: str) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Task queue helpers (inbox / outbox / loop control)
+# ---------------------------------------------------------------------------
+
+def _atomic_write(path: Path, data: dict) -> None:
+    """Atomic JSON write via .tmp -> os.replace to prevent corruption."""
+    tmp = path.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def _read_json(path: Path, default) -> dict:
+    if not path.exists():
+        return default
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return default
+
+
+def _queue_task(channel_id: int, author: str, content: str) -> None:
+    """Append a new task to discord_inbox.json."""
+    data = _read_json(_INBOX_FILE, {"tasks": []})
+    task = {
+        "id": f"disc-{int(time.time())}",
+        "created_at": __import__("datetime").datetime.now().isoformat(timespec="seconds"),
+        "channel_id": channel_id,
+        "author": author,
+        "content": content,
+        "status": "pending",
+    }
+    data["tasks"].append(task)
+    _atomic_write(_INBOX_FILE, data)
+    print(f"[inbox] Queued task from {author}: {content[:60]}")
+
+
+def _write_loop_control(mode: str) -> None:
+    _atomic_write(_LOOP_CONTROL_FILE, {
+        "mode": mode,
+        "updated_at": __import__("datetime").datetime.now().isoformat(timespec="seconds"),
+        "updated_by": "discord",
+    })
+
+
+def _format_status() -> str:
+    """Build mobile-friendly status block from status.json + loop_control.json."""
+    agents = _read_json(_STATUS_FILE, {})
+    control = _read_json(_LOOP_CONTROL_FILE, {"mode": "unknown"})
+    lines = [f"LOOP: {control.get('mode', 'unknown')}", "---"]
+    order = ["GEO", "Lead Intel", "SME Diag", "Consulting", "Discord Bot", "Claude Loop"]
+    for name in order:
+        info = agents.get(name)
+        if info:
+            lines.append(f"{name}: {info.get('status','?')} — {info.get('task','')}")
+    return "\n".join(lines)
+
+
+async def _handle_command(content: str, channel_id: int, author: str, channel) -> None:
+    """Handle ! commands without going through Claude."""
+    parts = content.strip().split(None, 1)
+    cmd = parts[0].lower()
+    arg = parts[1] if len(parts) > 1 else ""
+
+    if cmd == "!task":
+        if not arg:
+            await channel.send("Usage: `!task <description of what to do>`")
+            return
+        _queue_task(channel_id, author, arg)
+        await channel.send(f"Queued. Claude will pick it up on the next loop tick (every 3 min while VS Code is open).")
+
+    elif cmd == "!pause":
+        _write_loop_control("paused")
+        await channel.send("Loop paused. Send `!resume` to continue.")
+
+    elif cmd == "!resume":
+        _write_loop_control("running")
+        await channel.send("Loop resumed.")
+
+    elif cmd == "!stop":
+        _write_loop_control("stopped")
+        await channel.send("Loop stopped. Run `/schedule` in Claude Code to restart.")
+
+    elif cmd == "!status":
+        await channel.send(_format_status())
+
+    elif cmd == "!help":
+        await channel.send(
+            "**Commands:**\n"
+            "`!task <text>` — queue a task for Claude to execute\n"
+            "`!pause` — pause the autonomous loop\n"
+            "`!resume` — resume the loop\n"
+            "`!stop` — stop the loop (requires /schedule to restart)\n"
+            "`!status` — show agent status\n"
+            "`!help` — this message\n\n"
+            "Regular messages (no `!`) go directly to Claude for conversation."
+        )
+    else:
+        await channel.send(f"Unknown command `{cmd}`. Send `!help` for the list.")
+
+
+# ---------------------------------------------------------------------------
 # Anthropic client
 # ---------------------------------------------------------------------------
 import anthropic
@@ -118,7 +222,7 @@ def _call_claude(channel_id: int, user_message: str) -> str:
 
     try:
         response = _anthropic.messages.create(
-            model="claude-sonnet-4-6",
+            model="claude-haiku-4-5-20251001",
             max_tokens=1024,
             system=SYSTEM_PROMPT,
             messages=list(_history[channel_id]),
@@ -135,12 +239,39 @@ def _call_claude(channel_id: int, user_message: str) -> str:
 # ---------------------------------------------------------------------------
 import discord
 
-# Python 3.14 removed implicit event loop — create one explicitly
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
+# Python 3.14 removed default event loop — must create explicitly before discord.Client
+_loop = asyncio.new_event_loop()
+asyncio.set_event_loop(_loop)
 
 intents = discord.Intents.all()
-client = discord.Client(intents=intents, loop=loop)
+client = discord.Client(intents=intents)
+
+
+async def _poll_outbox():
+    """Background task: check discord_outbox.json every 10s and deliver undelivered results."""
+    while True:
+        await asyncio.sleep(10)
+        try:
+            data = _read_json(_OUTBOX_FILE, {"results": []})
+            changed = False
+            for result in data.get("results", []):
+                if result.get("delivered"):
+                    continue
+                channel = client.get_channel(result["channel_id"])
+                if channel:
+                    reply = result.get("reply", "(no reply)")
+                    if len(reply) <= 2000:
+                        await channel.send(reply)
+                    else:
+                        for i in range(0, len(reply), 1900):
+                            await channel.send(reply[i:i+1900])
+                    result["delivered"] = True
+                    changed = True
+                    print(f"[outbox] Delivered result {result.get('id')} to channel {result['channel_id']}")
+            if changed:
+                _atomic_write(_OUTBOX_FILE, data)
+        except Exception as e:
+            print(f"[outbox] poll error: {e}")
 
 
 @client.event
@@ -148,6 +279,8 @@ async def on_ready():
     print(f"[bot] Logged in as {client.user} (ID: {client.user.id})")
     print(f"[bot] Listening on channel ID: {DISCORD_CHANNEL_ID}")
     _write_status("idle", "Waiting for messages")
+    asyncio.create_task(_poll_outbox())
+    print("[bot] Outbox poller started (10s interval)")
 
 
 @client.event
@@ -169,6 +302,13 @@ async def on_message(message: discord.Message):
         return
 
     print(f"[msg] {message.author}: {user_input[:80]}")
+
+    # Handle ! commands without going through Claude
+    if user_input.startswith("!"):
+        _write_to_log(str(message.author), user_input)
+        await _handle_command(user_input, message.channel.id, str(message.author), message.channel)
+        return
+
     _write_status("working", f"Replying to: {user_input[:60]}")
 
     # Option 1: also write message to file in VS Code workspace (auto-refreshes in editor)

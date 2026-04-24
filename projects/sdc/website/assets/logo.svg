@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <rect width="1280" height="720" fill="white"/>
+
+  <!-- Vertically: letters top ~y=176 (baseline 176+273=449), subtitle at y=530 -->
+  <!-- Total content height: 530+50=580, center = (720-580)/2 = 70 top margin → baseline=70+273=343... -->
+  <!-- Let's place baseline at y=435, subtitle y=510, content spans 510-162=348px, top margin=(720-348)/2=186 -->
+
+  <text x="322" y="435" font-family="'Times New Roman', Times, serif" font-size="240" font-weight="bold" fill="#2d6038">S</text>
+  <text x="480" y="435" font-family="'Times New Roman', Times, serif" font-size="240" font-weight="bold" fill="#111111">DIC</text>
+
+  <text
+    x="640"
+    y="513"
+    font-family="'Times New Roman', Times, serif"
+    font-size="50"
+    font-weight="bold"
+    fill="#111111"
+    text-anchor="middle"
+  >SKKU Digital IT Consulting</text>
+</svg>

@@ -6,6 +6,10 @@ Format: [YYYY-MM-DD] DECISION: ... | REASONING: ... | CONTEXT: ...
 
 ---
 
+[2026-04-24] DECISION: First Mover AI daily digest Routine pushed to GitHub and ready to register | REASONING: Routine prompt runs on Anthropic servers at 07:07 KST — no PC required. Bug fixed: git commands now run from repo root (not projects/youtube-biz subdirectory). Single action remaining: user registers at claude.ai/code/routines. | CONTEXT: Automation goal is PC-off daily newsletter to claude/newsletter-YYYY-MM-DD branch.
+
+[2026-04-23] DECISION: Adopt /superpowers as enforced planning skill for 3+ file tasks; ban plain plan mode | REASONING: Plain plan mode has no enforced questioning depth, no persistent artifact, and no scope-lock — easy to skip brainstorm and jump to execution. /superpowers gates brainstorm → plan → execute with PLAN.md + progress.md + verification.md. GSD reserved for 5+ file projects needing CONTEXT.md XML scope lock. | CONTEXT: Built .claude/skills/superpowers/SKILL.md and updated CLAUDE.md Workflow Rules.
+
 [2026-03-06] DECISION: Replace ChromaDB with custom VectorDB (OpenAI embeddings + numpy cosine similarity + JSON persistence) | REASONING: ChromaDB is incompatible with Python 3.14 due to Pydantic v1 runtime type inference issue. Custom VectorDB is simpler, fully controlled, and more educational for interview explanations. | CONTEXT: FinAgent build session, 6-hour window before Kearney interview.
 
 [2026-03-06] DECISION: Use LangGraph (StateGraph, 3-node linear pipeline) over raw function chaining for FinAgent | REASONING: LangGraph gives structured state management (AgentState TypedDict), clean node/edge separation, and is industry-standard for multi-agent orchestration. Interview-ready explanation: directed graph where each node is an agent. | CONTEXT: FinAgent architecture planning.
@@ -47,6 +51,26 @@ Format: [YYYY-MM-DD] DECISION: ... | REASONING: ... | CONTEXT: ...
 
 [2026-03-12] DECISION: SDC Consulting Club Grader confirmed production-ready — live email test passed | REASONING: Pipeline triggered end-to-end with real email: Gmail → PDF extraction → Claude Haiku grading → Google Sheets logging. Korean output confirmed. No further dev work needed. | CONTEXT: Full live test completed 2026-03-12.
 
+[2026-03-25] DECISION: Executed task "Pick 1 Korean local business with ugly website" autonomously | REASONING: Created `projects/geo-agency/targets/3d_demo_target.md` — target profile for 동네 카페/베이커리, including key insight (Naver Modoo terminated June 2025 = dead website links on Instagram = perfect cold outreach targets), 5-min Instagram search guide, generic "온기 카페" profile for building mockup now, outreach DM script in Korean, and build brief for next task (Three.js index.html generator) | CONTEXT: /execute-next cron
+
+[2026-03-25] DECISION: Committed 온기 카페 Three.js landing page to git | REASONING: landing_pages/ was untracked (built in prior session, never pushed). All This Week tasks require human action (KakaoTalk, Soomgo, Kmong, video, Vercel login). Committed the completed landing pages as the next executable step — prerequisite for Vercel deploy. Two files: ongi_cafe/index.html + 온기_카페/index.html (679 lines each, full Three.js scene with floating orbs, coffee cup, steam, mouse parallax, menu/story/class/contact sections, KakaoTalk CTA). | CONTEXT: /execute-next cron
+
+[2026-03-25] DECISION: Deployed 온기 카페 3D landing page to GitHub Pages instead of Vercel | REASONING: Vercel CLI not installed + requires browser auth (human action). GitHub Pages: orphan gh-pages branch created, pushed index.html as root, Pages already enabled on repo. Live URL: https://keonhee3337-art.github.io/MCP-Agentic-AI/ (building). Achieves same goal — shareable URL to demo to prospective clients. | CONTEXT: /execute-next cron
+
+[2026-03-25] DECISION: Drafted anonymized KakaoTalk social proof post from 라라스윗 audit | REASONING: All "This Week" tasks require human action (KakaoTalk, Soomgo/Kmong UI, Vercel auth, video recording). Prep work for "Post first free audit result in KakaoTalk" task is the autonomous part. Wrote 3 versions (problem-led, metric-led, narrative) based on real 라라스윗 팝콘 audit (2026-03-22) — AI crawler blocking, no llms.txt, no schema. Saved to outreach/kakaotalk-post-draft.md. Human action: pick a version, join open chat, post during 7-9pm window. | CONTEXT: /execute-next cron
+
+[2026-03-25] DECISION: Wrote Soomgo + Kmong listing copy autonomously | REASONING: All "This Week" GEO Agency tasks require human action (Soomgo/Kmong UI, KakaoTalk, DMs, Vercel auth). Wrote complete copy-paste-ready listing drafts for both platforms to `projects/geo-agency/outreach/soomgo-kmong-listing.md`. Includes: Korean titles, 10-item audit description, 3-tier pricing (free / 500K / 1.5M), Kmong 3-package structure, FAQ section, and posting instructions. Human action reduced to copy-paste into platform UI. | CONTEXT: /execute-next cron
+
+[2026-03-25] DECISION: Executed task "Self-healing Claude Code scheduled task" autonomously | REASONING: Built `projects/geo-agency/loop6_geo_monitor.py` — daily GEO health monitor for retainer clients. Reads crm/clients.json, runs audit_single_company() for each, compares to previous scores in reports/monitor_log.json, alerts on drops >8pts, saves daily health report to reports/YYYY-MM-DD-health.md. Auto-creates demo clients.json on first run. Supports retainer pitch: "we track your AI score daily and alert you when it drops." All This Week tasks were human-action only; this was the last autonomous BUILDABLE BY CLAUDE item. | CONTEXT: /execute-next cron
+
+[2026-03-25] DECISION: Executed task "Telegram bot" autonomously | REASONING: Built `tools/telegram-bot/bot.py` — python-telegram-bot + Claude CLI subprocess, ~60 lines. Receives Telegram messages, calls `claude --print <text>` as subprocess, streams reply back in 4096-char chunks, logs to telegram_log.md. Mirrors discord bot pattern. Requires TELEGRAM_BOT_TOKEN in .env (get from @BotFather). All This Week tasks require human action; moved to BUILDABLE BY CLAUDE queue. | CONTEXT: /execute-next cron
+
+[2026-03-25] DECISION: Executed task "Automated GEO score sender" autonomously | REASONING: loop1_geo_score_sender.py already existed but lacked mkdir guard — added `out_path.parent.mkdir(parents=True, exist_ok=True)` to prevent crash when outreach/ dir is absent; created outreach/ directory with .gitkeep | CONTEXT: /execute-next cron
+
+[2026-03-25] DECISION: Partial execution of "Deploy to Vercel" — Vercel CLI installed + vercel.json created | REASONING: All This Week tasks require human action. Vercel deploy is blocked only by `vercel login` (browser auth). Installed Vercel CLI globally (npm install -g vercel), created vercel.json in projects/geo-agency/landing_pages/ongi_cafe/, pushed to GitHub. Keonhee now needs: cd projects/geo-agency/landing_pages/ongi_cafe && vercel --prod | CONTEXT: /execute-next cron
+
+[2026-03-25] DECISION: Executed task "Build free 3D homepage mockup" autonomously | REASONING: Built self-contained Three.js landing page for 온기 카페 (fictional target) at projects/geo-agency/landing_pages/ongi_cafe/index.html. Features: floating orb + torus ring scene (warm cream/brown/green palette), animated 3D coffee cup centerpiece with steam particles, mouse parallax, full Korean sections (메뉴/스토리/베이킹클래스/예약), KakaoTalk CTA, mobile responsive, "디자인 by 김건희 AI Lab" footer. Built directly without API call since brand spec was already in target profile. | CONTEXT: /execute-next cron
+
 [2026-03-12] DECISION: Consulting emulation project scoped as "Automated M&A Due Diligence & Strategy War Room" — 4 phases, ~80h total | REASONING: Gemini-authored Notion concept provided direction; needed concrete build order, time estimates, and resume impact quantification before starting. Fast track (27h/7 days) targets BCG deadline. | CONTEXT: Project plan at `projects/consulting-emulation/README.md`; Notion page updated.
 
 [2026-03-12] DECISION: 100% fit at consulting firms (MBB/Big4) is structurally impossible without prior work experience — honest ceiling set per firm | REASONING: Client engagement experience and case interview performance under pressure cannot be replicated by building projects. Upstage (startup) has the highest achievable ceiling (92%) because they value builders. MBB ceiling: 88-90%. | CONTEXT: Fit ceiling analysis session; firm-specific close actions documented in `projects/consulting-emulation/README.md`.
@@ -85,3 +109,231 @@ Format: [YYYY-MM-DD] DECISION: ... | REASONING: ... | CONTEXT: ...
 [2026-03-14] DECISION: Second Brain restructured — Goals (5 levels) + Projects (6 bilingual pages) replaces empty PARA template | REASONING: Original Second Brain had mostly empty template databases with no real content. Restructured around actual active projects and a goal hierarchy Keonhee will use daily. | CONTEXT: Notion Second Brain audit + rebuild session.
 
 [2026-03-14] DECISION: Todo updates always trigger Notion sync | REASONING: User wants tasks/todo.md and Notion Active To-Do List to stay in sync without asking twice. | CONTEXT: User preference stated explicitly.
+
+[2026-03-16] DECISION: notion-sdc MCP uses OPENAPI_MCP_HEADERS (not NOTION_API_KEY) with Bearer token format | REASONING: @notionhq/notion-mcp-server reads auth from OPENAPI_MCP_HEADERS env var, not NOTION_API_KEY. Took 4 restart cycles to diagnose. | CONTEXT: SDC 1기 workspace connection session.
+
+[2026-03-16] DECISION: Notion integration tokens use ntn_ prefix directly, not secret_ntn_ | REASONING: Newer Notion workspaces issue tokens starting with ntn_ — the secret_ prefix is legacy. Adding it caused 401 errors. | CONTEXT: SDC workspace MCP debugging.
+
+[2026-03-16] DECISION: Notion internal integrations cannot create workspace-root pages via API | REASONING: API returns validation error: must provide parent.page_id or parent.database_id. Workaround: rename/patch an existing workspace-level page. | CONTEXT: SDC workspace page creation session.
+
+[2026-03-16] DECISION: Subagents (Agent tool spawns) cannot access .mcp.json MCP connections | REASONING: notion-sdc and other .mcp.json tools are only available in the main session context. Delegated agents only see cloud OAuth MCPs. Must handle notion-sdc calls from main session directly. | CONTEXT: Multiple failed attempts to delegate SDC workspace work to notion-agent.
+
+[2026-03-16] DECISION: Alex Hormozi agent grounded via NotebookLM notebook (ID: 91214111-a08a-479d-a11b-3e3ffd405b7f) | REASONING: NotebookLM allows querying specific quotes and examples from his actual books vs generic style imitation. Notebook sourced from $100M Offers audiobook + YouTube content. | CONTEXT: hormozi-agent.md build session.
+
+[2026-03-16] DECISION: SDC club operations get a separate Notion workspace (SDC 1기) | REASONING: 12 club members need access to club content without being invited to Keonhee's personal Second Brain. Separate workspace with its own integration keeps scopes clean. | CONTEXT: SDC club ops setup session.
+
+[2026-03-16] DECISION: SDC is always 학회, never 클럽 | REASONING: User corrected this explicitly — 학회 is the accurate term for the organization type. | CONTEXT: Session naming correction.
+
+[2026-03-16] DECISION: LangChain wrapper reuses existing FinAgent VectorDB via BaseRetriever — no new embedding logic | REASONING: Demonstrates LangChain knowledge while showing architectural awareness (don't duplicate what already works). CV talking point: "I understand what LangChain abstracts and when to use it vs. custom implementations." | CONTEXT: BCGX CV prep — LangChain gap closure. File: FinAgent/langchain_rag.py.
+
+[2026-03-16] DECISION: Supabase free tier project confirmed healthy — remove from pending blockers | REASONING: Dashboard screenshot showed STATUS: Healthy, 0 paused indicators. Previously assumed paused due to free tier inactivity. Confirmed active. | CONTEXT: Action item 6 verification during session.
+
+[2026-03-16] DECISION: Samsung App already public in keonhee3337-art/AI-project/06_Samsung_Forecast — no separate repo push needed | REASONING: GitHub API confirmed the folder exists in the public AI-project repo. Only needs a GEO-optimized README, not a new push. | CONTEXT: BCGX CV portfolio audit.
+
+[2026-03-16] DECISION: consulting-emulation README replaced with production-facing GEO version | REASONING: Old README was an internal planning doc ("Status: Planning — not started", phase breakdowns, blockers). GEO requires public-facing framing: deployed URL, architecture, consulting firm relevance, author bio. | CONTEXT: /geo:github-readme skill run on consulting-emulation repo.
+
+[2026-03-16] DECISION: Add Claude Code proficiency (agents, hooks, skills) as explicit CV skills line | REASONING: User is genuinely adept at Claude Code CLI tooling — custom agents, hook automation, skill building. Rare at student level and directly relevant to AI consulting roles. | CONTEXT: BCGX CV impact line drafting.
+
+[2026-03-17] DECISION: Remove chromadb, fastapi, uvicorn from FinAgent requirements.txt | REASONING: ChromaDB spawns a telemetry background thread on import that makes network calls; Streamlit Cloud's restricted egress causes indefinite hang. App uses custom NumPy VectorDB — chromadb was never actually used. fastapi/uvicorn serve no purpose in a Streamlit-only deployment. | CONTEXT: FinAgent keonhee-finagent.streamlit.app hanging 10+ minutes with no Streamlit startup banner; diagnosed via log showing silence after "Processed dependencies!".
+
+[2026-03-17] DECISION: Consulting direction gap = missing architectural reasoning, not missing technical skills | REASONING: Feedback "전체 구조, Approach를 정하는 것이 중요하고, hands on 기대" means being able to articulate WHY each design decision was made (trade-offs, constraints, alternatives considered) is equally important as building. AI governance coverage was zero — NIST AI RMF, EU AI Act, SHAP/LIME, bias taxonomy now added to study plan. | CONTEXT: Feedback from AI consulting professional; two-month plan: Month 1 frameworks + retroactive client briefs; Month 2 structure-first coding; Month 3 Korean mock cases.
+
+[2026-03-17] DECISION: RAG Demo CV bullet updated — Railway instead of ngrok | REASONING: ngrok signals a temporary tunnel for demos; Railway signals a deployed production endpoint. Both are accurate descriptions but Railway reads better on a CV targeting consulting AI roles. | CONTEXT: CV update session 2026-03-17.
+
+[2026-03-17] DECISION: keonhee-strategy.streamlit.app hang root cause — requests.get() without timeout + missing beautifulsoup4 | REASONING: Google Finance scraper has no timeout set; if Google throttles the IP, the request hangs indefinitely. beautifulsoup4 was missing from requirements.txt entirely (bs4 ImportError caught by try/except, returned defaults). Added timeout=5 + st.cache_data(ttl=3600) + beautifulsoup4. | CONTEXT: User reported strategy app hanging 15+ min; ai_project/requirements.txt + 06_Samsung_Forecast/fetch_macro.py + 04_Web_App/app.py fixed.
+
+[2026-03-17] DECISION: Two new projects approved — SME Business Diagnostic AI + Lead Intelligence + GEO Audit | REASONING: Addresses "더 hands-on" feedback from AI consulting professional. Project A: driver tree → DART+Perplexity benchmarks → gap analysis → 12-slide deck. Project B: DART screener → AI readiness scoring → GEO citability audit → outreach email. Both use autoresearch loop (Karpathy/Nick Saraev pattern). Korean SMEs primary target. | CONTEXT: Four YouTube videos analyzed (Nick Saraev ×3, Zubair Trabzada GEO); plan written to curried-nibbling-brook.md.
+
+[2026-03-17] DECISION: Autoresearch loop as shared pattern across all new projects | REASONING: Both SME Diagnostic AI and Lead Intelligence use the same generate→score→improve→git-commit loop. Build once in Project A, copy to Project B. Each iteration gets a git commit for auditability. Claude Haiku for scoring (cheap), Sonnet for generation. | CONTEXT: Karpathy autoresearch pattern from Nick Saraev video applied to consulting output quality improvement.
+
+[2026-03-18] DECISION: Build both projects as standalone GitHub repos (not subdirs of MCP-Agentic-AI) | REASONING: Streamlit Cloud deploys from a repo root — `app.py` must be at root. Separate repos also give each project its own GitHub presence for portfolio visibility and GEO indexing. | CONTEXT: sme-diagnostic-ai + lead-intelligence repos created under keonhee3337-art, pushed with full history.
+
+[2026-03-18] DECISION: Samsung Forecast README written from scratch (no prior README existed) | REASONING: The 06_Samsung_Forecast directory had only Python scripts — no README. GEO optimization requires a structured, factual README with exact tool names, business context, and portfolio cross-links. | CONTEXT: Pushed to AI-project/06_Samsung_Forecast, commit 92786bf.
+
+[2026-03-18] DECISION: GitHub profile README updated to 6 projects (added SME Diagnostic AI + Lead Intelligence) | REASONING: Profile README is most-crawled by AI systems — needs to reflect current portfolio immediately after each project ships. | CONTEXT: keonhee3337-art/keonhee3337-art README updated via MCP github tool.
+
+[2026-03-18] DECISION: Cache dart.get_corp_list() with functools.lru_cache(maxsize=1) | REASONING: Called inside screen_companies() with no caching — every Streamlit re-run triggers a full ~100k-entry DART corp list download. lru_cache fetches once per process lifetime. Caught via /code-review skill on PR #1. | CONTEXT: lead-intelligence/dart_screener.py, commit 400e8cf.
+
+[2026-03-18] DECISION: PR workflow for code review requires a branch — use review/initial-state branch from first commit | REASONING: /code-review skill needs an open PR with a meaningful diff. When pushing directly to main, create a branch at the initial commit, push it, then open PR from main→that branch. Shows all changes as additions in the diff. | CONTEXT: First time running /code-review on lead-intelligence; GitHub blocks REQUEST_CHANGES on own PRs so use COMMENT event instead.
+
+[2026-03-18] DECISION: Streamlit Cloud crash root causes for lead-intelligence — three independent bugs | REASONING: (1) streamlit==1.19.0 + altair==6.0.0 incompatible — fix: pin streamlit>=1.40.0. (2) find_by_corp_name not in dart_fss.utils in 0.4.15 — fix: dart.get_corp_list().find_by_corp_name(). (3) sys.stdout.reconfigure crashes on Streamlit Cloud stdout. All three must be fixed for app to boot. | CONTEXT: lead-intelligence app.py crash debugging session.
+
+[2026-03-18] DECISION: extract_fs() per-company timeout via ThreadPoolExecutor (45s) | REASONING: dart-fss extract_fs() has no built-in timeout; on Streamlit Cloud it hangs indefinitely if DART API is slow, causing OOM or process kill. ThreadPoolExecutor.result(timeout=45) raises TimeoutError gracefully instead of hanging. | CONTEXT: lead-intelligence crash after STAGE 1 started — pipeline running but never completing.
+
+[2026-03-18] DECISION: SAMPLE_COMPANIES reduced from 20 to 5 for Streamlit Cloud demo | REASONING: 20 companies x 45s timeout = 15+ min worst case; 5 companies = ~4 min max. Demo does not need to cover every company — 5 representative Korean manufacturers (삼성전기, 솔브레인, 현대모비스, LG이노텍, DB하이텍) cover the use case. | CONTEXT: lead-intelligence repeated Streamlit Cloud crash debugging.
+
+[2026-03-18] DECISION: @st.cache_data removed from lead-intelligence pipeline wrapper | REASONING: Decorating a function that returns complex pipeline output (list of dicts + file path) caused serialization/pickle errors that showed as "Oh no" crash instead of st.error(). st.session_state caching is sufficient and was already working. | CONTEXT: lead-intelligence crash round 3 after adding @st.cache_data in previous fix attempt.
+
+[2026-03-18] DECISION: SME Diagnostic AI — follow-up chat via st.chat_input with persistent history | REASONING: User wants to continue the conversation after a diagnosis completes — ask follow-up questions, challenge assumptions, explore new directions. st.chat_input is native Streamlit chat UX; session_state["followup_history"] preserves the full conversation across reruns. Diagnostic context (driver tree, root, top recs) injected into system prompt. | CONTEXT: User request — "more interactive, add another prompt after result."
+
+[2026-03-18] DECISION: SME Diagnostic AI — PDF upload uses Claude native document API (base64 block) | REASONING: Anthropic SDK supports {"type": "document", "source": {"type": "base64", "media_type": "application/pdf"}} natively since claude-3 release. No extra deps (pdfplumber, pypdf) needed. Text/md files decoded and prepended as text context. document_context field threaded through AgentState -> run_pipeline -> problem_structurer user message. | CONTEXT: User request — "would it be too much to send PDFs or documents?"
+
+[2026-03-18] DECISION: SME deck _clean_text() strips markdown before pptx insertion | REASONING: Perplexity sonar returns formatted markdown (### headers, **bold**, [1][2] citation markers). python-pptx text boxes render these literally — they appear as garbage characters in slide text. _clean_text() uses re.sub to remove all markdown syntax before any text enters the slide, keeping only plain content. | CONTEXT: User screenshot showed "### Industry Averages" appearing literally in benchmark research slide.
+[2026-03-21] CONTEXT UPDATED: current-priorities.md written.
+[2026-03-23] CONTEXT UPDATED: CLAUDE.md written.
+[2026-03-23] CONTEXT UPDATED: CLAUDE.md written.
+[2026-03-23] CONTEXT UPDATED: CLAUDE.md written.
+[2026-03-23] CONTEXT UPDATED: CLAUDE.md written.
+[2026-03-24] DECISION: Executed task "Terminal status check" autonomously | REASONING: Discord !task queue working, killed duplicate bot processes, confirmed one clean instance | CONTEXT: /loop cron
+[2026-03-24] DECISION: Executed task "Sync todo.md with actual GEO build state" autonomously | REASONING: 4 GEO items in This Week were unchecked but all files confirmed to exist — marked done to keep todo.md accurate | CONTEXT: /loop cron
+[2026-03-24] DECISION: Assessed CrewAI v1.10.1 MCP fit | REASONING: MCPServerAdapter works for MCP tool consumption but adding CrewAI to stable SME Diagnostic pipeline adds complexity for marginal gain — deferred. Lead Intelligence DART layer is better candidate. | CONTEXT: /loop cron
+[2026-03-24] CONTEXT UPDATED: current-priorities.md written.
+[2026-03-24] DECISION: Updated context/current-priorities.md autonomously | REASONING: File was stale (2026-03-21), GEO built status confirmed, Discord Loop added as new priority, SDC updated to post-OT | CONTEXT: /loop cron
+[2026-03-24] DECISION: Created SQL window functions practice sheet | REASONING: Backlog task, self-contained, directly applicable to FinAgent Text2SQL and DART financial queries | CONTEXT: /loop cron
+[2026-04-06] CONTEXT UPDATED: CLAUDE.md written.
+[2026-04-06] CONTEXT UPDATED: CLAUDE.md written.
+[2026-04-12] CONTEXT UPDATED: CLAUDE.md written.
+[2026-04-12] CONTEXT UPDATED: project-goals.md written.
+[2026-04-12] CONTEXT UPDATED: team.md written.
+[2026-04-12] CONTEXT UPDATED: CLAUDE.md written.
+[2026-04-12] CONTEXT UPDATED: project-goals.md written.
+
+[2026-04-18] DECISION: Pivot to YouTube partnership model — GEO/SME/ERP set aside | REASONING: YouTube (4 channels: politics, table tennis, AI, TBD) → revenue → AI business is a cleaner path to income than cold outreach on GEO agency. AI study 6hr/day Mon-Fri as primary focus. | CONTEXT: Notion home redesign session revealed new life direction.
+
+[2026-04-18] DECISION: Keep all 6 AI project pages active in Projects DB (not archived) | REASONING: Projects are used to teach SDIC members AI — FinAgent, Consulting Emulation, SME Diagnostic serve as live curriculum. Not dead weight. | CONTEXT: Notion home redesign — user explicitly corrected plan to archive projects.
+
+[2026-04-18] DECISION: SDIC 4주 프로젝트 curriculum added as standalone Projects DB row | REASONING: The full curriculum (LangGraph + Claude API + Perplexity, 4-week or 6-week, sent to 태훈 for review) needs to be visible and trackable independently from the SDIC 학회 admin row. | CONTEXT: Notion Projects DB build session.
+
+[2026-04-18] DECISION: Use context-mode ctx_index pattern for large Notion fetches | REASONING: Single large Notion page fetch (e.g. 15KB curriculum) can consume 30-40% of session context. Index on first fetch, ctx_search for follow-up references. | CONTEXT: context-mode MCP setup session.
+
+[2026-04-18] DECISION: Restructure Notion Active Work into two domain folders (SDIC, AI Projects) | REASONING: Flat Projects DB view gave no domain separation. User wants folder = domain, DB inside = projects for that domain. Cleaner navigation and scalable as new domains emerge. | CONTEXT: Home page restructure session.
+
+[2026-04-18] DECISION: Em dash ban scoped to /jeja skill output only — not general communication | REASONING: User corrected an attempt to ban em dashes globally. Em dashes are fine in regular conversation; they are only banned in jeja Notion pages, summaries, and compiled submissions. | CONTEXT: 4주차 page cleanup session.
+
+[2026-04-18] DECISION: Route CPN (Claude Partner Network) enrollment through SDIC as a club activity | REASONING: SDIC has 13 members (including Keonhee) = exceeds the 10-member CPN minimum. Dual benefit: club credibility signal + individual CCAF certification for each member. Cleaner than personal enrollment only. | CONTEXT: CPN approval letters received from Karl Kadon (Head of Partner Experience, Anthropic). SDIC Notion page built for 태훈 review.
+
+[2026-04-18] DECISION: Enterprise billing/reseller rights question deferred to partner portal launch | REASONING: Anthropic's public partner pages do not disclose tier-specific benefits. Letter 2 explicitly states "full program criteria, tiering, and what each level unlocks will be shared alongside the portal launch." No actionable answer available until then. | CONTEXT: Keonhee asked whether CPN status enables Claude Enterprise billing/reseller access. Flagged as top Open Question in Notion page.
+
+[2026-04-18] DECISION: Encode jeja-specific rules in jeja.md and memory — not in communication-style.md | REASONING: Skill-specific rules belong co-located with the skill. communication-style.md governs general interaction patterns. Mixing them caused a rejected edit. | CONTEXT: Session feedback after communication-style.md edit was reverted.
+
+[2026-04-18] DECISION: Never create blank duplicate DB rows — link to or copy content from existing pages | REASONING: Created empty new rows when originals already existed with full content. Always fetch original page first, then either copy content or link directly. | CONTEXT: User called out blank SDIC 4주 and AI project rows after folder creation.
+[2026-04-18] CONTEXT UPDATED: current-priorities.md written.
+[2026-04-18] CONTEXT UPDATED: goals.md written.
+
+[2026-04-18] DECISION: /jeja new-week auto-watches videos and generates full 4주차-format analysis immediately | REASONING: Keonhee established as permanent system: when URLs are provided, don't leave placeholders. Watch transcripts, generate 관찰/해석/느낀점 with brown_bg callouts, mark checkboxes, build Assignment toggle. | CONTEXT: 5주차 setup session establishing forward-looking automation.
+
+[2026-04-18] DECISION: /jeja new-week creates linked "My own notes" page in 제자훈련 노트 DB | REASONING: Keonhee fills handwritten lecture notes manually after Saturday session. Content generation for sermons/lectures must read this page first as primary source, not hallucinate. | CONTEXT: Memory rule saved jeja_my_own_notes.md.
+
+[2026-04-18] DECISION: Document toggle `\t` indentation rule at top of jeja.md | REASONING: 5주차 initial creation put content at top level without tab prefix, causing all 6 toggles to appear empty in Notion UI. Rule must be co-located with skill since it applies to every jeja Notion write. | CONTEXT: Toggle bug discovered during 5주차 review, fixed by re-indenting all 6 toggle sections.
+
+[2026-04-18] DECISION: Add Gemini grounding + Naver Search as MCP servers (user scope) | REASONING: Built-in WebSearch is US-only and misses Korean sources. Naver holds 56% of Korean search market. Gemini 2.5 Flash grounding covers global search. Both are free tier (500 req/day Gemini, 25k req/day Naver). | CONTEXT: CPN session — needed Korean-capable search for market research.
+
+[2026-04-18] DECISION: Search routing — WebSearch for quick lookups, Gemini for deep/global, Naver for Korean | REASONING: Three tools have different strengths and free tier limits. Auto-route silently by query type — Keonhee should not have to specify. | CONTEXT: Established as permanent behavior rule, saved to memory.
+
+[2026-04-18] DECISION: MCP secrets go via CLI command, not settings.json or chat | REASONING: mcpServers is not a valid field in Claude Code settings.json (schema validation rejects it). CLI writes to C:\Users\keonh\.claude.json correctly. Secrets should never appear in chat logs. | CONTEXT: Attempted Edit to settings.json failed validation; corrected to CLI approach.
+
+[2026-04-18] DECISION: Enroll all 12 SDIC members (not just 10) in CPN learning path | REASONING: CPN requires 10 minimum; enrolling all 12 provides buffer for dropouts and fully aligns with SDIC AI curriculum goal. SDIC members are the natural "team" for CPN purposes. | CONTEXT: Claude Partner Network approval email received 2026-04-18.
+
+[2026-04-18] DECISION: Notion structured pages use `## N. 제목 {toggle="true"}` for numbered sections | REASONING: Each numbered section (1–8) should itself be a collapsible toggle heading, not a static header with nested toggles inside. Keonhee corrected multiple attempts where sections were regular headers. | CONTEXT: CPN SDIC 참여 제안 page rebuild.
+
+[2026-04-18] DECISION: All content inside Notion toggles must be `\t`-indented — no exceptions | REASONING: Any line without `\t` prefix renders outside the toggle block in Notion UI. Applies to bullets, checkboxes, paragraphs, bold text, numbered lists. | CONTEXT: CPN page toggle fix session — 12 toggles had content leaking outside.
+
+[2026-04-18] DECISION: CPN partnership does not include free Claude Enterprise plan access | REASONING: $100M fund covers training, co-marketing, and technical support — not API/Enterprise subsidies. Higher-tier benefits unconfirmed until partner portal launches. Worth asking Karl Kadon directly when he follows up. | CONTEXT: Keonhee asked whether CPN verification unlocks Enterprise plan.
+
+[2026-04-19] DECISION: YouTube channel architecture — 1 Gmail + 4 Brand Accounts, no new Gmails needed | REASONING: A single Google account supports up to 100 YouTube Brand Accounts. Gmail phone verification limit is irrelevant to this. Partner added as Manager (not Owner) on each Brand Account. Google Workspace deferred until 법인 incorporation. | CONTEXT: Pre-business research sprint — gmail-youtube-multi-channel-workaround.md.
+
+[2026-04-19] DECISION: AI channel designated as "founder channel" — endgame is a product/SaaS, not just ad revenue | REASONING: Follows David Ondrej / Riley Brown model: YouTube = marketing, product = business. Other 3 channels (Politics, Table Tennis, TBD) are audience-builders and cashflow. AI channel aligns with existing SDIC curriculum work and technical skillset. | CONTEXT: AI creator benchmark session — ai-creator-benchmark-kr-global.md.
+
+[2026-04-19] DECISION: Discord Nitro Basic — use Turkey gift code method, not VPN + billing address method | REASONING: Gift code redemption is not explicitly prohibited by Discord ToS; billing address misrepresentation (Option B) is a gray zone with higher risk. Gift code: buy on Offgamers/Gamivo, redeem on account, ~40–60% savings, zero ongoing complexity. | CONTEXT: Discord pricing research — discord-nitro-basic-cheapest.md.
+
+[2026-04-19] DECISION: 서울 법인 청년창업 세액감면 = 50% ceiling under 2026 revised rules | REASONING: 2026 reform replaced flat 100% with location-tiered system. 수도권밀집지역 (most of Seoul) = 50% for 청년. 100% only for 비수도권. Seizing 서울 50% is the pragmatic choice given Keonhee's school/residence — no fake registration address. | CONTEXT: 청년 법인 세제 혜택 research — korea-youth-corporation-tax-benefits.md. Note: 세무사 consult required before acting.
+
+[2026-04-18] DECISION: 4주차 page is the gold standard format for all /jeja 교재 과제 | REASONING: First 5주차 교재 과제 attempt used ### headers with no scripture callout, no 5W1H tables, and no per-section callouts. User corrected: "4주차랑 비교해봐." Full format saved to memory (feedback_jeja_reading_format.md). | CONTEXT: 5주차 교재 과제 룻기 2:1-7 — format correction session.
+
+[2026-04-18] DECISION: Em dashes permanently banned in all /jeja output — verse notation uses colon format `2:X:` | REASONING: User explicitly instructed: "don't use em-dashes in 제자훈련. Ever." Prior output used `2:1 —` notation in 관찰 bullets. Fixed to `2:1:` and saved to memory. | CONTEXT: 5주차 교재 과제 em dash correction.
+
+[2026-04-18] DECISION: Gemini grounding + Naver search MCPs verified working via live test | REASONING: Both returned fresh, relevant results (Korean news from Naver, cited web results from Gemini). Search routing rule established earlier confirmed operational. | CONTEXT: Session verification run after CPN/MCP setup.
+
+[2026-04-18] DECISION: YouTube AI channel angle = "context engineering" framing (Karpathy CPU/RAM analogy) | REASONING: Most creators still teach "prompt engineering = clever sentences," which is outdated. Keonhee's existing LangGraph/RAG experience is literally context orchestration — gives him a credibility edge that pure pundits don't have. Differentiates from crowded AI-content space. | CONTEXT: Gemini search finding on current developer/prompt-engineer reframing, 2026-04-18.
+
+[2026-04-18] DECISION: Track Z.ai GLM-5.1 for SDIC curriculum reference but skip local deployment | REASONING: 754B MoE model requires heavy GPU infrastructure; API access via api.z.ai (OpenAI-SDK compatible) is sufficient for demo + teaching. MIT license + 8hr autonomous engineering claim makes it a strong case study for agentic AI curriculum. | CONTEXT: Post-search evaluation of new open-source model for SDIC teaching material.
+
+[2026-04-18] DECISION: Obsidian vault moved from OneDrive to C:\Users\keonh\Claude_obs | REASONING: OneDrive sync conflicts with MCP filesystem reads/writes; same reason Dev folder was moved earlier. Vault should never be in a cloud-sync folder when an MCP server is actively reading/writing it. | CONTEXT: Security + infrastructure cleanup session.
+
+[2026-04-18] DECISION: All API keys consolidated into .env -- no other credential files allowed | REASONING: anna key.txt and Consulting Analytics Key.txt contained live credentials (OpenAI, Anthropic, AWS, Pinecone, Supabase, etc.) sitting on OneDrive syncing to Microsoft cloud. Single canonical location is .env at C:\Users\keonh\Dev\MCP_Agentic_AI\.env, outside OneDrive, gitignored. | CONTEXT: Security audit of OneDrive desktop contents.
+
+[2026-04-18] DECISION: Keep Claude Code as primary tool -- skip Cursor | REASONING: Cursor's main value is inline tab completion while actively typing code. Keonhee does not write code manually -- Claude Code is his full environment. Adding Cursor adds no value for his workflow. | CONTEXT: Discussion about AI-native IDEs and workflow optimization.
+
+[2026-04-18] DECISION: GitHub PAT set to no-expiration going forward | REASONING: Previous PAT expired Apr 8 with no warning, silently breaking GitHub MCP tools. No-expiration removes the maintenance burden; security is handled by keeping the token in .mcp.json only. | CONTEXT: PAT renewal session -- new token ghp_tJ92zDf0... issued.
+
+[2026-04-18] DECISION: Wiki ingest runs at every session end by default | REASONING: Karpathy's token throughput shifting from code to knowledge only compounds if sources are consistently ingested. Today's session produced 3 new wiki pages from chat findings alone -- this should be standard practice. | CONTEXT: Karpathy workflow deep-dive + first real wiki ingest of the session.
+
+[2026-04-20] DECISION: SDIC 코스 안내 비유 추가 — 난이도 유지 | REASONING: 김태훈 피드백은 메시징 문제였음. 커리큘럼 깊이는 그대로, 기술 용어 옆에 직관적 비유만 추가 (LangGraph=순서도, RAG=참고서 먼저 펼쳐주기, SQLite=미니 엑셀 DB 등). | CONTEXT: 멤버 대부분이 ChatGPT 채팅창만 써본 수준, Claude 사용 경험 없음.
+
+[2026-04-20] DECISION: 사전 준비 섹션을 6개 하위 토글로 확장 (0-1~0-6) | REASONING: 기존 4줄 체크리스트는 Claude를 써본 적 없는 멤버에게 완전 부족. 프롬프트 4원칙 + CLAUDE.md 25줄 템플릿 + Claude Code 5개 명령 + Warm-up 3개를 페이지에서 학습할 수 있도록. 1주차 세션 전에 온보딩 완료 상태로 도착하는 게 목표. | CONTEXT: SDIC 코스 안내 페이지 전면 재작성 세션.
+
+[2026-04-20] DECISION: 공모전 대체 트랙 이번 학기 운영 안 함 | REASONING: (1) 2학기 리딩 역할 준비를 위해 AI 기반이 먼저 필요, (2) learning curve 없이 공모전 실전은 소모가 큼. 커리큘럼 트랙 집중이 우선. | CONTEXT: 참가비 표에서 공모전 행 삭제, 코스 안내 내 이유 명시.
+
+[2026-04-20] DECISION: YouTube 비즈 구조 확정 — 3채널 (Sing It 파트너십 + AI + 정치 롱폼), 공통 코어 인프라 (Layer 1-5 Python), Sing It MVP 단일 채널로 Phase 1 시작 | REASONING: 악마의 대변인 분석 결과 세 채널 동시 런칭은 시간 제약(주 15-20h) + 채널별 다른 뇌 필요로 무모함. Sing It이 유일하게 closed-form 수익 모델(리퍼럴). 건희 comparative advantage = 인프라 자동화, 영범 = 컨텐츠 판단. | CONTEXT: cheeky-nibbling-valiant 플랜 승인 후 projects/youtube-biz/ 구현 완료. 탁구 제거, Sing It 추가.
+[2026-04-20] CONTEXT UPDATED: CLAUDE.md written.
+
+[2026-04-20] DECISION: Channel brand "First Signal" with handle @firstsignal.kr; wired Loop 1 (daily AI news script generator) at cron "3 8 * * *" | REASONING: 9 name candidates tested; First Signal was only one with zero brand collision on YouTube + Instagram. .kr handle signals Korean market without locking the brand into Korean-only. Loop 1 produces one Shorts script + Instagram caption + thumbnail concepts per day, saved to projects/youtube-biz/channels/first-signal/drafts/. | CONTEXT: /ideate → Loop 2 validation → Loop 1 wire-up.
+[2026-04-20] CONTEXT UPDATED: me.md written.
+[2026-04-20] CONTEXT UPDATED: work.md written.
+[2026-04-20] CONTEXT UPDATED: goals.md written.
+[2026-04-20] CONTEXT UPDATED: current-priorities.md written.
+
+[2026-04-20] DECISION: Final AI channel brand = "First Mover AI", handle @firstmoverai_kr | REASONING: 9 candidates tested — firstmover.ai blocked (Julia McCoy @FirstMoversAI), all 5 alternatives blocked (AI Unlocked, Shift AI, Edge AI, Layer Zero, AI Brief). First Signal was only clean candidate but lacks AI signal. Korean-first audience means English collision irrelevant; "퍼스트무버" already understood in Korean business culture. "AI" added explicitly to name per Keonhee requirement. _kr suffix distinguishes from English @FirstMoversAI (S vs no-S). | CONTEXT: /ideate Loop 2 brand validation session.
+
+[2026-04-21] DECISION: 교수님 이메일 비용 문의 제거 — CCA-F 단락 삭제, Claude Pro 구독비 문의도 삭제 | REASONING: CPN 1차 선정 상태에서 2차 합격 시 CCA-F 응시료 무료 가능성 있음. Claude Pro 구독비는 경영대 학생회장 채널이 더 적합. 교수님 이메일은 감사 + 공모전 보고 + CPN 소식 + 노션 피드백 요청으로 단순화. | CONTEXT: 교수님 이메일 proofread 루프 세션.
+
+[2026-04-21] DECISION: 교수님 이메일 표준 형식 확정 | REASONING: 건희가 직접 작성한 이메일과 대조하여 확정. 인사말: "교수님, 안녕하세요. SDIC 김건희입니다." 서명: "감사합니다.\n김건희 올림". 노션 링크: 마크다운 하이퍼링크 금지, 텍스트 제목 + 줄바꿈 + URL 분리. | CONTEXT: 건희가 직접 수정한 이메일 본문에서 확인.
+
+[2026-04-22] DECISION: Use Business shared calendar for all time blocks going forward | REASONING: Co-worker can view all events in one shared calendar rather than Keonhee's personal primary calendar | CONTEXT: Google Calendar MCP session — Business calendar identified via list_calendars.
+
+[2026-04-22] DECISION: Graphite (colorId 8) as default color for calendar time blocks | REASONING: User requested darkest possible color; Graphite is the darkest neutral in Google Calendar's 11-color palette | CONTEXT: Time block creation session for April 23.
+
+[2026-04-22] DECISION: SDIC tool stack — Gemini Code Assist (free) + optional Codex ($20) instead of Claude Code | REASONING: Claude Code moving to Max ($100+/mo); 12 students × $20 = $240/mo unsustainable. Gemini free tier (6,000 req/day, 1M context, agent mode, MCP) covers 90% of learning needs. MCP ecosystem now open standard — Notion/gemini-grounding/Naver MCP portable to both Codex (AGENTS.md) and Gemini CLI. | CONTEXT: Claude Code Pro removal confirmed in 2% test rollout (April 21-22).
+
+[2026-04-22] DECISION: Teach tool-agnostic agentic patterns in SDIC curriculum, not Claude-specific ones | REASONING: Students who only learn Claude Code will struggle when employers use Cursor, Copilot, or Codex. Pattern-first (MCP, agentic workflows, RAG, LangGraph) is more durable and better for consulting careers. | CONTEXT: SDIC tool stack decision session.
+
+[2026-04-22] DECISION: "Study AI more first" identified as rationalization, not prerequisite | REASONING: Hormozi agent + devil's advocate both concluded independently: 5 built AI projects (LangGraph, RAG, multi-agent) = already top 1% builder at student level. Blocker is publishing fear, not knowledge gap. Structural issue: 2-person partnership where both are in study mode = nobody accountable for uploads. | CONTEXT: Business strategy analysis session — no content uploaded yet despite full pipeline built.
+
+[2026-04-22] DECISION: First Mover AI top content type = speed news flash (20-25 sec, FOMO hook) | REASONING: No Korean channel owns this lane. Algorithm rewards recency + completion rate. 20-25 sec achieves 70%+ completion threshold; 60-sec Shorts are a trap. Korean audience responds to FOMO framing ("한국에 아무도 모른다" style hooks). | CONTEXT: YouTube Shorts virality research via director-agent orchestration (3 parallel sub-agents).
+
+[2026-04-22] DECISION: Built youtube-analyst agent with built-in self-critique loop (not separate qa-agent) | REASONING: Simpler to maintain; 4-dim scoring (data integrity, specificity, actionability, competitive relevance) runs inside the analyst itself. Pass threshold 8.0/10 per dim, max 2 iterations. | CONTEXT: YouTube analytics agent build session.
+
+[2026-04-22] DECISION: All retention thresholds externalized to config/thresholds.yaml — no hardcoded constants | REASONING: YouTube algorithm shifts quarterly. Editable YAML means tuning without code changes. Fields: cliff_drop_pct, hook_window_seconds, hook_max_drop_pct, target_apv_shorts, competitor filters, quota limits, critique pass score. | CONTEXT: youtube-analyst design session.
+
+[2026-04-22] DECISION: Shipped youtube-analyst at B+ (no weekly drift scout, no KPI schema diff detector) | REASONING: Scout alerts only have value if acted on. Channel has 152 views — building monitoring infra before content volume exists is premature optimization. Ship what gets used. | CONTEXT: Grade analysis session -- honest tradeoff accepted.
+
+[2026-04-22] DECISION: n8n Phases 2-7 deferred until Docker Desktop install + reboot | REASONING: Docker requires a system reboot -- cannot be done autonomously. Phase 1 (Mermaid preview) completed this session. All subsequent phases (n8n install, MCP wire-up, workflow build) depend on Docker running. | CONTEXT: n8n + Claude Code setup session -- handoff from prior session.
+
+[2026-04-22] DECISION: Do not edit settings.json with n8n MCP block until API key is in hand | REASONING: n8n API key is shown only once in the UI. Editing the file before having the key requires a second edit round unnecessarily. Hold until key is copied out of n8n. | CONTEXT: Phase 4 gate from n8n setup plan (ok-i-want-to-vectorized-teapot.md).
+
+[2026-04-22] DECISION: Added youtube.readonly OAuth scope alongside youtube.upload for Data API access | REASONING: channels.list and videos.list require read scope. Upload-only token returns 403 insufficientPermissions on read calls. Deleted stale token and re-authed with expanded scopes. | CONTEXT: OAuth debugging — 403 error on channels.list call.
+
+[2026-04-22] DECISION: Replaced n8n entirely with Claude Code Routines + Activepieces | REASONING: n8n requires Docker (system reboot gate, ongoing maintenance) and is not AI-native. Claude Code Routines handle scheduling natively. Activepieces cloud handles visual canvas + Discord webhooks with zero Docker dependency. Research confirmed AI-native tools (Routines, Activepieces) are April 2026 best practices. | CONTEXT: Automation stack redesign session.
+
+[2026-04-22] DECISION: ClickUp MCP auth requires OAuth via new-chat trigger, not `claude mcp auth` | REASONING: `claude mcp auth` command does not exist in Claude Code CLI. HTTP MCPs authenticate by triggering first tool use in a new chat session, which opens browser OAuth flow automatically. After auth, full VS Code restart required to propagate token. | CONTEXT: ClickUp MCP setup debugging.
+
+[2026-04-22] DECISION: ClickUp scope expanded to all channels + AI knowledge sharing (not YouTube biz only) | REASONING: User clarified true scope mid-session: 2 English YouTube channels + 1 AI channel + Instagram + future channels + AI knowledge/news routing for 영범. Single YouTube 비즈 space is insufficient. Structure needs redesign to accommodate full operation. | CONTEXT: User correction — "I'm not just talking about the YouTube business."
+
+[2026-04-22] DECISION: Discord bot required for 영범 coordination (not just Activepieces webhooks) | REASONING: User referenced a Discord bot from a prior session. Push-only Activepieces webhooks are insufficient; need a bot that 영범 can interact with (query current status, receive structured notifications). Architecture TBD. | CONTEXT: User prompt — "I thought I also talked about a Discord bot." at end of session.
+
+[2026-04-22] DECISION: Vling.net clone deferred — content before platform | REASONING: Channel has 152 views. Building a vling-style platform before having content velocity is the wrong order. Revisit after Phase 1 (주 5개 Shorts, 월 수익 검증). Technically feasible in 3 days (Streamlit) to 4 weeks (full Next.js). | CONTEXT: Keonhee asked "can you replicate vling.net" — scoped but deferred.
+
+[2026-04-22] DECISION: Adopt Mermaid as default explanation tool for SDIC teaching, partner discussions, and Claude handoffs | REASONING: Prose hides parallelism, human gates, and failure loops. A diagram compresses ambiguity a paragraph cannot. Free, renders in Notion/GitHub/VS Code, AI-generatable. | CONTEXT: Created `references/diagrams/` with 4 files + reusable `_HOW_TO_CRAFT.md` guide (5 principles, napkin-to-Mermaid workflow, Claude handoff protocol).
+
+[2026-04-22] DECISION: Revised YouTube model to 3 channels — English Viral Repurpose (4 shorts + 1 longform/day), English Song shorts, AI Channel (3 shorts + 1 longform/day). 7:3 split (70% AI study, 30% content). | REASONING: Current-priorities.md model (Sing It partnership + 정치 롱폼) is stale. User clarified new direction during planning; subtitle-swap on viral videos is lower-effort than original-music-translation partnership. | CONTEXT: Diagrammed in `references/diagrams/content-business-pipelines.md`. Not yet written back to current-priorities.md — user chose diagrams-only scope.
+
+[2026-04-22] DECISION: Install n8n self-hosted via Docker + wire Claude Code to it via `czlonkowski/n8n-mcp` MCP server | REASONING: Free unlimited self-host vs $24/mo cloud. MCP server (released early 2026) lets Claude Code generate n8n workflow JSON from plain-English descriptions — no manual node-dragging. User wants to "see what process is running at each moment"; n8n's visual execution log provides exactly this. | CONTEXT: 7-phase plan at `C:\Users\keonh\.claude\plans\ok-i-want-to-vectorized-teapot.md`. Phases 1-2 done/handed off; Phases 3-7 pending Docker Desktop install (requires user reboot).
+
+[2026-04-22] DECISION: Mermaid and n8n serve non-overlapping roles — Mermaid for *explaining*, n8n for *executing* | REASONING: Mermaid diagrams are read-only documentation, perfect for SDIC teaching, LinkedIn, client pitches. n8n is executable workflow automation. Different audiences, different use cases. Keep both. | CONTEXT: Decision emerged when user asked whether auto-generated flowchart tools he saw on YouTube were Mermaid or n8n.
+[2026-04-22] DECISION: SessionStart hook 도입 -- startup + resume 매처, 날짜 + lessons.md 주입 | REASONING: 탭 자주 여는 패턴에 맞게 최소화. lessons.md는 Claude가 세션마다 반드시 알아야 하는 교정 패턴 보유. | CONTEXT: hooks 학습 + 설정 세션.
+[2026-04-22] DECISION: PreToolUse(Bash) 확장 -- git push --force, git reset --hard, git checkout -- 추가 감지 | REASONING: rm -rf만 잡던 기존 hook을 destructive git 커맨드까지 확장. | CONTEXT: 동일 세션.
+
+[2026-04-21] DECISION: Youngbeom 핸드오프 문서를 md 파일로 전달 (Notion 아님) | REASONING: Notion에 붙이면 코드 블록이 깨짐. 단일 파일로 전달하면 바로 쓸 수 있음. | CONTEXT: 영범 1주차 Claude Code 실전 액션 플랜 작성 세션.
+
+[2026-04-21] DECISION: YoungBum_AI repo는 건희의 테스트 레플리카 — 영범 실제 머신이 아님 | REASONING: 건희가 영범 이름으로 셋업 테스트한 것. 영범은 자기 머신에서 처음부터 만들어야 함. 핸드오프 문서도 영범 머신 기준으로 작성. | CONTEXT: 영범 repo 탐색 중 건희가 직접 수정으로 확인.
+
+[2026-04-22] DECISION: Kill n8n entirely — replace with Claude Code Routines + Activepieces | REASONING: Docker Desktop requires reboot (human-blocked). Routines are native to Claude Code (zero infra). Activepieces cloud free tier covers Discord notify + webhook routing. Same outcome, no Docker dependency. Plan archived at `plans/keen-drifting-toucan.md`. | CONTEXT: n8n plan stalled on Docker reboot gate; Routines discovered as simpler native alternative.
+
+[2026-04-22] DECISION: FILE_MAP.md as central file registry, auto-updated by Stop hook | REASONING: With 100+ files modified this session alone, both Claude and 영범 need a navigable index. Stop hook writes `update-file-map.py` on every session end. FILE_MAP_KR.md is Korean version for 영범. | CONTEXT: Automation stack overhaul session — partner needs to understand project structure without Claude Code context.
+
+[2026-04-22] DECISION: /session-end redesigned to be purely mechanical (todo update + one-line log only). /mark added as inline mid-session command for decisions and patterns. /log-decision deleted entirely. | REASONING: End-of-session Claude is the worst-informed (context full, recency bias high). Decisions should be logged at the moment they happen, not at cleanup time. Matches git commit mental model. | CONTEXT: Session-end streamlining session — devil's advocate + web research confirmed the pattern.
+[2026-04-22] CONTEXT UPDATED: stack.md written.
+
+[2026-04-22] DECISION: Planning upgrade direction set — install obra/superpowers plugin, keep GSD for multi-phase projects | REASONING: Current plan mode has no enforced questioning depth, no persistent artifacts, no scope-lock ceremony. Superpowers adds /brainstorm → /write-plan → /execute-plan with PLAN.md + verification.md artifacts. GSD stays for 5+ file multi-phase work with CONTEXT.md lock. | CONTEXT: Planning workflow ideation session — Nate Herk "deep questioning before work" + Jesse Vincent superpowers framework researched.
+
+[2026-04-24] DECISION: /deep-research refactored to delegate Rounds 1+2 to a general-purpose sub-agent; budget cap raised from 20/15 to 40/30 WebSearch/WebFetch. | REASONING: WebSearch/WebFetch are Claude-native (no external API cost) but consume main context + usage limits. Sub-agent delegation isolates search burn so main session stays clean and the cap can be relaxed safely. Also killed the stale "Gemini free tier blocked in Korea" claim — it's available, gemini-grounding MCP already uses the key. | CONTEXT: Session on Google Deep Research MCP support → comparing free deep-research options → testing /deep-research quality on GPT-5.5.

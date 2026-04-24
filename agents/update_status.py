@@ -23,8 +23,36 @@ _HERE = Path(__file__).resolve().parent          # agents/
 PROJECT_ROOT = _HERE.parent                       # MCP_Agentic AI/
 STATUS_FILE = PROJECT_ROOT / "agents" / "status.json"
 
-VALID_AGENTS = ["GEO", "Lead Intel", "SME Diag", "Consulting", "Next Role", "Discord Bot"]
+# Load .env for STATUS_SERVER_URL
+from dotenv import load_dotenv
+for _p in [PROJECT_ROOT / ".env", _HERE / ".env"]:
+    if _p.exists():
+        load_dotenv(dotenv_path=_p)
+        break
+
+STATUS_SERVER_URL = os.environ.get("STATUS_SERVER_URL", "")
+
+VALID_AGENTS = ["GEO", "Lead Intel", "SME Diag", "Consulting", "Next Role", "Discord Bot", "Claude Loop", "youtube-analyst"]
 VALID_STATUSES = ["working", "idle", "done", "blocked"]
+
+
+def _post_to_server(agent_name: str, status: str, task: str) -> None:
+    """POST status update to Railway server. Silent on failure."""
+    if not STATUS_SERVER_URL:
+        return
+    try:
+        import urllib.request
+        import json as _json
+        data = _json.dumps({"agent": agent_name, "status": status, "task": task}).encode()
+        req = urllib.request.Request(
+            f"{STATUS_SERVER_URL.rstrip('/')}/status",
+            data=data,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        urllib.request.urlopen(req, timeout=5)
+    except Exception as e:
+        print(f"[server] post failed (local write still succeeded): {e}")
 
 
 def update(agent_name: str, status: str, task: str) -> None:
@@ -52,6 +80,9 @@ def update(agent_name: str, status: str, task: str) -> None:
     tmp = STATUS_FILE.with_suffix(".json.tmp")
     tmp.write_text(json.dumps(current, ensure_ascii=False, indent=2), encoding="utf-8")
     os.replace(tmp, STATUS_FILE)
+
+    # Also POST to Railway server (cloud dashboard)
+    _post_to_server(agent_name, status, task)
 
     print(f"[{agent_name}] {status} — {task or 'Idle'}")
 

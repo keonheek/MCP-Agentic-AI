@@ -35,18 +35,57 @@ def run_problem_structurer(state: dict) -> dict:
     """LangGraph node. Takes state, returns updated state."""
     client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
-    user_message = (
-        f"Company: {state['company_description']}\n"
-        f"Country: {state.get('country', 'Korea')}\n"
-        f"Problem: {state['problem_statement']}"
+    # Build company context with personalization fields
+    company_context_parts = [
+        f"Company: {state['company_description']}",
+        f"Country: {state.get('country', 'Korea')}",
+    ]
+    if state.get("revenue_krw"):
+        company_context_parts.append(f"Annual Revenue: {state['revenue_krw']}")
+    if state.get("employee_count"):
+        company_context_parts.append(f"Employees: {state['employee_count']}")
+    if state.get("industry"):
+        company_context_parts.append(f"Industry: {state['industry']}")
+    if state.get("founded_year"):
+        company_context_parts.append(f"Founded: {state['founded_year']}")
+
+    text_content = (
+        "\n".join(company_context_parts)
+        + f"\nProblem: {state['problem_statement']}"
     )
+
+    doc_ctx = state.get("document_context")
+    if doc_ctx:
+        if doc_ctx["type"] == "pdf":
+            # Claude native PDF support via base64 document block
+            content = [
+                {
+                    "type": "document",
+                    "source": {
+                        "type": "base64",
+                        "media_type": "application/pdf",
+                        "data": doc_ctx["data"],
+                    },
+                    "title": doc_ctx.get("name", "Attached document"),
+                },
+                {"type": "text", "text": text_content},
+            ]
+        else:
+            # Plain text — prepend as additional context
+            content = (
+                f"{text_content}\n\n"
+                f"[Attached document — {doc_ctx.get('name', 'document')}]\n"
+                f"{doc_ctx['data'][:8000]}"  # cap at 8K chars
+            )
+    else:
+        content = text_content
 
     try:
         response = client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=2048,
+            max_tokens=4096,
             system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": user_message}],
+            messages=[{"role": "user", "content": content}],
         )
         raw = response.content[0].text.strip()
 

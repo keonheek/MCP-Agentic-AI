@@ -1,0 +1,30 @@
+{
+  "corp_name": "세무법인 엑스퍼트",
+  "readiness_score": null,
+  "geo_score": 49,
+  "geo_breakdown": {
+    "citability": 10,
+    "share_of_voice": 7,
+    "ai_bot_access": 20,
+    "ai_policy_file": 0,
+    "org_schema": 0,
+    "content_schema": 0,
+    "naver_presence": 10,
+    "kr_platform_sync": 10,
+    "brand_mention": 10,
+    "sentiment_quality": 6,
+    "crawler_access": 20,
+    "schema_org": 0,
+    "llms_txt": 0,
+    "korean_presence": 20
+  },
+  "sov_competitors": [
+    "세무법인",
+    "엑스퍼트의",
+    "경쟁사",
+    "한국",
+    "세무법인"
+  ],
+  "sov_cited": true,
+  "website_url": "http://taxexpert.kr"
+}

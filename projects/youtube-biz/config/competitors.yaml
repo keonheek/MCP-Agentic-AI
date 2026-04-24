@@ -1,0 +1,20 @@
+my_channel:
+  id: "UCalLyZ2lZVPlnfoTxYzpl8w"
+  name: "Sing It Partnership Channel"
+  language: "ko"
+  format: "shorts"
+  niche: "foreign content translation"  # viral drama clips, interviews, podcasts, memes
+
+seed_keywords:
+  - "해외 드라마 클립 번역"
+  - "외국 인터뷰 한국어 자막"
+  - "해외 밈 번역"
+  - "viral drama clip korean subtitles"
+  - "foreign interview korean translation shorts"
+
+competitor_filters:
+  min_subscribers: 10000
+  max_subscribers: 1000000
+  min_uploads_last_90_days: 3
+  preferred_language: "ko"
+  cache_ttl_days: 7

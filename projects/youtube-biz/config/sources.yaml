@@ -1,0 +1,55 @@
+sources:
+  first_mover_ai_youtube:
+    # 해외 AI 영상 번역용 — Fair Use 기반 재편집
+    viral_channels:
+      - "@mreflow"              # Matt Wolfe
+      - "@aiexplained-official" # AI Explained
+      - "@TwoMinutePapers"
+      - "@mkbhd"                # MKBHD (AI 리뷰만)
+      - "@FireshipIo"
+      - "@AI-Jason"
+      - "@theAIadvantage"
+      - "@LexFridman"           # AI/tech 에피소드
+      - "@DavidShapiroAutomator"
+    search_queries:
+      - "latest AI news"
+      - "Claude 4 update"
+      - "Anthropic announcement"
+      - "GPT new release"
+      - "AI startup launch"
+    min_views_last_7d: 100000
+    max_duration_seconds: 1800  # 30분 이하 원본만
+
+  first_mover_ai_instagram:
+    claude_news:
+      # Anthropic 공식 + Claude 업데이트
+      official_sources:
+        - "https://www.anthropic.com/news"
+        - "https://www.anthropic.com/blog"
+      hackernews_keywords:
+        - "Claude"
+        - "Anthropic"
+        - "MCP"
+        - "Claude Code"
+      twitter_handles:
+        - "@AnthropicAI"
+        - "@alexalbert__"
+    ai_business:
+      sources:
+        - "TechCrunch AI"
+        - "The Information AI"
+        - "Forbes AI"
+      keywords:
+        - "AI funding"
+        - "AI acquisition"
+        - "AI startup"
+        - "AI market"
+    ai_trends:
+      sources:
+        - "Product Hunt AI"
+        - "Hacker News AI"
+        - "Reddit r/singularity"
+        - "Reddit r/LocalLLaMA"
+      benchmark_accounts:
+        - "evolving.ai"
+        - "openai"

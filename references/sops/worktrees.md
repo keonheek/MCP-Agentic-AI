@@ -36,7 +36,7 @@ git worktree add -b langchain ../MCP-Agentic-AI-langchain master
 git worktree list
 
 # Work in main repo as normal
-cd "c:/Users/keonh/OneDrive/바탕 화면/MCP_Agentic AI"
+cd "C:/Users/keonh/Dev/MCP_Agentic_AI"
 
 # Open a worktree in a separate VS Code window
 code "../MCP-Agentic-AI-langchain"

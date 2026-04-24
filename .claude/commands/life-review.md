@@ -1,0 +1,1 @@
+Run the `/life-review` skill. Execute the full two-phase process: sequential 5-step scan (goals vs. reality, weekly health, decision log, Obsidian patterns, emerge), then auto-fix loop for anything that can be resolved autonomously. Save the report to `research/YYYY-MM-DD-life-review.md` and append a summary to today's Obsidian daily note.

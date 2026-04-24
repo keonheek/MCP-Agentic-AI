@@ -1,0 +1,78 @@
+{
+  "first_mover_ai_youtube": {
+    "hooks": [
+      {
+        "id": "news_urgency",
+        "template": "오늘 {company}에서 공개한 {thing} — 한국 사람은 아직 모른다",
+        "score": null,
+        "uses": 0
+      },
+      {
+        "id": "translation_reveal",
+        "template": "{foreign_channel}이 말한 {topic} — 한국어로 그대로 번역해 봤다",
+        "score": null,
+        "uses": 0
+      },
+      {
+        "id": "implication",
+        "template": "이 AI 업데이트가 한국 시장에 의미하는 것 — 3가지",
+        "score": null,
+        "uses": 0
+      },
+      {
+        "id": "tier_question",
+        "template": "지금 AI 1티어 국가는 미국이다. 한국은 몇 티어일까?",
+        "score": null,
+        "uses": 0
+      }
+    ],
+    "cta_templates": [
+      "이 채널은 해외 AI 뉴스를 매일 한국어로 전달합니다. 구독하면 놓치지 않아요.",
+      "더 깊은 분석은 인스타 @firstmoverai_kr 에서"
+    ]
+  },
+  "first_mover_ai_instagram": {
+    "claude_news": [
+      {
+        "id": "anthropic_drop",
+        "template": "Anthropic이 방금 공개한 {feature}",
+        "score": null,
+        "uses": 0
+      },
+      {
+        "id": "claude_update",
+        "template": "Claude {version} 업데이트 — 한눈에 요약",
+        "score": null,
+        "uses": 0
+      }
+    ],
+    "ai_business": [
+      {
+        "id": "funding_news",
+        "template": "{company}가 {amount} 투자를 받았다. 왜 중요한가",
+        "score": null,
+        "uses": 0
+      },
+      {
+        "id": "market_shift",
+        "template": "AI 시장에서 지금 벌어지고 있는 것",
+        "score": null,
+        "uses": 0
+      }
+    ],
+    "ai_trends": [
+      {
+        "id": "trend_spot",
+        "template": "이번 주 AI 트렌드 — 3개만 알아두면 된다",
+        "score": null,
+        "uses": 0
+      },
+      {
+        "id": "tool_reveal",
+        "template": "새로 떠오른 AI 툴 — 이건 써봐야 한다",
+        "score": null,
+        "uses": 0
+      }
+    ]
+  }
+}

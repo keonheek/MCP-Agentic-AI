@@ -1,0 +1,11 @@
+{
+  "approved": true,
+  "flags": [
+    "COMPLETENESS: Fewer than 2 recommendations — audit may be incomplete."
+  ],
+  "geo_score": 49,
+  "brand_sentiment": 0,
+  "recommendations_count": 0,
+  "evidence_quality": "ok",
+  "verdict": "APPROVED — proceed to Reporter"
+}

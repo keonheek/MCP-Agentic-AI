@@ -1,0 +1,173 @@
+{
+  "results": {
+    "ANTHROPIC_API_KEY": {
+      "status": "WARN",
+      "detail": "False"
+    },
+    "YOUTUBE_CLIENT_ID": {
+      "status": "WARN",
+      "detail": "False"
+    },
+    "SINGIT_REFERRAL_BASE_URL": {
+      "status": "WARN",
+      "detail": "False"
+    },
+    "ffmpeg": {
+      "status": "FAIL",
+      "detail": "[WinError 2] 지정된 파일을 찾을 수 없습니다"
+    },
+    "yt-dlp": {
+      "status": "OK",
+      "detail": "2026.03.17"
+    },
+    "faster-whisper": {
+      "status": "OK",
+      "detail": "1.2.1"
+    },
+    "pkg:anthropic": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "pkg:yaml": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "pkg:httpx": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "pkg:googleapiclient": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "dir:config": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "dir:core/layer1_ingestion": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "dir:core/layer2_intelligence": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "dir:core/layer3_media/singit": {
+      "status": "WARN",
+      "detail": "False"
+    },
+    "dir:core/layer4_publishing": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "dir:core/observability": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "dir:pipelines": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "dir:data/inbox": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "dir:data/scripts": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "dir:data/renders": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "dir:logs": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "config:config/channels.yaml": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "config:config/sources.yaml": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "config:config/hook-templates.json": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer1.viral_videos": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer1.claude_news": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer1.business": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer1.ai_news": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer2.ranker": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer2.script": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer2.qa": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer3.downloader": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer3.highlight": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer3.translator": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer4.youtube": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:layer4.dispatcher": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:obs.utm": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:obs.obsidian": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:pipeline.yt": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "import:pipeline.ig": {
+      "status": "OK",
+      "detail": "True"
+    },
+    "pipeline:dry-run": {
+      "status": "OK",
+      "detail": "True"
+    }
+  },
+  "summary": {
+    "ok": 36,
+    "warn": 4,
+    "fail": 1
+  }
+}

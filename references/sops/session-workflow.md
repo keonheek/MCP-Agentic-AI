@@ -6,9 +6,10 @@ _How to use the second brain system effectively every session._
 
 ## Session start (30 seconds)
 
-1. Open VS Code → this project
+1. Open VS Code → this project (or the relevant worktree folder)
 2. Check `context/current-priorities.md` — is anything stale?
-3. Claude loads CLAUDE.md + all context files automatically. No re-explaining needed.
+3. Claude loads CLAUDE.md + context files automatically. No re-explaining needed.
+4. One session = one task. If switching to a different task, `/clear` first or open a new window.
 
 **If priorities have shifted:** Just say "update current priorities: [new focus]" — Claude updates the file.
 
@@ -77,11 +78,24 @@ Branches: `master` (stable), `dev` (integration), `skills` (new skills), `agents
 
 ---
 
+## When to /clear mid-session
+
+`/clear` resets context completely. Use it when:
+- Switching to a different task or project
+- Claude starts contradicting earlier decisions
+- Claude forgets something it said 10 messages ago
+- Response quality degrades noticeably
+- You've finished one sub-task and starting the next
+
+For the same task: stay in session. Only clear when context is genuinely polluted.
+`/compact` is a softer option — compresses history but keeps the gist.
+
 ## End of session
 
 1. Say "session summary" → Claude fills `templates/session-summary.md`
-2. If priorities shifted → update `context/current-priorities.md`
-3. Any big decision made → confirm it's in `decisions/log.md`
+2. `/daily-learn` → capture one lesson/pattern from this session into `tasks/lessons.md`
+3. If priorities shifted → update `context/current-priorities.md`
+4. Any big decision made → confirm it's in `decisions/log.md`
 
 ---
 

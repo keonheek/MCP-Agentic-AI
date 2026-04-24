@@ -66,4 +66,4 @@ def build_graph():
 ## Projects
 
 - `c:/Users/keonh/OneDrive/바탕 화면/FinAgent/` — deployed LangGraph + RAG + Text2SQL system
-- `c:/Users/keonh/OneDrive/바탕 화면/MCP_Agentic AI/demo/` — RAG demo (FastAPI + Pinecone + Supabase)
+- `C:/Users/keonh/Dev/MCP_Agentic_AI/demo/` — RAG demo (FastAPI + Pinecone + Supabase)

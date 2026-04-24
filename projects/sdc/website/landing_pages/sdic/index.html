@@ -39,7 +39,7 @@ html[data-theme="light"] nav.scrolled{background:rgba(242,245,252,.98)}
 .mobile-menu a{display:block;padding:.75rem 0;color:var(--text2);text-decoration:none;font-size:1rem;border-bottom:1px solid var(--border)}
 .mobile-menu.open{display:block}
 #hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;padding-top:var(--nav-h);background:radial-gradient(ellipse 80% 80% at 10% 60%,rgba(30,80,45,.22) 0%,transparent 55%),radial-gradient(ellipse 60% 80% at 90% 20%,rgba(20,60,35,.12) 0%,transparent 55%),var(--bg)}
-html[data-theme="light"] #hero{background:radial-gradient(ellipse 80% 80% at 10% 60%,rgba(27,153,72,.08) 0%,transparent 55%),radial-gradient(ellipse 60% 80% at 90% 20%,rgba(27,153,72,.05) 0%,transparent 55%),var(--bg)}
+html[data-theme="light"] #hero{background:var(--bg)}
 /* Dense star field — visible in screenshots */
 #hero::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background-image:
   radial-gradient(1px 1px at 7% 12%,rgba(255,255,255,.7) 0%,transparent 100%),
@@ -70,14 +70,15 @@ html[data-theme="light"] #hero{background:radial-gradient(ellipse 80% 80% at 10%
   radial-gradient(1.8px 1.8px at 60% 90%,rgba(61,218,112,.65) 0%,transparent 100%)}
 /* Top edge accent lines */
 #hero::after{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(61,218,112,.4) 20%,rgba(61,218,112,.15) 60%,transparent);z-index:3}
-/* Light mode: hide white stars (invisible on light bg), reduce opacity */
-html[data-theme="light"] #hero::before{opacity:.3;filter:invert(1) hue-rotate(180deg)}
+/* Light mode: hide CSS star field — Three.js canvas with multiply blend handles particles */
+html[data-theme="light"] #hero::before{opacity:0}
 /* Side glow */
 .hero-side-glow{position:absolute;left:-120px;top:10%;width:400px;height:400px;background:radial-gradient(circle,rgba(61,218,112,.12) 0%,transparent 65%);pointer-events:none;z-index:1;border-radius:50%}
 #hero-canvas{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.65}
+html[data-theme="light"] #hero-canvas{opacity:1;mix-blend-mode:normal}
 .hero-inner{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:0 5%;width:100%;display:grid;grid-template-columns:1fr 380px;gap:4rem;align-items:center}
 .hero-right-panel{display:flex;flex-direction:column;gap:1rem}
-.hero-panel-card{background:rgba(10,18,32,.85);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:1.25rem 1.5rem;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,.4),0 1px 0 rgba(255,255,255,.04) inset;position:relative}
+.hero-panel-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;backdrop-filter:blur(20px);box-shadow:0 8px 24px rgba(0,0,0,.18);position:relative}
 .hero-panel-card:nth-child(2){margin-left:.5rem;margin-right:-.5rem}
 .hero-panel-card:nth-child(3){margin-left:.25rem}
 .hero-panel-label{font-size:.65rem;font-weight:700;color:var(--green-bright);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem;opacity:.8}
@@ -87,7 +88,7 @@ html[data-theme="light"] #hero::before{opacity:.3;filter:invert(1) hue-rotate(18
 .hero-panel-bar{height:3px;background:var(--border);border-radius:2px;margin-top:1rem;overflow:hidden}
 .hero-panel-bar-fill{height:100%;width:85%;background:linear-gradient(to right,var(--green-bright),var(--green-dim));border-radius:2px}
 .hero-panel-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}
-.hero-panel-tag{font-size:.65rem;font-weight:600;color:var(--text2);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;padding:.2rem .55rem}
+.hero-panel-tag{font-size:.65rem;font-weight:600;color:var(--text2);background:var(--green-faint);border:1px solid var(--border);border-radius:20px;padding:.2rem .55rem}
 @media(max-width:1024px){.hero-inner{grid-template-columns:1fr}.hero-right-panel{display:none}}
 .hero-label{display:inline-flex;align-items:center;gap:.5rem;background:rgba(61,218,112,.08);border:1px solid rgba(61,218,112,.22);border-radius:6px;padding:.35rem .9rem;font-size:.7rem;font-weight:700;color:var(--green-bright);letter-spacing:.12em;text-transform:uppercase;margin-bottom:1.5rem;font-family:"Inter",monospace}
 .hero-dot{width:6px;height:6px;border-radius:50%;background:var(--green-bright);animation:pulse-dot 2s ease-in-out infinite}
@@ -275,13 +276,22 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 5% 
 .president-card::before{content:"“";position:absolute;top:-1rem;left:2rem;font-size:12rem;font-weight:900;color:var(--green-bright);opacity:.07;line-height:1}
 .timeline-step:not(:last-child)::after{content:"";position:absolute;top:12px;left:50%;right:-50%;height:1px;background:var(--border);z-index:0}
 .recruit-box::before{content:"";position:absolute;top:-80px;right:-80px;width:280px;height:280px;background:radial-gradient(circle,rgba(74,222,128,.08) 0%,transparent 70%)}
+/* Light mode CSS particle system */
+#light-particles{display:none;position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+html[data-theme="light"] #light-particles{display:block}
+html[data-theme="light"] #hero-canvas{display:none}
+.lp{position:absolute;border-radius:50%;animation:lp-float linear infinite}
+@keyframes lp-float{0%{transform:translateY(0) translateX(0) scale(1);opacity:var(--op)}
+  33%{transform:translateY(var(--dy1)) translateX(var(--dx1)) scale(1.1);opacity:calc(var(--op)*1.2)}
+  66%{transform:translateY(var(--dy2)) translateX(var(--dx2)) scale(0.9);opacity:calc(var(--op)*.8)}
+  100%{transform:translateY(0) translateX(0) scale(1);opacity:var(--op)}}
 </style>
 </head>
 <body>
 <div id="cursor"></div><div id="cursor-ring"></div>
 <nav id="navbar"><a href="#" class="nav-logo"><div class="logo-mark">S</div>SDIC</a><ul class="nav-links"><li><a href="#about">소개</a></li><li><a href="#teams">팀 구성</a></li><li><a href="#president">학회장</a></li><li><a href="#cases">프로젝트</a></li><li><a href="#methodology">방법론</a></li><li><a href="#recruit">지원하기</a></li></ul><div class="nav-right"><button class="lang-btn active" id="btn-ko" onclick="applyLang('ko')">KO</button><button class="lang-btn" id="btn-en" onclick="applyLang('en')">EN</button><a href="#recruit" class="nav-cta">지원하기</a></div><button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button></nav>
 <div class="mobile-menu" id="mobile-menu"><a href="#about">소개</a><a href="#teams">팀 구성</a><a href="#president">학회장</a><a href="#cases">프로젝트</a><a href="#methodology">방법론</a><a href="#recruit">지원하기</a></div>
-<section id="hero"><canvas id="hero-canvas"></canvas><div class="hero-side-glow"></div><div class="hero-inner"><div class="hero-left"><div class="hero-label"><span class="hero-dot"></span><span>SKKU Digital IT Consulting</span></div><h1 class="hero-h1"><span class="line" id="hero-line-0">전략의 중심에서,</span><span class="line line-accent" id="hero-line-1">디지털의 경계를</span><span class="line" id="hero-line-2">넓히다</span></h1><p class="hero-sub">성균관대학교 경영대학 소속 디지털 IT 컨설팅 학회. 데이터와 전략이 만나는 곳에서 미래의 컨설턴트를 양성합니다.</p><div class="hero-actions"><a href="#recruit" class="btn-primary">지원하기</a><a href="#cases" class="btn-outline">프로젝트 보기</a></div><div class="hero-stats"><div class="stat-item"><div class="stat-num">12<span>명</span></div><div class="stat-label">MEMBERS</div></div><div class="stat-item"><div class="stat-num">3<span>개</span></div><div class="stat-label">TEAMS</div></div><div class="stat-item"><div class="stat-num">1<span>기</span></div><div class="stat-label">2026 COHORT</div></div></div></div><div class="hero-right-panel"><div class="hero-panel-card"><div class="hero-panel-label">활동 현황</div><div class="hero-panel-value"><span>1기</span> 활동 중</div><div class="hero-panel-sub">2026년 3월 20일 OT 완료</div><div class="hero-panel-bar"><div class="hero-panel-bar-fill"></div></div></div><div class="hero-panel-card"><div class="hero-panel-label">팀 구성</div><div class="hero-panel-value">IM · PR · <span>EDU</span></div><div class="hero-panel-sub">3개 팀 / 12명</div><div class="hero-panel-tags"><span class="hero-panel-tag">전략 분석</span><span class="hero-panel-tag">데이터</span><span class="hero-panel-tag">AI 응용</span><span class="hero-panel-tag">대외 홍보</span><span class="hero-panel-tag">교육 설계</span></div></div><div class="hero-panel-card"><div class="hero-panel-label">다음 모집</div><div class="hero-panel-value">2027년 <span>3월</span></div><div class="hero-panel-sub">2기 모집 알림 신청 →</div></div></div></div><div class="scroll-hint">SCROLL</div></section>
+<section id="hero"><canvas id="hero-canvas"></canvas><div id="light-particles"></div><div class="hero-side-glow"></div><div class="hero-inner"><div class="hero-left"><div class="hero-label"><span class="hero-dot"></span><span>SKKU Digital IT Consulting</span></div><h1 class="hero-h1"><span class="line" id="hero-line-0">전략의 중심에서,</span><span class="line line-accent" id="hero-line-1">디지털의 경계를</span><span class="line" id="hero-line-2">넓히다</span></h1><p class="hero-sub">성균관대학교 경영대학 소속 디지털 IT 컨설팅 학회. 데이터와 전략이 만나는 곳에서 미래의 컨설턴트를 양성합니다.</p><div class="hero-actions"><a href="#recruit" class="btn-primary">지원하기</a><a href="#cases" class="btn-outline">프로젝트 보기</a></div><div class="hero-stats"><div class="stat-item"><div class="stat-num">12<span>명</span></div><div class="stat-label">MEMBERS</div></div><div class="stat-item"><div class="stat-num">3<span>개</span></div><div class="stat-label">TEAMS</div></div><div class="stat-item"><div class="stat-num">1<span>기</span></div><div class="stat-label">2026 COHORT</div></div></div></div><div class="hero-right-panel"><div class="hero-panel-card"><div class="hero-panel-label">활동 현황</div><div class="hero-panel-value"><span>1기</span> 활동 중</div><div class="hero-panel-sub">2026년 3월 20일 OT 완료</div><div class="hero-panel-bar"><div class="hero-panel-bar-fill"></div></div></div><div class="hero-panel-card"><div class="hero-panel-label">팀 구성</div><div class="hero-panel-value">IM · PR · <span>EDU</span></div><div class="hero-panel-sub">3개 팀 / 12명</div><div class="hero-panel-tags"><span class="hero-panel-tag">전략 분석</span><span class="hero-panel-tag">데이터</span><span class="hero-panel-tag">AI 응용</span><span class="hero-panel-tag">대외 홍보</span><span class="hero-panel-tag">교육 설계</span></div></div><div class="hero-panel-card"><div class="hero-panel-label">다음 모집</div><div class="hero-panel-value">2027년 <span>3월</span></div><div class="hero-panel-sub">2기 모집 알림 신청 →</div></div></div></div><div class="scroll-hint">SCROLL</div></section>
 <div class="trust-bar"><div class="trust-bar-inner"><span class="trust-bar-label">Affiliated with</span><div class="trust-bar-divider"></div><div class="trust-badge"><div class="badge-icon">S</div>성균관대학교</div><div class="trust-badge"><div class="badge-icon">경</div>경영대학 공식</div><div class="trust-badge"><div class="badge-icon">IT</div>DIGITAL IT</div><div class="trust-bar-divider"></div><span class="trust-badge" style="color:var(--green-bright);font-size:.7rem">&#9679; 2026 1기 활동 중</span></div></div>
 <section id="about"><span class="ghost-num">01</span><div class="section-inner"><div class="section-label">About SDIC</div><div class="about-stat-callout reveal"><div class="callout-num">12</div><div class="callout-text"><h3>명이 함께 컨설팅을 배웁니다</h3><p>성균관대학교 경영대학 공식 학회. IM, PR, EDU 3개 팀이 유기적으로 협력하여 실전 컨설팅 프로젝트를 수행합니다.</p></div></div><div class="about-grid"><div class="about-text reveal"><h2 class="section-title">전략과 디지털, 두 언어를 모두 구사합니다</h2><p>SDIC(SKKU Digital IT Consulting)는 성균관대학교 경영대학 소속 학회입니다. 컨설팅 방법론과 디지털 기술을 결합하여 실제 비즈니스 문제를 해결하는 경험을 쌍습니다.</p><p>단순한 케이스 스터디를 넘어, AI 도구와 데이터 분석을 활용한 실전 프로젝트를 수행합니다.</p></div><div class="about-pillars"><div class="pillar-card reveal delay-1"><div class="pillar-icon-box">&#9881;</div><div class="pillar-title">전략 컨설팅</div><div class="pillar-desc">MECE 프레임워크, 이슈 트리, McKinsey 방식의 문제 구조화</div></div><div class="pillar-card reveal delay-2"><div class="pillar-icon-box" style="background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.2)">&#128202;</div><div class="pillar-title">데이터 분석</div><div class="pillar-desc">Python, SQL, 통계 모델링을 활용한 인사이트 도출</div></div><div class="pillar-card reveal delay-3"><div class="pillar-icon-box" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.2)">&#129302;</div><div class="pillar-title">AI 응용</div><div class="pillar-desc">LLM, RAG, 에이전트 AI를 비즈니스 문제에 적용</div></div><div class="pillar-card reveal delay-4"><div class="pillar-icon-box" style="background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2)">&#128101;</div><div class="pillar-title">팀 협업</div><div class="pillar-desc">실제 컨설팅 팀처럼 협력하고 결과물을 발표하는 경험</div></div></div></div></div></section>
 <div class="metrics-strip"><div class="metrics-track"><span class="metric-item"><span class="m-val">12</span>명 활동 중</span><span class="metric-item"><span class="m-val">3</span>개 팀</span><span class="metric-item"><span class="m-val">1</span>기 코호트</span><span class="metric-item"><span class="m-val">4</span>개 실전 프로젝트</span><span class="metric-item"><span class="m-val">5</span>단계 방법론</span><span class="metric-item"><span class="m-val">2026</span>년 출범</span><span class="metric-item"><span class="m-val">12</span>명 활동 중</span><span class="metric-item"><span class="m-val">3</span>개 팀</span><span class="metric-item"><span class="m-val">1</span>기 코호트</span><span class="metric-item"><span class="m-val">4</span>개 실전 프로젝트</span><span class="metric-item"><span class="m-val">5</span>단계 방법론</span><span class="metric-item"><span class="m-val">2026</span>년 출범</span></div></div>
@@ -356,13 +366,16 @@ requestAnimationFrame(function(){document.querySelectorAll(".reveal").forEach(fu
     var isLight=theme==="light";
     // In light mode: transparent canvas, dark particles (visible on light bg)
     // In dark mode: opaque dark canvas, white additive particles
-    renderer.setClearColor(isLight?BG_LIGHT:BG_DARK, isLight?0:1);
+    renderer.setClearColor(isLight?BG_LIGHT:BG_DARK, 1);
     scene.fog = isLight ? null : new THREE.FogExp2(BG_DARK, 0.0006);
     bgP.material.map=isLight?spriteDark:spriteWhite;
     bgP.material.blending=isLight?THREE.NormalBlending:THREE.AdditiveBlending;
-    bgP.material.opacity=isLight?0.45:1;
+    bgP.material.opacity=isLight?0.85:1;
+    bgP.material.size=isLight?5:3.5;
     bgP.material.needsUpdate=true;
-    fgP.material.opacity=isLight?0.6:1;
+    fgP.material.blending=isLight?THREE.NormalBlending:THREE.AdditiveBlending;
+    fgP.material.opacity=isLight?0.9:1;
+    fgP.material.size=isLight?7:5;
     fgP.material.needsUpdate=true;
   }
   window._threeApplyTheme=applyTheme;
@@ -373,13 +386,13 @@ requestAnimationFrame(function(){document.querySelectorAll(".reveal").forEach(fu
 
     // Build sprites once
     spriteWhite=makeSprite(255,255,255,0.9);
-    spriteDark=makeSprite(30,50,80,0.85);   // dark navy — visible on light bg
-    spriteGreen=makeSprite(61,218,112,0.9);
+    spriteDark=makeSprite(8,20,50,1.0);     // very deep navy — maximum contrast on light bg
+    spriteGreen=makeSprite(27,153,72,0.95); // darker green for light mode visibility
 
     renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:false});
     renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
     renderer.setSize(window.innerWidth,window.innerHeight);
-    renderer.setClearColor(isLightInit?BG_LIGHT:BG_DARK,isLightInit?0:1);
+    renderer.setClearColor(isLightInit?BG_LIGHT:BG_DARK,1);
 
     scene=new THREE.Scene();
     // No fog in light mode — let CSS bg handle depth; in dark mode fog adds depth
@@ -388,14 +401,14 @@ requestAnimationFrame(function(){document.querySelectorAll(".reveal").forEach(fu
     camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,.1,2000);
     camera.position.z=500;
 
-    // BG particles — white additive in dark, dark navy normal in light
-    bgP=makeP(2200,1600,3.5,isLightInit?spriteDark:spriteWhite,
+    // BG particles — white additive in dark, dark navy normal in light (larger+denser for visibility)
+    bgP=makeP(2200,1600,isLightInit?5:3.5,isLightInit?spriteDark:spriteWhite,
               isLightInit?THREE.NormalBlending:THREE.AdditiveBlending);
-    if(isLightInit){bgP.material.opacity=0.45;}
+    if(isLightInit){bgP.material.opacity=0.85;}
 
-    // FG green particles — works on both modes
-    fgP=makeP(280,800,5,spriteGreen,THREE.AdditiveBlending);
-    if(isLightInit){fgP.material.opacity=0.6;}
+    // FG green particles — NormalBlending in light mode too for visibility, larger for contrast
+    fgP=makeP(280,800,isLightInit?7:5,spriteGreen,isLightInit?THREE.NormalBlending:THREE.AdditiveBlending);
+    if(isLightInit){fgP.material.opacity=0.9;}
 
     scene.add(bgP);scene.add(fgP);
 
@@ -416,6 +429,54 @@ requestAnimationFrame(function(){document.querySelectorAll(".reveal").forEach(fu
   }catch(e){if(canvas)canvas.style.display="none";}
 })();
 (function(){if(typeof gsap==="undefined")return;gsap.from(["#hero-line-0","#hero-line-1","#hero-line-2"],{y:40,opacity:0,duration:.9,stagger:.12,ease:"power3.out",delay:.2});})();
+// CSS particle system for light mode (Three.js replaced — SwiftShader can't render transparent WebGL)
+(function(){
+  var container=document.getElementById("light-particles");
+  if(!container)return;
+  var particles=[
+    {x:7,y:12,s:4,op:.55,dur:8,dy1:-18,dx1:10,dy2:-8,dx2:-12,c:"navy"},
+    {x:18,y:28,s:3,op:.45,dur:11,dy1:-12,dx1:-8,dy2:-20,dx2:6,c:"navy"},
+    {x:32,y:8,s:5,op:.6,dur:9,dy1:-22,dx1:14,dy2:-10,dx2:-10,c:"navy"},
+    {x:47,y:18,s:3.5,op:.5,dur:13,dy1:-15,dx1:-6,dy2:-25,dx2:8,c:"navy"},
+    {x:63,y:6,s:4,op:.55,dur:10,dy1:-20,dx1:8,dy2:-12,dx2:-14,c:"navy"},
+    {x:78,y:14,s:5,op:.65,dur:7,dy1:-10,dx1:-12,dy2:-22,dx2:10,c:"navy"},
+    {x:88,y:30,s:3,op:.45,dur:14,dy1:-18,dx1:6,dy2:-8,dx2:-8,c:"navy"},
+    {x:94,y:8,s:4,op:.58,dur:9,dy1:-14,dx1:-10,dy2:-20,dx2:12,c:"navy"},
+    {x:12,y:42,s:3.5,op:.48,dur:12,dy1:-20,dx1:8,dy2:-10,dx2:-6,c:"navy"},
+    {x:55,y:38,s:3,op:.4,dur:15,dy1:-12,dx1:-14,dy2:-18,dx2:8,c:"navy"},
+    {x:72,y:45,s:4,op:.52,dur:8,dy1:-16,dx1:12,dy2:-8,dx2:-10,c:"navy"},
+    {x:3,y:65,s:4.5,op:.5,dur:11,dy1:-10,dx1:-8,dy2:-20,dx2:14,c:"navy"},
+    {x:28,y:72,s:3,op:.44,dur:13,dy1:-22,dx1:6,dy2:-12,dx2:-8,c:"navy"},
+    {x:42,y:58,s:3.5,op:.48,dur:10,dy1:-14,dx1:-10,dy2:-22,dx2:6,c:"navy"},
+    {x:83,y:62,s:4,op:.52,dur:9,dy1:-18,dx1:8,dy2:-10,dx2:-12,c:"navy"},
+    {x:96,y:55,s:3,op:.42,dur:14,dy1:-12,dx1:-6,dy2:-20,dx2:10,c:"navy"},
+    {x:16,y:88,s:3.5,op:.48,dur:11,dy1:-20,dx1:10,dy2:-8,dx2:-8,c:"navy"},
+    {x:38,y:82,s:3,op:.42,dur:12,dy1:-16,dx1:-12,dy2:-22,dx2:6,c:"navy"},
+    {x:67,y:78,s:4,op:.5,dur:8,dy1:-10,dx1:8,dy2:-18,dx2:-14,c:"navy"},
+    {x:90,y:85,s:4.5,op:.55,dur:10,dy1:-14,dx1:-8,dy2:-10,dx2:12,c:"navy"},
+    // green accent
+    {x:22,y:18,s:6,op:.85,dur:9,dy1:-20,dx1:12,dy2:-10,dx2:-8,c:"green"},
+    {x:51,y:33,s:5,op:.75,dur:12,dy1:-14,dx1:-10,dy2:-22,dx2:10,c:"green"},
+    {x:75,y:52,s:6,op:.8,dur:8,dy1:-18,dx1:8,dy2:-8,dx2:-12,c:"green"},
+    {x:10,y:75,s:5,op:.7,dur:13,dy1:-12,dx1:-6,dy2:-20,dx2:8,c:"green"},
+    {x:60,y:90,s:5.5,op:.75,dur:11,dy1:-22,dx1:10,dy2:-12,dx2:-10,c:"green"}
+  ];
+  var navyColor="rgba(8,20,50,1)",greenColor="rgba(19,112,53,1)";
+  var html=particles.map(function(p,i){
+    var color=p.c==="green"?greenColor:navyColor;
+    var delay=(i*.37)%p.dur;
+    return '<span class="lp" style="left:'+p.x+'%;top:'+p.y+'%;width:'+p.s+'px;height:'+p.s+'px;background:'+color+';--op:'+p.op+';--dy1:'+p.dy1+'px;--dx1:'+p.dx1+'px;--dy2:'+p.dy2+'px;--dx2:'+p.dx2+'px;animation-duration:'+p.dur+'s;animation-delay:-'+delay+'s"></span>';
+  }).join("");
+  container.innerHTML=html;
+  // Parallax on mousemove
+  document.addEventListener("mousemove",function(e){
+    var mx=(e.clientX/window.innerWidth-.5)*20;
+    var my=(e.clientY/window.innerHeight-.5)*20;
+    container.style.transform="translate("+mx+"px,"+my+"px)";
+  });
+  // Re-init on theme toggle
+  window._lightParticlesInit=function(){};
+})();
 </script>
 </body>
 </html>

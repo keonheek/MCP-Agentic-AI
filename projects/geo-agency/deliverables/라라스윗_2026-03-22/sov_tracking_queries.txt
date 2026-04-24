@@ -1,0 +1,46 @@
+# SoV Tracking Queries — 라라스윗
+# Generated: 2026-03-22
+#
+# Instructions / 사용법:
+# 1. Run each query in ChatGPT + Perplexity once per month
+# 2. Record: date | query | mentioned (Y/N) | competitors mentioned | screenshot
+# 3. Calculate SoV = (mentions / total queries) * 100
+
+# =====================================================================
+🤖 Korean Queries / 한국어 쿼리
+# =====================================================================
+라라스윗 어떤 회사인가요?
+팝콘 추천 회사 한국
+한국 팝콘 업체 추천해주세요
+팝콘 분야 최고 기업은?
+라라스윗 제품 특징
+한국에서 팝콘 잘하는 회사
+팝콘 비교 한국 기업
+
+# =====================================================================
+🌐 English Queries / 영어 쿼리
+# =====================================================================
+What is 라라스윗?
+Best 팝콘 companies in Korea
+Korean 팝콘 companies recommended
+라라스윗 products and services
+Top 팝콘 suppliers Korea
+
+# =====================================================================
+⚔️  Competitor Comparison Queries / 경쟁사 비교 쿼리
+# =====================================================================
+라라스윗 vs 주요
+주요 대안 추천
+라라스윗 vs 경쟁사
+경쟁사 대안 추천
+라라스윗 vs 저당
+저당 대안 추천
+
+# =====================================================================
+📊 Scoring Template / 점수 기록 양식
+# =====================================================================
+# Format: Date | Query | Mentioned (Y/N) | Competitors Mentioned | Notes
+# Example: 2026-03-22 | 라라스윗 어떤 회사인가요? | Y | CompA, CompB | Screenshot saved
+
+# Monthly SoV Score = (number of Y responses / total queries run) * 100
+# Target: > 30% SoV within 6 months of full GEO implementation

@@ -17,7 +17,7 @@ This plan answers all three and defines the execution path to first revenue.
 
 **How to run:**
 ```bash
-cd "c:/Users/keonh/OneDrive/바탕 화면/MCP_Agentic AI/projects/geo-agency"
+cd "C:/Users/keonh/Dev/MCP_Agentic_AI/projects/geo-agency"
 streamlit run app.py
 # Enter: 에이스침대 / 침대 매트리스
 ```

@@ -11,6 +11,7 @@ Status colors:
 import sys
 import json
 import time
+import os
 from pathlib import Path
 from datetime import datetime
 
@@ -23,7 +24,8 @@ import streamlit as st
 # ---------------------------------------------------------------------------
 _HERE = Path(__file__).resolve().parent
 _PROJECT_ROOT = _HERE.parent.parent
-STATUS_FILE = _PROJECT_ROOT / "agents" / "status.json"
+STATUS_FILE   = _PROJECT_ROOT / "agents" / "status.json"
+REGISTRY_FILE = _PROJECT_ROOT / "tasks" / "orchestrator_registry.json"
 
 # ---------------------------------------------------------------------------
 # Agent config
@@ -35,6 +37,7 @@ AGENTS = [
     {"name": "Consulting", "icon": "📊", "project": "consulting-emulation"},
     {"name": "Next Role",  "icon": "🎯", "project": "next-ai-role"},
     {"name": "Discord Bot","icon": "💬", "project": "tools/discord-bot"},
+    {"name": "Claude Loop", "icon": "⚙️",  "project": "loop"},
 ]
 
 # Status → color + label
@@ -57,6 +60,24 @@ def load_status() -> dict:
         return json.loads(STATUS_FILE.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return {}
+
+
+def load_registry() -> dict:
+    if not REGISTRY_FILE.exists():
+        return {}
+    try:
+        return json.loads(REGISTRY_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def pid_alive(pid: int) -> bool:
+    """Check if a PID is still running (cross-platform)."""
+    try:
+        os.kill(pid, 0)
+        return True
+    except (OSError, ProcessLookupError):
+        return False
 
 
 def relative_time(iso_str: str) -> str:
@@ -171,6 +192,73 @@ st.markdown(f"""
 # ---------------------------------------------------------------------------
 for agent in AGENTS:
     render_card(agent, status_data.get(agent["name"], {}))
+
+# ---------------------------------------------------------------------------
+# Orchestrator registry
+# ---------------------------------------------------------------------------
+registry = load_registry()
+
+st.markdown("---")
+st.markdown("""
+<div style="font-family:monospace; font-size:0.8em; color:#888899; margin-bottom:0.5rem; letter-spacing:1px;">
+    RUNNING ORCHESTRATORS
+</div>
+""", unsafe_allow_html=True)
+
+if not registry:
+    st.markdown("""
+    <div style="
+        background:#0f0f1e;
+        border:1px dashed #222233;
+        border-radius:5px;
+        padding:10px 16px;
+        font-family:monospace;
+        font-size:0.82em;
+        color:#333344;
+        margin-bottom:1rem;
+    ">No orchestrators running — start one with:<br>
+    <span style="color:#555566;">python tools/orchestrator.py --name "GEO" --command "/execute-next" --interval 300</span>
+    </div>
+    """, unsafe_allow_html=True)
+else:
+    for orch_name, info in registry.items():
+        alive   = pid_alive(info.get("pid", -1))
+        dot_col = "#00CC44" if alive else "#555566"
+        label   = "RUNNING" if alive else "DEAD"
+        runs    = info.get("runs", 0)
+        started = relative_time(info.get("started_at", ""))
+        cmd     = info.get("command", "?")
+        pid     = info.get("pid", "?")
+
+        st.markdown(f"""
+        <div style="
+            background:#141420;
+            border:1.5px solid {dot_col};
+            border-radius:5px;
+            padding:10px 16px;
+            margin-bottom:8px;
+            font-family:monospace;
+            font-size:0.82em;
+        ">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#ffffff; font-weight:bold;">
+                    ⚙️&nbsp;&nbsp;{orch_name}
+                </span>
+                <span style="
+                    color:{dot_col};
+                    border:1px solid {dot_col};
+                    border-radius:3px;
+                    padding:2px 8px;
+                    font-size:0.72em;
+                    letter-spacing:1.5px;
+                ">{'●' if alive else '○'} {label}</span>
+            </div>
+            <div style="color:#888899; margin-top:6px;">
+                {runs} runs &nbsp;·&nbsp; cmd: <span style="color:#ccccdd;">{cmd}</span> &nbsp;·&nbsp; started {started}
+            </div>
+            <div style="color:#333344; font-size:0.9em; margin-top:2px;">PID {pid}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
 # Auto-refresh

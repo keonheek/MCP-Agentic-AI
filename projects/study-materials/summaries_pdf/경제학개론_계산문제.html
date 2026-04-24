@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>경제학개론 계산문제 20선</title>
+  <style>
+    body { font-family: 'Malgun Gothic', sans-serif; font-size: 11pt; line-height: 1.7; color: #212121; max-width: 900px; margin: 0 auto; padding: 20px; }
+    h1 { color: #1a237e; border-bottom: 2px solid #1a237e; padding-bottom: 8px; }
+    h2 { color: #283593; font-size: 13pt; margin-top: 28px; border-left: 3px solid #5c6bc0; padding-left: 8px; }
+    h3 { color: #37474f; font-size: 11.5pt; }
+    .problem { background: #f8f9ff; border: 1px solid #c5cae9; border-radius: 6px; padding: 14px 18px; margin: 16px 0; }
+    .problem-title { font-weight: bold; color: #1a237e; margin-bottom: 8px; font-size: 12pt; }
+    .solution { background: #f1f8e9; border-left: 3px solid #558b2f; padding: 10px 14px; margin-top: 10px; border-radius: 0 4px 4px 0; }
+    .answer { font-weight: bold; color: #1b5e20; margin-top: 6px; }
+    strong { color: #b71c1c; }
+    .graph-container { text-align: center; margin: 20px 0; }
+    .graph-caption { font-size: 10pt; color: #555; margin-top: 6px; font-style: italic; }
+    svg text { font-family: 'Malgun Gothic', sans-serif; }
+    @page { size: A4; margin: 2cm; }
+    .step { margin: 4px 0; padding-left: 16px; border-left: 2px solid #c8e6c9; }
+    .formula { background: #fff9c4; border: 1px solid #f9a825; border-radius: 4px; padding: 4px 10px; display: inline-block; margin: 4px 0; font-family: monospace; font-size: 11pt; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0; }
+    th { background: #e8eaf6; color: #1a237e; padding: 6px 10px; border: 1px solid #c5cae9; }
+    td { padding: 6px 10px; border: 1px solid #c5cae9; }
+    .chapter-header { background: #1a237e; color: #fff; padding: 8px 14px; border-radius: 6px 6px 0 0; margin-top: 32px; margin-bottom: 0; font-size: 13pt; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>경제학개론 — 계산문제 20선 (풀이 포함)</h1>
+<p style="color:#555; font-size:10pt;">각 문제를 먼저 직접 풀어보고, 풀이와 비교하세요. 수식은 노란 박스, 최종 정답은 초록색으로 표시됩니다.</p>
+
+<!-- ===== CH2 PPF ===== -->
+<div class="chapter-header">2장 — 생산가능곡선(PPF) 계산</div>
+
+<!-- PPF 그래프 -->
+<div class="graph-container">
+<svg width="320" height="260" viewBox="0 0 320 260">
+  <!-- 축 -->
+  <line x1="50" y1="210" x2="290" y2="210" stroke="#333" stroke-width="1.5"/>
+  <line x1="50" y1="20" x2="50" y2="210" stroke="#333" stroke-width="1.5"/>
+  <!-- 화살표 -->
+  <polygon points="290,206 300,210 290,214" fill="#333"/>
+  <polygon points="46,20 50,10 54,20" fill="#333"/>
+  <!-- PPF 직선: X절편(재화A=80) → Y절편(재화B=40) -->
+  <!-- X=80: x_px = 50 + 80*(230/100) = 50+184=234, Y=40: y_px = 210 - 40*(180/50) = 210-144=66 -->
+  <!-- X절편(0,40)→(80,0): map A[0-80] to px[50-280], B[0-40] to px[210-50] -->
+  <!-- A_px = 50 + A*2.75, B_px = 210 - B*4 -->
+  <!-- A=0→x=50, B=40→y=50; A=80→x=270, B=0→y=210 -->
+  <line x1="50" y1="50" x2="270" y2="210" stroke="#1a237e" stroke-width="2.5"/>
+  <!-- 현재 생산점 (A=60, B=10): x=50+60*2.75=215, y=210-10*4=170 -->
+  <circle cx="215" cy="170" r="5" fill="#e53935"/>
+  <!-- 이동 지점 (A=40, B=30): x=50+40*2.75=160, y=210-30*4=90 -->
+  <circle cx="160" cy="90" r="5" fill="#43a047"/>
+  <!-- 화살표 이동 표시 -->
+  <line x1="215" y1="170" x2="160" y2="90" stroke="#888" stroke-width="1" stroke-dasharray="5,3"/>
+  <!-- 레이블 -->
+  <text x="270" y="225" font-size="11" fill="#333">재화A</text>
+  <text x="8" y="25" font-size="11" fill="#333">재화B</text>
+  <text x="260" y="205" font-size="10" fill="#1a237e">80</text>
+  <text x="30" y="54" font-size="10" fill="#1a237e">40</text>
+  <text x="218" y="165" font-size="10" fill="#e53935">(60,10)</text>
+  <text x="118" y="88" font-size="10" fill="#43a047">(40,30)</text>
+  <text x="120" y="160" font-size="10" fill="#888">ΔA=−20</text>
+  <text x="170" y="135" font-size="10" fill="#888">ΔB=+10</text>
+  <text x="80" y="245" font-size="10" fill="#555">기울기 = −ΔB/ΔA = 기회비용</text>
+</svg>
+<div class="graph-caption">PPF 직선 — 재화A 기준 기회비용 = 기울기의 절댓값</div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 1 (2장) — PPF 직선에서 기회비용</div>
+  <p>어떤 경제의 PPF가 <strong>직선</strong>이다. 재화A 최대 생산량은 80개, 재화B 최대 생산량은 40개이다.<br>
+  재화A 1개를 추가로 생산할 때의 <strong>기회비용(재화B 기준)</strong>은 얼마인가?</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> PPF 직선의 방정식을 구한다.<br>
+    X절편 = 80(재화A), Y절편 = 40(재화B) → 방정식: <span class="formula">A/80 + B/40 = 1</span></div>
+    <div class="step"><b>Step 2.</b> B에 대해 정리: <span class="formula">B = 40 − (40/80)A = 40 − 0.5A</span></div>
+    <div class="step"><b>Step 3.</b> 재화A 1단위 증가 시 재화B 감소량 = 기울기의 절댓값 = <span class="formula">|ΔB/ΔA| = 0.5</span></div>
+    <div class="answer">정답: 재화A 1개의 기회비용 = <strong>재화B 0.5개</strong></div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 2 (2장) — PPF 두 점 사이의 기회비용</div>
+  <p>PPF 위의 두 점이 <strong>(재화A=60, 재화B=20)</strong>과 <strong>(재화A=40, 재화B=30)</strong>이다.<br>
+  이 구간에서 재화A 1개를 추가 생산할 때의 기회비용은?</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 재화A 변화량: ΔA = 60 − 40 = +20 (A 증가)</div>
+    <div class="step"><b>Step 2.</b> 재화B 변화량: ΔB = 20 − 30 = −10 (B 감소)</div>
+    <div class="step"><b>Step 3.</b> 재화A 1개당 기회비용: <span class="formula">|ΔB/ΔA| = 10/20 = 0.5</span></div>
+    <div class="answer">정답: 재화A 1개의 기회비용 = <strong>재화B 0.5개</strong></div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 3 (2장) — PPF 방정식으로 기회비용 계산</div>
+  <p>어떤 경제의 PPF 방정식이 <strong>2A + 4B = 80</strong>이다.<br>
+  현재 A=10, B=15를 생산하고 있다. 재화A를 <strong>10개 추가</strong> 생산하려면 재화B를 몇 개 포기해야 하는가?</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 방정식을 B에 대해 정리: <span class="formula">B = (80 − 2A) / 4 = 20 − 0.5A</span></div>
+    <div class="step"><b>Step 2.</b> A = 10일 때: B = 20 − 0.5×10 = 20 − 5 = <b>15</b> ✓ (현재 위치 확인)</div>
+    <div class="step"><b>Step 3.</b> A = 20(10개 추가)일 때: B = 20 − 0.5×20 = 20 − 10 = <b>10</b></div>
+    <div class="step"><b>Step 4.</b> 포기해야 할 B: 15 − 10 = <b>5개</b></div>
+    <div class="answer">정답: 재화B <strong>5개</strong> 포기 (재화A 10개의 기회비용 = 재화B 5개)</div>
+  </div>
+</div>
+
+<!-- ===== CH3 비교우위 ===== -->
+<div class="chapter-header">3장 — 비교우위 계산</div>
+
+<!-- 비교우위 생산가능표 그래프 -->
+<div class="graph-container">
+<svg width="460" height="200" viewBox="0 0 460 200">
+  <!-- 배경 -->
+  <rect x="10" y="10" width="440" height="180" rx="6" fill="#f9f9ff" stroke="#c5cae9" stroke-width="1"/>
+  <!-- 제목 -->
+  <text x="230" y="35" font-size="12" font-weight="bold" fill="#1a237e" text-anchor="middle">비교우위 — 기회비용 비교</text>
+  <!-- 테이블 헤더 -->
+  <rect x="30" y="50" width="90" height="28" fill="#e8eaf6" stroke="#c5cae9"/>
+  <rect x="120" y="50" width="100" height="28" fill="#e8eaf6" stroke="#c5cae9"/>
+  <rect x="220" y="50" width="100" height="28" fill="#e8eaf6" stroke="#c5cae9"/>
+  <rect x="320" y="50" width="120" height="28" fill="#e8eaf6" stroke="#c5cae9"/>
+  <text x="75" y="69" font-size="10" fill="#1a237e" text-anchor="middle">국가</text>
+  <text x="170" y="69" font-size="10" fill="#1a237e" text-anchor="middle">쌀 기회비용</text>
+  <text x="270" y="69" font-size="10" fill="#1a237e" text-anchor="middle">자동차 기회비용</text>
+  <text x="380" y="69" font-size="10" fill="#1a237e" text-anchor="middle">비교우위</text>
+  <!-- 한국 행 -->
+  <rect x="30" y="78" width="90" height="28" fill="#fff" stroke="#c5cae9"/>
+  <rect x="120" y="78" width="100" height="28" fill="#fff3e0" stroke="#c5cae9"/>
+  <rect x="220" y="78" width="100" height="28" fill="#fff" stroke="#c5cae9"/>
+  <rect x="320" y="78" width="120" height="28" fill="#e8f5e9" stroke="#c5cae9"/>
+  <text x="75" y="97" font-size="10" fill="#333" text-anchor="middle">한국</text>
+  <text x="170" y="97" font-size="10" fill="#e65100" text-anchor="middle" font-weight="bold">자동차 0.2대 ✓</text>
+  <text x="270" y="97" font-size="10" fill="#333" text-anchor="middle">쌀 5kg</text>
+  <text x="380" y="97" font-size="10" fill="#2e7d32" text-anchor="middle" font-weight="bold">쌀</text>
+  <!-- 일본 행 -->
+  <rect x="30" y="106" width="90" height="28" fill="#fff" stroke="#c5cae9"/>
+  <rect x="120" y="106" width="100" height="28" fill="#fff" stroke="#c5cae9"/>
+  <rect x="220" y="106" width="100" height="28" fill="#fff3e0" stroke="#c5cae9"/>
+  <rect x="320" y="106" width="120" height="28" fill="#e8f5e9" stroke="#c5cae9"/>
+  <text x="75" y="125" font-size="10" fill="#333" text-anchor="middle">일본</text>
+  <text x="170" y="125" font-size="10" fill="#333" text-anchor="middle">자동차 0.25대</text>
+  <text x="270" y="125" font-size="10" fill="#e65100" text-anchor="middle" font-weight="bold">쌀 4kg ✓</text>
+  <text x="380" y="125" font-size="10" fill="#2e7d32" text-anchor="middle" font-weight="bold">자동차</text>
+  <!-- 설명 -->
+  <text x="230" y="165" font-size="10" fill="#555" text-anchor="middle">기회비용이 더 낮은 재화에 비교우위 → 특화 후 교역 시 양국 모두 이익</text>
+</svg>
+<div class="graph-caption">비교우위 판별표 — 낮은 기회비용 = 비교우위</div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 4 (3장) — 기회비용과 비교우위 판별</div>
+  <p>한국: 쌀 1kg 생산에 <strong>2시간</strong>, 자동차 1대 생산에 <strong>10시간</strong><br>
+  일본: 쌀 1kg 생산에 <strong>1시간</strong>, 자동차 1대 생산에 <strong>4시간</strong><br>
+  각국의 쌀 1kg 생산 기회비용을 구하고, 어느 나라가 쌀에 비교우위를 가지는지 판단하라.</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 한국의 쌀 1kg 기회비용 = 쌀 1kg 생산시간 / 자동차 1대 생산시간<br>
+    <span class="formula">2시간 / 10시간 = 1/5 = 자동차 0.2대</span></div>
+    <div class="step"><b>Step 2.</b> 일본의 쌀 1kg 기회비용:<br>
+    <span class="formula">1시간 / 4시간 = 1/4 = 자동차 0.25대</span></div>
+    <div class="step"><b>Step 3.</b> 비교: 한국 0.2 &lt; 일본 0.25 → 한국이 쌀 생산 기회비용이 더 낮다.</div>
+    <div class="answer">정답: 한국의 쌀 기회비용 = 자동차 0.2대, 일본 = 자동차 0.25대.<br>
+    <strong>한국이 쌀에 비교우위</strong> (일본은 자동차에 비교우위)</div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 5 (3장) — 비교우위 판별 (1시간 생산량 기준)</div>
+  <p>프랭크: 1시간에 감자 <strong>6개</strong> 또는 고기 <strong>3마리</strong> 생산 가능<br>
+  루비: 1시간에 감자 <strong>4개</strong> 또는 고기 <strong>4마리</strong> 생산 가능<br>
+  각자의 비교우위를 구하라.</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 기회비용을 감자 기준으로 계산:</div>
+    <div class="step">프랭크 — 감자 1개의 기회비용: <span class="formula">3마리/6개 = 고기 0.5마리</span></div>
+    <div class="step">루비 — 감자 1개의 기회비용: <span class="formula">4마리/4개 = 고기 1마리</span></div>
+    <div class="step"><b>Step 2.</b> 감자: 프랭크(0.5) &lt; 루비(1) → 프랭크가 감자 기회비용 낮음</div>
+    <div class="step"><b>Step 3.</b> 고기 1마리의 기회비용:<br>
+    프랭크: <span class="formula">6/3 = 감자 2개</span> | 루비: <span class="formula">4/4 = 감자 1개</span></div>
+    <div class="step">고기: 루비(1) &lt; 프랭크(2) → 루비가 고기 기회비용 낮음</div>
+    <div class="answer">정답: <strong>프랭크 → 감자 비교우위, 루비 → 고기 비교우위</strong></div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 6 (3장) — 상호이익이 되는 교환 비율 범위</div>
+  <p>문제 5에서 "감자 1개 = 고기 X마리"로 교환할 때, 두 사람 모두에게 이익이 되는 X의 범위는?</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 프랭크 입장: 감자 1개 생산 기회비용 = 고기 0.5마리<br>
+    교환 비율이 0.5마리보다 높아야 프랭크에게 이익 → <span class="formula">X &gt; 0.5</span></div>
+    <div class="step"><b>Step 2.</b> 루비 입장: 감자 1개를 받으려면 고기를 줘야 함. 루비의 감자 1개 기회비용 = 고기 1마리<br>
+    교환 비율이 1마리보다 낮아야 루비에게 이익 → <span class="formula">X &lt; 1</span></div>
+    <div class="step"><b>Step 3.</b> 두 조건 합치기</div>
+    <div class="answer">정답: <strong>0.5 &lt; X &lt; 1</strong> (감자 1개 = 고기 0.5마리 초과 ~ 1마리 미만)</div>
+  </div>
+</div>
+
+<!-- ===== CH5 탄력성 ===== -->
+<div class="chapter-header">5장 — 탄력성 계산</div>
+
+<!-- 탄력성 수요곡선 그래프 -->
+<div class="graph-container">
+<svg width="480" height="260" viewBox="0 0 480 260">
+  <!-- 왼쪽: 탄력적 수요곡선 -->
+  <text x="110" y="18" font-size="11" fill="#1a237e" text-anchor="middle" font-weight="bold">탄력적 수요 (Ed &gt; 1)</text>
+  <line x1="30" y1="220" x2="200" y2="220" stroke="#333" stroke-width="1.5"/>
+  <line x1="30" y1="20" x2="30" y2="220" stroke="#333" stroke-width="1.5"/>
+  <polygon points="200,216 208,220 200,224" fill="#333"/>
+  <polygon points="26,20 30,12 34,20" fill="#333"/>
+  <!-- 완만한 수요곡선 (탄력적) -->
+  <line x1="40" y1="70" x2="190" y2="205" stroke="#1565c0" stroke-width="2.5"/>
+  <!-- 가격 P1=1000원: y위치 높음, P2=1200원 -->
+  <!-- P축: y=70(높은가격) ~ y=200(낮은가격), Q축: x=40~190 -->
+  <!-- P1 선 y=160, P2 선 y=120 -->
+  <line x1="30" y1="160" x2="175" y2="160" stroke="#e53935" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="30" y1="120" x2="155" y2="120" stroke="#e53935" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- Q1 수직선 x=175, Q2 x=120 -->
+  <line x1="175" y1="160" x2="175" y2="220" stroke="#e53935" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="120" y1="120" x2="120" y2="220" stroke="#e53935" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- 점들 -->
+  <circle cx="175" cy="160" r="4" fill="#e53935"/>
+  <circle cx="120" cy="120" r="4" fill="#e53935"/>
+  <!-- 레이블 -->
+  <text x="6" y="163" font-size="9" fill="#e53935">P₁</text>
+  <text x="6" y="123" font-size="9" fill="#e53935">P₂</text>
+  <text x="170" y="233" font-size="9" fill="#e53935">Q₁</text>
+  <text x="115" y="233" font-size="9" fill="#e53935">Q₂</text>
+  <text x="26" y="230" font-size="9" fill="#555">O</text>
+  <text x="195" y="218" font-size="9" fill="#333">Q</text>
+  <text x="12" y="18" font-size="9" fill="#333">P</text>
+  <text x="33" y="215" font-size="9" fill="#1565c0">D</text>
+  <!-- ΔQ 크다, ΔP 작다 표시 -->
+  <text x="40" y="248" font-size="9" fill="#555">가격 조금↑ → 수량 많이↓</text>
+
+  <!-- 오른쪽: 비탄력적 수요곡선 -->
+  <text x="370" y="18" font-size="11" fill="#6a1b9a" text-anchor="middle" font-weight="bold">비탄력적 수요 (Ed &lt; 1)</text>
+  <line x1="290" y1="220" x2="460" y2="220" stroke="#333" stroke-width="1.5"/>
+  <line x1="290" y1="20" x2="290" y2="220" stroke="#333" stroke-width="1.5"/>
+  <polygon points="460,216 468,220 460,224" fill="#333"/>
+  <polygon points="286,20 290,12 294,20" fill="#333"/>
+  <!-- 가파른 수요곡선 (비탄력적) -->
+  <line x1="330" y1="30" x2="400" y2="215" stroke="#7b1fa2" stroke-width="2.5"/>
+  <!-- P1 선 y=160, P2 선 y=120 -->
+  <line x1="290" y1="160" x2="390" y2="160" stroke="#e53935" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="290" y1="120" x2="375" y2="120" stroke="#e53935" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- Q1 수직선 x=390, Q2 x=375 (가까움) -->
+  <line x1="390" y1="160" x2="390" y2="220" stroke="#e53935" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="375" y1="120" x2="375" y2="220" stroke="#e53935" stroke-width="1" stroke-dasharray="4,3"/>
+  <circle cx="390" cy="160" r="4" fill="#e53935"/>
+  <circle cx="375" cy="120" r="4" fill="#e53935"/>
+  <text x="266" y="163" font-size="9" fill="#e53935">P₁</text>
+  <text x="266" y="123" font-size="9" fill="#e53935">P₂</text>
+  <text x="386" y="233" font-size="9" fill="#e53935">Q₁</text>
+  <text x="371" y="233" font-size="9" fill="#e53935">Q₂</text>
+  <text x="286" y="230" font-size="9" fill="#555">O</text>
+  <text x="455" y="218" font-size="9" fill="#333">Q</text>
+  <text x="272" y="18" font-size="9" fill="#333">P</text>
+  <text x="293" y="215" font-size="9" fill="#7b1fa2">D</text>
+  <text x="300" y="248" font-size="9" fill="#555">가격 많이↑ → 수량 조금↓</text>
+</svg>
+<div class="graph-caption">탄력적 수요(완만한 곡선) vs 비탄력적 수요(가파른 곡선) — 동일한 가격 변화, 다른 수량 반응</div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 7 (5장) — 수요의 가격탄력성 (기본 공식)</div>
+  <p>가격이 <strong>1,000원 → 1,200원</strong>으로 올랐고, 수요량이 <strong>100개 → 80개</strong>로 줄었다.<br>
+  수요의 가격탄력성을 구하라. (기점 공식 사용)</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 가격 변화율: <span class="formula">ΔP/P = (1,200−1,000)/1,000 = +20%</span></div>
+    <div class="step"><b>Step 2.</b> 수량 변화율: <span class="formula">ΔQ/Q = (80−100)/100 = −20%</span></div>
+    <div class="step"><b>Step 3.</b> 탄력성 공식: <span class="formula">Ed = |ΔQ%/ΔP%| = |−20%/+20%| = 1.0</span></div>
+    <div class="answer">정답: 수요의 가격탄력성 = <strong>1.0</strong> (단위 탄력적)</div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 8 (5장) — 탄력성과 총수입 관계</div>
+  <p>문제 7의 결과(탄력성=1.0)를 바탕으로: 이 수요는 탄력적인가, 비탄력적인가?<br>
+  가격이 1,000원 → 1,200원으로 오를 때 총수입(TR)은 어떻게 변하는가?</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 탄력성 판별: Ed = 1.0 → <b>단위 탄력적(unit elastic)</b></div>
+    <div class="step"><b>Step 2.</b> 총수입 계산:<br>
+    변화 전: TR = 1,000 × 100 = <span class="formula">100,000원</span><br>
+    변화 후: TR = 1,200 × 80 = <span class="formula">96,000원</span></div>
+    <div class="step"><b>Step 3.</b> Ed = 1이면 이론적으로 TR 불변이지만, 기점 공식 사용 시 소폭 차이 발생 가능.</div>
+    <div class="answer">정답: <strong>단위 탄력적</strong>. 총수입: 100,000원 → 96,000원 (이론상 변화 없음, 실제 소폭 감소)</div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 9 (5장) — 탄력성 (중간점 공식)</div>
+  <p>가격이 <strong>500원 → 400원</strong>으로 하락했고, 수요량이 <strong>200개 → 260개</strong>로 증가했다.<br>
+  <strong>중간점(Midpoint) 공식</strong>으로 수요의 가격탄력성을 계산하라.</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 중간점 공식:</div>
+    <div class="step"><span class="formula">Ed = |((Q2−Q1)/((Q1+Q2)/2)) / ((P2−P1)/((P1+P2)/2))|</span></div>
+    <div class="step"><b>Step 2.</b> 수량 변화율 (중간점 기준):<br>
+    <span class="formula">(260−200) / ((200+260)/2) = 60 / 230 ≈ 0.2609 = 26.09%</span></div>
+    <div class="step"><b>Step 3.</b> 가격 변화율 (중간점 기준):<br>
+    <span class="formula">(400−500) / ((500+400)/2) = −100 / 450 ≈ −0.2222 = −22.22%</span></div>
+    <div class="step"><b>Step 4.</b> <span class="formula">Ed = |26.09% / −22.22%| ≈ 1.174</span></div>
+    <div class="answer">정답: 수요의 가격탄력성 ≈ <strong>1.17</strong> (탄력적, Ed &gt; 1)</div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 10 (5장) — 소득탄력성과 재화 종류 판별</div>
+  <p>소득이 <strong>300만원 → 400만원</strong>으로 증가했고, 어떤 재화의 수요량이 <strong>50개 → 70개</strong>로 증가했다.<br>
+  소득탄력성을 구하고, 이 재화가 정상재인지 열등재인지 판단하라.</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 소득 변화율: <span class="formula">ΔI/I = (400−300)/300 = 100/300 = 33.3%</span></div>
+    <div class="step"><b>Step 2.</b> 수량 변화율: <span class="formula">ΔQ/Q = (70−50)/50 = 20/50 = 40%</span></div>
+    <div class="step"><b>Step 3.</b> 소득탄력성: <span class="formula">EI = ΔQ%/ΔI% = 40%/33.3% ≈ 1.2</span></div>
+    <div class="step"><b>Step 4.</b> EI &gt; 0 → 정상재 (소득 증가 시 수요 증가). EI &gt; 1 → 사치재(luxury good).</div>
+    <div class="answer">정답: 소득탄력성 ≈ <strong>1.2</strong> → <strong>정상재(사치재)</strong></div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 11 (5장) — 교차탄력성과 재화 관계 판별</div>
+  <p>A재화 가격이 <strong>2,000원 → 2,500원</strong>으로 오를 때, B재화 수요량이 <strong>100개 → 130개</strong>로 증가했다.<br>
+  교차탄력성을 구하고, A와 B의 관계를 판별하라.</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> A재화 가격 변화율: <span class="formula">(2,500−2,000)/2,000 = 500/2,000 = 25%</span></div>
+    <div class="step"><b>Step 2.</b> B재화 수량 변화율: <span class="formula">(130−100)/100 = 30/100 = 30%</span></div>
+    <div class="step"><b>Step 3.</b> 교차탄력성: <span class="formula">Exy = ΔQb%/ΔPa% = 30%/25% = 1.2</span></div>
+    <div class="step"><b>Step 4.</b> Exy &gt; 0 → <b>대체재</b> (A가 비싸질수록 B를 더 구입)</div>
+    <div class="answer">정답: 교차탄력성 = <strong>+1.2</strong> → A와 B는 <strong>대체재</strong></div>
+  </div>
+</div>
+
+<!-- ===== CH7 잉여 계산 ===== -->
+<div class="chapter-header">7장 — 소비자잉여 &amp; 생산자잉여 계산</div>
+
+<!-- 소비자/생산자 잉여 그래프 (문제 14 기준: P=10-Q, P=2+Q, P*=6, Q*=4) -->
+<div class="graph-container">
+<svg width="320" height="280" viewBox="0 0 320 280">
+  <!-- 축 -->
+  <line x1="50" y1="230" x2="280" y2="230" stroke="#333" stroke-width="1.5"/>
+  <line x1="50" y1="20" x2="50" y2="230" stroke="#333" stroke-width="1.5"/>
+  <polygon points="280,226 288,230 280,234" fill="#333"/>
+  <polygon points="46,20 50,12 54,20" fill="#333"/>
+  <!-- 축 레이블 -->
+  <text x="283" y="228" font-size="10" fill="#333">Q</text>
+  <text x="30" y="18" font-size="10" fill="#333">P</text>
+  <text x="40" y="243" font-size="9" fill="#555">O</text>
+  <!-- P축 눈금: P=2(공급P절편), P=6(균형), P=10(수요P절편) -->
+  <!-- Q축 범위 0-8, P축 범위 0-12 -->
+  <!-- 좌표 변환: x = 50 + Q*25, y = 230 - P*17 -->
+  <!-- Q=0→x=50, Q=8→x=250; P=0→y=230, P=12→y=26 -->
+  <!-- 수요곡선 P=10-Q: Q=0,P=10 → (50,60); Q=8,P=2 → (250,196) -->
+  <line x1="50" y1="60" x2="250" y2="196" stroke="#1565c0" stroke-width="2"/>
+  <!-- 공급곡선 P=2+Q: Q=0,P=2 → (50,196); Q=8,P=10 → (250,60) -->
+  <line x1="50" y1="196" x2="250" y2="60" stroke="#c62828" stroke-width="2"/>
+  <!-- 균형점 Q*=4, P*=6: x=50+4*25=150, y=230-6*17=128 -->
+  <circle cx="150" cy="128" r="5" fill="#333"/>
+  <!-- 균형 가격선 -->
+  <line x1="50" y1="128" x2="150" y2="128" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="150" y1="128" x2="150" y2="230" stroke="#555" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- 소비자잉여 삼각형 (파란색) — 수요P절편(10)~P*(6), Q 0~4 -->
+  <!-- 꼭짓점: (50,60), (50,128), (150,128) -->
+  <polygon points="50,60 50,128 150,128" fill="#1565c0" fill-opacity="0.2" stroke="#1565c0" stroke-width="1"/>
+  <text x="72" y="110" font-size="10" fill="#1565c0" font-weight="bold">CS=8</text>
+  <!-- 생산자잉여 삼각형 (빨간색) — P*~공급P절편(2), Q 0~4 -->
+  <!-- 꼭짓점: (50,196), (50,128), (150,128) -->
+  <polygon points="50,196 50,128 150,128" fill="#c62828" fill-opacity="0.2" stroke="#c62828" stroke-width="1"/>
+  <text x="65" y="168" font-size="10" fill="#c62828" font-weight="bold">PS=8</text>
+  <!-- P축 레이블 -->
+  <text x="22" y="63" font-size="9" fill="#1565c0">10</text>
+  <text x="30" y="131" font-size="9" fill="#333">P*=6</text>
+  <text x="22" y="199" font-size="9" fill="#c62828">2</text>
+  <!-- Q축 레이블 -->
+  <text x="144" y="244" font-size="9" fill="#333">Q*=4</text>
+  <!-- 곡선 레이블 -->
+  <text x="240" y="55" font-size="10" fill="#c62828" font-weight="bold">S</text>
+  <text x="240" y="194" font-size="10" fill="#1565c0" font-weight="bold">D</text>
+  <text x="80" y="270" font-size="9" fill="#555">CS = ½×(10−6)×4 = 8 | PS = ½×(6−2)×4 = 8 | 총잉여 = 16</text>
+</svg>
+<div class="graph-caption">소비자잉여(파랑) &amp; 생산자잉여(빨강) — 균형점에서 삼각형 면적</div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 12 (7장) — 소비자잉여 (이산적 계산)</div>
+  <p>어떤 재화에 대한 지불용의: 갑 <strong>10,000원</strong>, 을 <strong>8,000원</strong>, 병 <strong>6,000원</strong><br>
+  시장가격이 <strong>7,000원</strong>일 때, 총 소비자잉여는?</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 시장가격(7,000원)보다 지불용의가 높은 소비자만 구매한다.</div>
+    <table>
+      <tr><th>소비자</th><th>지불용의</th><th>시장가격</th><th>구매 여부</th><th>소비자잉여</th></tr>
+      <tr><td>갑</td><td>10,000원</td><td>7,000원</td><td>구매 O</td><td>10,000 − 7,000 = <b>3,000원</b></td></tr>
+      <tr><td>을</td><td>8,000원</td><td>7,000원</td><td>구매 O</td><td>8,000 − 7,000 = <b>1,000원</b></td></tr>
+      <tr><td>병</td><td>6,000원</td><td>7,000원</td><td>구매 X</td><td>0원</td></tr>
+    </table>
+    <div class="step"><b>Step 2.</b> 총 소비자잉여 = 3,000 + 1,000 = <span class="formula">4,000원</span></div>
+    <div class="answer">정답: 총 소비자잉여 = <strong>4,000원</strong></div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 13 (7장) — 생산자잉여 (이산적 계산)</div>
+  <p>각 생산자의 최소 수취가격(생산비용): A생산자 <strong>3,000원</strong>, B생산자 <strong>5,000원</strong>, C생산자 <strong>7,000원</strong><br>
+  시장가격이 <strong>6,000원</strong>일 때, 총 생산자잉여는?</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 시장가격(6,000원)보다 생산비용이 낮은 생산자만 판매한다.</div>
+    <table>
+      <tr><th>생산자</th><th>생산비용</th><th>시장가격</th><th>판매 여부</th><th>생산자잉여</th></tr>
+      <tr><td>A</td><td>3,000원</td><td>6,000원</td><td>판매 O</td><td>6,000 − 3,000 = <b>3,000원</b></td></tr>
+      <tr><td>B</td><td>5,000원</td><td>6,000원</td><td>판매 O</td><td>6,000 − 5,000 = <b>1,000원</b></td></tr>
+      <tr><td>C</td><td>7,000원</td><td>6,000원</td><td>판매 X</td><td>0원</td></tr>
+    </table>
+    <div class="step"><b>Step 2.</b> 총 생산자잉여 = 3,000 + 1,000 = <span class="formula">4,000원</span></div>
+    <div class="answer">정답: 총 생산자잉여 = <strong>4,000원</strong></div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 14 (7장) — 수요·공급 함수에서 균형과 잉여 계산</div>
+  <p>수요곡선: <strong>P = 10 − Q</strong>, 공급곡선: <strong>P = 2 + Q</strong><br>
+  균형가격과 균형수량을 구하고, 소비자잉여(CS)와 생산자잉여(PS)를 계산하라.</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 균형 조건: 수요 = 공급<br>
+    <span class="formula">10 − Q = 2 + Q → 8 = 2Q → Q* = 4</span></div>
+    <div class="step"><b>Step 2.</b> 균형가격: <span class="formula">P* = 10 − 4 = 6</span> (또는 P* = 2 + 4 = 6) ✓</div>
+    <div class="step"><b>Step 3.</b> 소비자잉여 = 수요곡선 아래, P* 위의 삼각형 면적<br>
+    수요곡선 P절편(Q=0일 때): P = 10<br>
+    <span class="formula">CS = (1/2) × (10 − 6) × 4 = (1/2) × 4 × 4 = 8</span></div>
+    <div class="step"><b>Step 4.</b> 생산자잉여 = P* 아래, 공급곡선 위의 삼각형 면적<br>
+    공급곡선 P절편(Q=0일 때): P = 2<br>
+    <span class="formula">PS = (1/2) × (6 − 2) × 4 = (1/2) × 4 × 4 = 8</span></div>
+    <div class="answer">정답: Q* = <strong>4</strong>, P* = <strong>6</strong>, CS = <strong>8</strong>, PS = <strong>8</strong>, 총잉여 = <strong>16</strong></div>
+  </div>
+</div>
+
+<!-- ===== CH8 경제적 순손실 ===== -->
+<div class="chapter-header">8장 — 조세와 경제적 순손실(DWL) 계산</div>
+
+<!-- 조세 DWL 그래프 (문제 15 기준) -->
+<div class="graph-container">
+<svg width="340" height="290" viewBox="0 0 340 290">
+  <!-- 축 -->
+  <line x1="50" y1="240" x2="300" y2="240" stroke="#333" stroke-width="1.5"/>
+  <line x1="50" y1="20" x2="50" y2="240" stroke="#333" stroke-width="1.5"/>
+  <polygon points="300,236 308,240 300,244" fill="#333"/>
+  <polygon points="46,20 50,12 54,20" fill="#333"/>
+  <text x="303" y="238" font-size="10" fill="#333">Q</text>
+  <text x="30" y="18" font-size="10" fill="#333">P</text>
+  <text x="40" y="252" font-size="9" fill="#555">O</text>
+  <!-- 좌표: Q[0-60]→x[50-290], P[80-120]→y[220-40] -->
+  <!-- x = 50 + Q*4, y = 240 - (P-80)*4.5 -->
+  <!-- 수요곡선: 기울기 내려가는 직선. P*=100,Q*=50 → 세금 후 Pc=110,Q=40 -->
+  <!-- 수요: P=110-0.2Q(P=0일때 Q=550, P=110일때Q=0 → 간단하게 Q=0..60 범위만) -->
+  <!-- 수요곡선: Q=0→P=120, Q=60→P=90. x=50,y=240-40*4.5=60 → x=290,y=240-10*4.5=195 -->
+  <line x1="50" y1="60" x2="290" y2="195" stroke="#1565c0" stroke-width="2"/>
+  <!-- 공급곡선: Q=0→P=80, Q=60→P=110. x=50,y=240; x=290,y=240-30*4.5=105 -->
+  <line x1="50" y1="240" x2="290" y2="105" stroke="#c62828" stroke-width="2"/>
+  <!-- 균형점 P*=100,Q*=50: x=50+50*4=250, y=240-(100-80)*4.5=240-90=150 -->
+  <circle cx="250" cy="150" r="4" fill="#333"/>
+  <!-- 세금 후 거래량 Q=40: x=50+40*4=210 -->
+  <!-- Pc=110: y=240-(110-80)*4.5=240-135=105 -->
+  <!-- Pp=90: y=240-(90-80)*4.5=240-45=195 -->
+  <!-- 가격 구간선 -->
+  <line x1="50" y1="105" x2="210" y2="105" stroke="#e65100" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="50" y1="195" x2="210" y2="195" stroke="#e65100" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="50" y1="150" x2="250" y2="150" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="210" y1="105" x2="210" y2="240" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="250" y1="150" x2="250" y2="240" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- 조세 수입 직사각형 -->
+  <rect x="50" y="105" width="160" height="90" fill="#ffa726" fill-opacity="0.25" stroke="#ffa726" stroke-width="1"/>
+  <!-- DWL 삼각형 (210,105)-(210,195)-(250,150) -->
+  <polygon points="210,105 210,195 250,150" fill="#b71c1c" fill-opacity="0.4" stroke="#b71c1c" stroke-width="1.5"/>
+  <!-- 레이블 -->
+  <text x="110" y="157" font-size="10" fill="#e65100" font-weight="bold">조세수입</text>
+  <text x="214" y="153" font-size="9" fill="#b71c1c" font-weight="bold">DWL</text>
+  <!-- P축 레이블 -->
+  <text x="20" y="108" font-size="9" fill="#e65100">Pc=110</text>
+  <text x="22" y="153" font-size="9" fill="#333">P*=100</text>
+  <text x="22" y="198" font-size="9" fill="#e65100">Pp=90</text>
+  <!-- Q축 레이블 -->
+  <text x="204" y="253" font-size="9" fill="#555">Q₁=40</text>
+  <text x="244" y="253" font-size="9" fill="#555">Q*=50</text>
+  <!-- 세금 브라켓 -->
+  <line x1="42" y1="105" x2="42" y2="195" stroke="#e65100" stroke-width="1.5"/>
+  <text x="5" y="155" font-size="9" fill="#e65100">T=20</text>
+  <!-- 곡선 레이블 -->
+  <text x="278" y="106" font-size="10" fill="#c62828" font-weight="bold">S</text>
+  <text x="278" y="193" font-size="10" fill="#1565c0" font-weight="bold">D</text>
+  <text x="60" y="275" font-size="9" fill="#555">DWL = ½ × (Q*−Q₁) × T = ½ × 10 × 20 = 100원</text>
+</svg>
+<div class="graph-caption">조세 부과 → 조세수입(주황) + DWL 삼각형(빨강) 발생 — 경제적 순손실</div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 15 (8장) — 경제적 순손실 (삼각형 면적)</div>
+  <p>세금 부과 전 균형: <strong>P* = 100원, Q* = 50개</strong><br>
+  세금 T = 20원 부과 후: 소비자 지불가격 <strong>110원</strong>, 생산자 수취가격 <strong>90원</strong>, 거래량 <strong>40개</strong><br>
+  경제적 순손실(DWL)을 구하라.</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 경제적 순손실 = 세금으로 인해 사라진 거래에서 발생하는 잉여 손실</div>
+    <div class="step"><b>Step 2.</b> DWL 삼각형: 밑변 = Q*−Q_tax, 높이 = 소비자가격−생산자가격 = 세금<br>
+    밑변 = 50 − 40 = 10개<br>
+    높이 = 110 − 90 = 20원 (= 세금 T)</div>
+    <div class="step"><b>Step 3.</b> <span class="formula">DWL = (1/2) × 밑변 × 높이 = (1/2) × 10 × 20 = 100원</span></div>
+    <div class="answer">정답: 경제적 순손실 = <strong>100원</strong></div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 16 (8장) — 세금 2배 시 DWL 변화</div>
+  <p>세금이 <strong>10원</strong>일 때 경제적 순손실이 <strong>50원</strong>이다.<br>
+  세금이 <strong>20원</strong>으로 2배가 되면 경제적 순손실은 얼마가 되는가?</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> DWL 공식: <span class="formula">DWL = (1/2) × ΔQ × T</span><br>
+    ΔQ도 세금에 비례해서 변한다 (선형 공급·수요 가정): T 2배 → ΔQ도 2배</div>
+    <div class="step"><b>Step 2.</b> DWL ∝ T × ΔQ ∝ T × T = T²<br>
+    → 세금 2배 시 DWL은 <span class="formula">2² = 4배</span> 증가</div>
+    <div class="step"><b>Step 3.</b> 새 DWL = 50 × 4 = <span class="formula">200원</span></div>
+    <div class="answer">정답: <strong>200원</strong> (세금 2배 → DWL 4배 증가 — 조세의 체증적 비효율)</div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 17 (8장) — 잉여 변화로 DWL 계산</div>
+  <p>세금 부과 후의 변화:<br>
+  소비자잉여 감소: <strong>300</strong>, 생산자잉여 감소: <strong>200</strong>, 조세수입: <strong>400</strong><br>
+  경제적 순손실(DWL)을 구하라.</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 총잉여 감소 = 소비자잉여 감소 + 생산자잉여 감소<br>
+    = 300 + 200 = <span class="formula">500</span></div>
+    <div class="step"><b>Step 2.</b> 감소한 총잉여 중 일부는 조세수입으로 정부에 귀속 (사회 내 이전)<br>
+    조세수입 = 400 (이것은 순손실이 아님)</div>
+    <div class="step"><b>Step 3.</b> DWL = 총잉여 감소 − 조세수입 = 500 − 400 = <span class="formula">100</span></div>
+    <div class="answer">정답: 경제적 순손실 = <strong>100</strong></div>
+  </div>
+</div>
+
+<!-- ===== CH9 국제무역 ===== -->
+<div class="chapter-header">9장 — 국제무역 계산</div>
+
+<!-- 국제무역 수입국 그래프 -->
+<div class="graph-container">
+<svg width="460" height="280" viewBox="0 0 460 280">
+  <!-- 왼쪽: 수입국 (국제가격 < 국내가격) -->
+  <text x="110" y="18" font-size="11" fill="#1a237e" text-anchor="middle" font-weight="bold">수입국 (국제가격 &lt; 국내가격)</text>
+  <!-- 축 -->
+  <line x1="30" y1="235" x2="205" y2="235" stroke="#333" stroke-width="1.5"/>
+  <line x1="30" y1="25" x2="30" y2="235" stroke="#333" stroke-width="1.5"/>
+  <polygon points="205,231 212,235 205,239" fill="#333"/>
+  <polygon points="26,25 30,17 34,25" fill="#333"/>
+  <text x="210" y="233" font-size="9" fill="#333">Q</text>
+  <text x="15" y="22" font-size="9" fill="#333">P</text>
+  <!-- Q[0-10]→x[30-200], P[0-16]→y[235-35] -->
+  <!-- x=30+Q*17, y=235-P*12.5 -->
+  <!-- 수요: Q=0→P=15, Q=10→P=5: (30,47)→(200,172) -->
+  <line x1="30" y1="47" x2="200" y2="172" stroke="#1565c0" stroke-width="2"/>
+  <!-- 공급: Q=0→P=3, Q=10→P=13: (30,198)→(200,73) -->
+  <line x1="30" y1="198" x2="200" y2="73" stroke="#c62828" stroke-width="2"/>
+  <!-- 국내균형 P=9,Q=5: x=30+5*17=115, y=235-9*12.5=122.5≈123 -->
+  <circle cx="115" cy="123" r="4" fill="#555"/>
+  <!-- 국제가격 Pw=5: y=235-5*12.5=172.5→173 -->
+  <line x1="30" y1="173" x2="200" y2="173" stroke="#2e7d32" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <!-- Pw=5에서 국내수요량: 수요P=15-Q, 5=15-Q→Q=10: x=30+10*17=200 -->
+  <!-- Pw=5에서 국내공급량: 공급P=3+Q, 5=3+Q→Q=2: x=30+2*17=64 -->
+  <line x1="64" y1="173" x2="64" y2="235" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="200" y1="173" x2="200" y2="235" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="115" y1="123" x2="115" y2="235" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- 소비자잉여 증가 영역 (파랑, 수입으로 확대됨) -->
+  <!-- 원래 CS: (30,47)-(30,123)-(115,123) -->
+  <!-- 새 CS: (30,47)-(30,173)-(200,173) -->
+  <!-- 추가 CS: 원래 균형 아래 사다리꼴 -->
+  <polygon points="30,123 115,123 200,173 30,173" fill="#1565c0" fill-opacity="0.2" stroke="none"/>
+  <!-- 생산자잉여 감소 영역 (빨강) -->
+  <polygon points="30,173 64,173 30,198" fill="#c62828" fill-opacity="0.3" stroke="none"/>
+  <!-- 수입량 표시 -->
+  <line x1="64" y1="185" x2="200" y2="185" stroke="#2e7d32" stroke-width="2"/>
+  <polygon points="64,181 56,185 64,189" fill="#2e7d32"/>
+  <polygon points="200,181 208,185 200,189" fill="#2e7d32"/>
+  <text x="100" y="200" font-size="9" fill="#2e7d32" font-weight="bold">수입량</text>
+  <!-- 레이블 -->
+  <text x="10" y="126" font-size="8" fill="#555">Pd</text>
+  <text x="8" y="176" font-size="8" fill="#2e7d32">Pw</text>
+  <text x="60" y="248" font-size="8" fill="#555">Qs</text>
+  <text x="110" y="248" font-size="8" fill="#555">Q*</text>
+  <text x="193" y="248" font-size="8" fill="#555">Qd</text>
+  <text x="190" y="70" font-size="9" fill="#c62828" font-weight="bold">S</text>
+  <text x="190" y="170" font-size="9" fill="#1565c0" font-weight="bold">D</text>
+  <text x="10" y="270" font-size="9" fill="#1565c0">↑CS 증가</text>
+  <text x="70" y="270" font-size="9" fill="#c62828">↓PS 감소</text>
+
+  <!-- 오른쪽: 수출국 (국제가격 > 국내가격) -->
+  <text x="360" y="18" font-size="11" fill="#6a1b9a" text-anchor="middle" font-weight="bold">수출국 (국제가격 &gt; 국내가격)</text>
+  <!-- 축 -->
+  <line x1="250" y1="235" x2="430" y2="235" stroke="#333" stroke-width="1.5"/>
+  <line x1="250" y1="25" x2="250" y2="235" stroke="#333" stroke-width="1.5"/>
+  <polygon points="430,231 437,235 430,239" fill="#333"/>
+  <polygon points="246,25 250,17 254,25" fill="#333"/>
+  <text x="432" y="233" font-size="9" fill="#333">Q</text>
+  <text x="235" y="22" font-size="9" fill="#333">P</text>
+  <!-- 수요: Q=0→P=15, Q=10→P=5: (250,47)→(420,172) -->
+  <line x1="250" y1="47" x2="420" y2="172" stroke="#1565c0" stroke-width="2"/>
+  <!-- 공급: Q=0→P=3, Q=10→P=13: (250,198)→(420,73) -->
+  <line x1="250" y1="198" x2="420" y2="73" stroke="#c62828" stroke-width="2"/>
+  <!-- 국내균형 P=9,Q=5: x=250+5*17=335, y=235-9*12.5=123 -->
+  <circle cx="335" cy="123" r="4" fill="#555"/>
+  <!-- 국제가격 Pw=12 (더 높음): y=235-12*12.5=85 -->
+  <line x1="250" y1="85" x2="430" y2="85" stroke="#ff8f00" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <!-- Pw=12에서 국내수요: P=15-Q, 12=15-Q→Q=3: x=250+3*17=301 -->
+  <!-- Pw=12에서 국내공급: P=3+Q, 12=3+Q→Q=9: x=250+9*17=403 -->
+  <line x1="301" y1="85" x2="301" y2="235" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="403" y1="85" x2="403" y2="235" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="335" y1="123" x2="335" y2="235" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- 생산자잉여 증가 영역 -->
+  <polygon points="250,123 335,123 403,85 250,85" fill="#c62828" fill-opacity="0.2" stroke="none"/>
+  <!-- 소비자잉여 감소 영역 -->
+  <polygon points="250,85 301,85 250,123" fill="#1565c0" fill-opacity="0.3" stroke="none"/>
+  <!-- 수출량 표시 -->
+  <line x1="301" y1="100" x2="403" y2="100" stroke="#ff8f00" stroke-width="2"/>
+  <polygon points="301,96 293,100 301,104" fill="#ff8f00"/>
+  <polygon points="403,96 411,100 403,104" fill="#ff8f00"/>
+  <text x="335" y="116" font-size="9" fill="#ff8f00" font-weight="bold">수출량</text>
+  <!-- 레이블 -->
+  <text x="230" y="126" font-size="8" fill="#555">Pd</text>
+  <text x="228" y="88" font-size="8" fill="#ff8f00">Pw</text>
+  <text x="298" y="248" font-size="8" fill="#555">Qd</text>
+  <text x="330" y="248" font-size="8" fill="#555">Q*</text>
+  <text x="399" y="248" font-size="8" fill="#555">Qs</text>
+  <text x="412" y="75" font-size="9" fill="#c62828" font-weight="bold">S</text>
+  <text x="412" y="170" font-size="9" fill="#1565c0" font-weight="bold">D</text>
+  <text x="253" y="270" font-size="9" fill="#c62828">↑PS 증가</text>
+  <text x="330" y="270" font-size="9" fill="#1565c0">↓CS 감소</text>
+</svg>
+<div class="graph-caption">수입국: 국제가격 하락 → CS↑ PS↓ 총잉여↑ | 수출국: 국제가격 상승 → PS↑ CS↓ 총잉여↑</div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 18 (9장) — 무역 개시와 소비자 이익</div>
+  <p>어떤 재화의 국내균형가격이 <strong>1,500원</strong>이다. 국제가격은 <strong>1,000원</strong>이다.<br>
+  자유무역이 시작될 때 한국 <strong>소비자</strong>는 이득인가, 손해인가? 그 이유를 설명하라.</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 국제가격(1,000원) &lt; 국내가격(1,500원) → 한국은 이 재화를 <b>수입</b>한다.</div>
+    <div class="step"><b>Step 2.</b> 무역 후 국내가격은 국제가격 1,000원으로 하락.</div>
+    <div class="step"><b>Step 3.</b> 소비자: 가격 하락 → 더 낮은 가격에 더 많은 수량 구입 가능 → <b>소비자잉여 증가</b></div>
+    <div class="step"><b>Step 4.</b> 생산자: 가격 하락 → 수취가격 하락 → <b>생산자잉여 감소</b></div>
+    <div class="answer">정답: 한국 소비자는 <strong>이득</strong>. 국제가격이 낮아 수입이 발생하고 국내가격이 하락하여 소비자잉여가 증가한다.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 19 (9장) — 관세 부과 후 수입량 변화</div>
+  <p>관세 부과 전 수입량: <strong>100개</strong><br>
+  관세 부과 후: 국내생산 <strong>20개 증가</strong>, 국내소비 <strong>15개 감소</strong><br>
+  관세 부과 후 수입량은?</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 수입량 = 국내 소비량 − 국내 생산량</div>
+    <div class="step"><b>Step 2.</b> 관세 → 국내가격 상승 → 국내생산↑, 국내소비↓<br>
+    소비 감소: 15개 줄어듦<br>
+    생산 증가: 20개 늘어남</div>
+    <div class="step"><b>Step 3.</b> 수입량 변화 = −소비감소 − 생산증가 = −15 − 20 = −35개</div>
+    <div class="step"><b>Step 4.</b> 새 수입량 = 100 − 35 = <span class="formula">65개</span></div>
+    <div class="answer">정답: 관세 후 수입량 = <strong>65개</strong> (100개에서 35개 감소)</div>
+  </div>
+</div>
+
+<div class="problem">
+  <div class="problem-title">문제 20 (9장) — 수출국의 무역 개시 후 총잉여 변화</div>
+  <p>수출국에서 무역 개시 전 총잉여 = <strong>1,000</strong><br>
+  무역 개시 후: 소비자잉여 <strong>200 감소</strong>, 생산자잉여 <strong>350 증가</strong><br>
+  총잉여는 어떻게 변하는가?</p>
+  <div class="solution">
+    <div class="step"><b>Step 1.</b> 수출국은 자유무역 후 국내가격이 국제가격으로 <b>상승</b>함.</div>
+    <div class="step"><b>Step 2.</b> 소비자: 가격 상승 → 소비자잉여 감소 (−200)</div>
+    <div class="step"><b>Step 3.</b> 생산자: 가격 상승 → 생산자잉여 증가 (+350)</div>
+    <div class="step"><b>Step 4.</b> 총잉여 변화 = −200 + 350 = <span class="formula">+150 증가</span></div>
+    <div class="step"><b>Step 5.</b> 무역 후 총잉여 = 1,000 + 150 = <span class="formula">1,150</span></div>
+    <div class="answer">정답: 총잉여 <strong>+150 증가</strong> (1,000 → 1,150). 생산자잉여 증가분이 소비자잉여 감소분을 초과 → 순이익 발생.</div>
+  </div>
+</div>
+
+<p style="text-align:center; color:#888; font-size:10pt; margin-top:40px; border-top:1px solid #ddd; padding-top:12px;">경제학개론 계산문제 20선 — 시험 대비 풀이 노트</p>
+
+</body>
+</html>

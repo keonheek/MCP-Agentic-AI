@@ -1,0 +1,26 @@
+channels:
+  first_mover_ai:
+    name: "First Mover AI"
+    handle: "@firstmoverai_kr"
+    phase: 1
+
+    youtube:
+      enabled: true
+      format: longform
+      target_duration_minutes: [10, 20]
+      schedule: "daily_6_7_per_week"
+      content_strategy: "translate_viral_ai_videos"
+      license_posture: "fair_use"
+      quality_threshold: 8.0
+
+    instagram:
+      enabled: true
+      format: stories_carousel
+      schedule: "mon_fri_daily"
+      posts_per_day: 5
+      slides_per_carousel: 5
+      content_mix:
+        claude_news: 0.33
+        ai_business: 0.33
+        ai_trends: 0.34
+      quality_threshold: 7.5

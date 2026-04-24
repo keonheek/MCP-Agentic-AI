@@ -5,13 +5,14 @@
 - **Agentic AI** — Building AI agents using MCPs, plugins, Claude Code, and skills
 - **AI CPA Exam** — Currently studying
 - **SDC Consulting Club** — Active member
+- **제자훈련** — Church discipleship course. 매주 토요일 12:00–16:00 session. Submissions to jwj.kr before 12:00. Daily: 기도 5분 + 성경읽기 5분 (Mon–Sat). Weekly: 성경대학 YouTube videos ×2, 설교 요약 ×1, 교재 과제. Currently on 룻기. Use `/jeja` command for all tracking.
 
 ## Tools Used Daily
 - Claude / Claude Code (VS Code)
 - Wispr Flow — voice-to-text input (may cause phonetic typos in Korean/English tech terms)
 - Notion
 - Google Drive / Google Workspace
-- Gemini free tier blocked in South Korea — use Perplexity API for research instead
+- Gemini free tier IS available in South Korea (asia-northeast3 / Seoul region). Free tier = Flash/Flash-Lite only; Pro behind paywall since April 1 2026. gemini-grounding MCP already uses the key. Default research path: WebSearch → gemini-grounding → Perplexity (only for project scripts: SME Diagnostic, benchmark_research)
 
 ## MCP Servers Connected
 - Notion (connected)

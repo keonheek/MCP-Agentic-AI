@@ -1,0 +1,30 @@
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "라라스윗 팝콘의 주요 특징은 무엇인가요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "신선한 재료와 독특한 맛으로 만든 프리미엄 팝콘입니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "팝콘 주문 후 배송은 얼마나 걸리나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "일반 배송은 2-3일, 특급 배송은 1일 소요됩니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "라라스윗 팝콘에 알레르기 정보가 있나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "제품 포장에 전체 알레르기 정보가 표시되어 있습니다."
+      }
+    }
+  ]
+}

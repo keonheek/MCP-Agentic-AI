@@ -7,3 +7,11 @@ node_modules/
 __pycache__/
 *.pyc
 *.pptx
+
+# Sensitive credentials
+rootkey.csv
+.ig_session_*.json
+projects/.youtube_token.json
+
+# Ephemeral research outputs
+research/

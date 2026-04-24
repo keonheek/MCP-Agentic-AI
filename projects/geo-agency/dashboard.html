@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>GEO Agency — Outreach Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      padding: 32px;
+      min-height: 100vh;
+    }
+
+    h1 { font-size: 20px; font-weight: 600; color: #f8fafc; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #64748b; margin-bottom: 32px; }
+
+    /* KPI row */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .kpi {
+      background: #1e2330;
+      border: 1px solid #2d3548;
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+    .kpi-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .kpi-value { font-size: 28px; font-weight: 700; color: #f8fafc; }
+    .kpi-sub { font-size: 11px; color: #64748b; margin-top: 4px; }
+    .kpi.green .kpi-value { color: #34d399; }
+    .kpi.yellow .kpi-value { color: #fbbf24; }
+    .kpi.red .kpi-value { color: #f87171; }
+    .kpi.blue .kpi-value { color: #60a5fa; }
+
+    /* Two-col layout */
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    /* Table */
+    .card {
+      background: #1e2330;
+      border: 1px solid #2d3548;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid #2d3548;
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      letter-spacing: .04em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 1px solid #2d3548;
+    }
+    td { padding: 11px 16px; border-bottom: 1px solid #1a1f2e; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #242a3a; }
+
+    /* Score bar */
+    .score-wrap { display: flex; align-items: center; gap: 8px; }
+    .score-bar-bg { flex: 1; background: #2d3548; border-radius: 4px; height: 6px; overflow: hidden; }
+    .score-bar { height: 6px; border-radius: 4px; transition: width .3s; }
+    .score-num { font-size: 12px; font-weight: 600; width: 34px; text-align: right; flex-shrink: 0; }
+
+    /* Status badge */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .03em;
+    }
+    .badge-audit { background: #1e3a5f; color: #60a5fa; }
+    .badge-ready { background: #14532d; color: #34d399; }
+    .badge-sent  { background: #3b1f6b; color: #a78bfa; }
+    .badge-error { background: #3b1a1a; color: #f87171; }
+    .badge-pending { background: #2d3548; color: #94a3b8; }
+
+    /* Chart card */
+    .chart-card {
+      background: #1e2330;
+      border: 1px solid #2d3548;
+      border-radius: 10px;
+      padding: 0;
+      overflow: hidden;
+    }
+    .chart-inner { padding: 16px; }
+
+    /* Pipeline */
+    .pipeline {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+    }
+    .stage {
+      flex: 1;
+      text-align: center;
+      padding: 16px 8px;
+      background: #1e2330;
+      border: 1px solid #2d3548;
+      position: relative;
+    }
+    .stage:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #4b5563;
+      font-size: 16px;
+      z-index: 1;
+    }
+    .stage:first-child { border-radius: 10px 0 0 10px; }
+    .stage:last-child  { border-radius: 0 10px 10px 0; }
+    .stage.active { background: #1e3a5f; border-color: #3b82f6; }
+    .stage-num { font-size: 22px; font-weight: 700; }
+    .stage-num.done  { color: #34d399; }
+    .stage-num.block { color: #f87171; }
+    .stage-num.zero  { color: #4b5563; }
+    .stage-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+    .next-action {
+      background: #1a2a1a;
+      border: 1px solid #34d399;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: #34d399;
+    }
+    .next-action strong { display: block; margin-bottom: 6px; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+    .next-action code {
+      display: inline-block;
+      margin-top: 8px;
+      background: #0f2a0f;
+      border: 1px solid #1a4a1a;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 12px;
+      color: #86efac;
+    }
+
+    .blocker {
+      background: #2a1a1a;
+      border: 1px solid #f87171;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #f87171;
+      margin-bottom: 20px;
+    }
+    .blocker strong { font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<h1>GEO Agency — Outreach Dashboard</h1>
+<p class="subtitle">강남 세무사 20개 사무소 | 마지막 업데이트: 2026-04-07</p>
+
+<!-- Blocker -->
+<div class="blocker">
+  <strong>BLOCKER:</strong> Anthropic API credits exhausted — DM generation halted.
+  Top up at <strong>console.anthropic.com/billing</strong> (~$5), then run:
+  <code>python projects/geo-agency/outreach.py --dm-only</code>
+</div>
+
+<!-- KPI row -->
+<div class="kpi-row">
+  <div class="kpi green">
+    <div class="kpi-label">Audits Complete</div>
+    <div class="kpi-value">20</div>
+    <div class="kpi-sub">of 20 firms</div>
+  </div>
+  <div class="kpi blue">
+    <div class="kpi-label">PDFs Generated</div>
+    <div class="kpi-value">20</div>
+    <div class="kpi-sub">ready to send</div>
+  </div>
+  <div class="kpi yellow">
+    <div class="kpi-label">Avg GEO Score</div>
+    <div class="kpi-value">39</div>
+    <div class="kpi-sub">/100 — all weak</div>
+  </div>
+  <div class="kpi red">
+    <div class="kpi-label">DMs Generated</div>
+    <div class="kpi-value">0</div>
+    <div class="kpi-sub">blocked by API</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Responses</div>
+    <div class="kpi-value" style="color:#4b5563">0</div>
+    <div class="kpi-sub">DMs not sent yet</div>
+  </div>
+</div>
+
+<!-- Pipeline stages -->
+<div class="pipeline">
+  <div class="stage">
+    <div class="stage-num done">20</div>
+    <div class="stage-label">GEO Audit</div>
+  </div>
+  <div class="stage">
+    <div class="stage-num done">20</div>
+    <div class="stage-label">PDF Generated</div>
+  </div>
+  <div class="stage active">
+    <div class="stage-num block">0</div>
+    <div class="stage-label">DM Generated</div>
+  </div>
+  <div class="stage">
+    <div class="stage-num zero">0</div>
+    <div class="stage-label">DM Sent</div>
+  </div>
+  <div class="stage">
+    <div class="stage-num zero">0</div>
+    <div class="stage-label">Response</div>
+  </div>
+  <div class="stage">
+    <div class="stage-num zero">0</div>
+    <div class="stage-label">Client</div>
+  </div>
+</div>
+
+<!-- Table + Chart -->
+<div class="grid2">
+  <div class="card">
+    <div class="card-header">FIRM TRACKER</div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>사무소</th>
+          <th>GEO Score</th>
+          <th>Status</th>
+          <th>PDF</th>
+        </tr>
+      </thead>
+      <tbody id="firmTable"></tbody>
+    </table>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    <div class="chart-card">
+      <div class="card-header">GEO SCORE DISTRIBUTION</div>
+      <div class="chart-inner">
+        <canvas id="scoreChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action</strong>
+      1. Top up Anthropic credits (~$5)<br>
+      2. Re-run DM generation (skips audits)
+      <code>python projects/geo-agency/outreach.py --dm-only</code>
+    </div>
+  </div>
+</div>
+
+<script>
+const firms = [
+  { name: "세무법인 다솔",      url: "https://www.dasoltax.com",        score: 51, status: "audit" },
+  { name: "세무법인 택스코리아", url: "https://www.taxkorea.co.kr",      score: 44, status: "audit" },
+  { name: "강남세무법인",        url: "https://www.gangnamtax.co.kr",    score: 35, status: "audit" },
+  { name: "세무법인 가나",       url: "https://www.ganatax.co.kr",       score: 40, status: "audit" },
+  { name: "세무법인 정상",       url: "https://www.jeongsangtax.co.kr",  score: 40, status: "audit" },
+  { name: "세무법인 한빛",       url: "https://www.hanbittax.co.kr",     score: 42, status: "audit" },
+  { name: "세무법인 이현",       url: "https://www.ihyuntax.co.kr",      score: 31, status: "audit" },
+  { name: "세무법인 광장",       url: "https://www.bkl-tax.co.kr",       score: 42, status: "audit" },
+  { name: "세무법인 삼덕",       url: "https://www.samduk.co.kr",        score: 42, status: "audit" },
+  { name: "세무법인 청솔",       url: "https://www.cheongsolltax.co.kr", score: 54, status: "audit" },
+  { name: "세무법인 지율",       url: "https://www.jiyultax.co.kr",      score: 40, status: "audit" },
+  { name: "세무법인 우덕",       url: "https://www.wooduktax.com",       score: 28, status: "audit" },
+  { name: "세무법인 대명",       url: "https://www.daemungtax.co.kr",    score: 40, status: "audit" },
+  { name: "세무법인 한울",       url: "https://www.hanuiltax.co.kr",     score: 40, status: "audit" },
+  { name: "세무법인 미래",       url: "https://www.miraetax.co.kr",      score: 44, status: "audit" },
+  { name: "세무법인 유일",       url: "https://www.yuilltax.co.kr",      score: 42, status: "audit" },
+  { name: "세무법인 나라",       url: "https://www.naratax.co.kr",       score: 42, status: "audit" },
+  { name: "세무법인 신영",       url: "https://www.shinyoungtax.co.kr",  score: 31, status: "audit" },
+  { name: "세무법인 하나로",     url: "https://www.hanarotax.co.kr",     score: 30, status: "audit" },
+  { name: "세무법인 세종",       url: "https://www.sejongltax.co.kr",    score: 40, status: "audit" },
+];
+
+function scoreColor(s) {
+  if (s >= 50) return "#fbbf24";
+  if (s >= 40) return "#60a5fa";
+  return "#f87171";
+}
+
+function badgeHtml(status) {
+  const map = {
+    audit:   ['badge-audit',   'Audit Done'],
+    ready:   ['badge-ready',   'DM Ready'],
+    sent:    ['badge-sent',    'DM Sent'],
+    error:   ['badge-error',   'Error'],
+    pending: ['badge-pending', 'Pending'],
+  };
+  const [cls, label] = map[status] || map.pending;
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+const tbody = document.getElementById("firmTable");
+firms.forEach((f, i) => {
+  const color = scoreColor(f.score);
+  const pct = f.score;
+  tbody.innerHTML += `
+    <tr>
+      <td style="color:#4b5563;font-size:12px">${i+1}</td>
+      <td>
+        <a href="${f.url}" target="_blank" style="color:#e2e8f0;text-decoration:none;font-weight:500;">${f.name}</a>
+      </td>
+      <td>
+        <div class="score-wrap">
+          <div class="score-bar-bg">
+            <div class="score-bar" style="width:${pct}%;background:${color}"></div>
+          </div>
+          <span class="score-num" style="color:${color}">${f.score}</span>
+        </div>
+      </td>
+      <td>${badgeHtml(f.status)}</td>
+      <td style="color:#34d399;font-size:12px">PDF</td>
+    </tr>`;
+});
+
+// Bar chart
+const sorted = [...firms].sort((a, b) => b.score - a.score);
+new Chart(document.getElementById("scoreChart"), {
+  type: "bar",
+  data: {
+    labels: sorted.map(f => f.name.replace("세무법인 ", "").replace("세무법인", "강남")),
+    datasets: [{
+      data: sorted.map(f => f.score),
+      backgroundColor: sorted.map(f => scoreColor(f.score)),
+      borderRadius: 4,
+      barThickness: 10,
+    }]
+  },
+  options: {
+    indexAxis: "y",
+    plugins: { legend: { display: false } },
+    scales: {
+      x: {
+        max: 100,
+        grid: { color: "#2d3548" },
+        ticks: { color: "#64748b", font: { size: 10 } },
+      },
+      y: {
+        grid: { display: false },
+        ticks: { color: "#94a3b8", font: { size: 10 } },
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

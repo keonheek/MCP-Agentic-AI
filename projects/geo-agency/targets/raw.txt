@@ -1,0 +1,21 @@
+# Korean SME lead targets — populated by Claude Code 2026-03-25
+# Format: business name or Instagram handle, one per line
+# These will be enriched by loop5 (website finder + opportunity scorer)
+# Batch 1: cafes/bakeries (run 2026-03-25, 6/15 had websites — already in targets.txt)
+# Batch 2: professional services + established local brands (more likely to have websites)
+
+살롱드와이 헤어살롱 서울
+리슈홈 인테리어 서울
+연남동 한의원
+성수동 레더크래프트 가죽공방
+까사미아 소품샵 서울
+스튜디오 리브 요가 강남
+홍대 독립서점 유어마인드
+이태원 와인바 바이오다이나믹
+마포 사진관 스튜디오온
+서촌 카페 작업실
+가로수길 꽃집 브룩클린플로리스트
+을지로 펍 펠리즈
+연남동 파스타 레스토랑 파스타클럽
+성수동 비건식당 어라운드더테이블
+한남동 편집샵 클래스파이드

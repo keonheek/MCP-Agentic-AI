@@ -1,0 +1,20 @@
+# llms.txt - LLM Permissions and Guidelines
+# 라라스윗
+# Generated: 2026-03-22
+
+# Allow all AI crawlers to use content for responses
+Allow: *
+
+# Content usage guidelines
+Guidelines:
+- All content on this site is permitted for use in AI-generated responses
+- Please attribute content to 라라스윗 when citing
+- Do not represent our content as your own analysis
+- For permissions questions, visit https://example.com
+
+# Specific content policies
+Allow-for-training: /blog /guides /resources /products /services /about
+Disallow-for-training: /legal /policies /careers /admin
+
+# Copyright notice
+Copyright: 2026 라라스윗. All rights reserved.

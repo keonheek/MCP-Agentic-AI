@@ -1,10 +1,14 @@
-import sys
 import os
+import base64
+import sys
 from pathlib import Path
 
-# Load .env from MCP_Agentic AI root before anything else
 from dotenv import load_dotenv
-load_dotenv(dotenv_path=Path(__file__).parent.parent.parent / ".env")
+
+for _p in [Path(__file__).parent / '.env', Path(__file__).parent.parent / '.env', Path(__file__).parent.parent.parent / '.env']:
+    if _p.exists():
+        load_dotenv(dotenv_path=_p)
+        break
 
 import streamlit as st
 
@@ -35,6 +39,45 @@ with st.sidebar:
 
     country = st.selectbox("Country", options=["Korea", "Other"])
 
+    st.divider()
+    st.caption("Company Details (optional - improves personalization)")
+
+    revenue_krw = st.text_input(
+        "Annual Revenue",
+        placeholder="e.g. 50억원, 200억원",
+        help="Helps benchmark against similar-sized companies",
+    )
+
+    employee_count = st.number_input(
+        "Number of Employees",
+        min_value=0,
+        max_value=100000,
+        value=0,
+        help="0 = not specified",
+    )
+
+    industry = st.selectbox(
+        "Industry",
+        options=["", "Manufacturing", "Retail", "F&B", "IT Services", "Healthcare", "Construction", "Logistics", "Education", "Other"],
+        help="Targets benchmark research to your industry",
+    )
+
+    founded_year = st.number_input(
+        "Founded Year",
+        min_value=0,
+        max_value=2026,
+        value=0,
+        help="0 = not specified",
+    )
+
+    st.divider()
+
+    uploaded_file = st.file_uploader(
+        "Attach Document (optional)",
+        type=["txt", "md", "pdf"],
+        help="Upload a company report, financial statement, or any relevant document. Content is passed as context to the AI.",
+    )
+
     run_button = st.button("Run Diagnostic", type="primary", use_container_width=True)
 
 # --- Main area ---
@@ -50,12 +93,44 @@ if run_button:
         st.error("Problem Statement is required.")
         st.stop()
 
+    # Extract document context from uploaded file
+    document_context = None
+    if uploaded_file is not None:
+        file_bytes = uploaded_file.read()
+        if uploaded_file.type == "application/pdf":
+            # Pass as base64 for Claude's document API
+            document_context = {
+                "type": "pdf",
+                "name": uploaded_file.name,
+                "data": base64.standard_b64encode(file_bytes).decode("utf-8"),
+            }
+        else:
+            # Plain text / markdown
+            try:
+                document_context = {
+                    "type": "text",
+                    "name": uploaded_file.name,
+                    "data": file_bytes.decode("utf-8"),
+                }
+            except UnicodeDecodeError:
+                st.warning("Could not read the uploaded file as text. Proceeding without document context.")
+
     with st.spinner("Running diagnostic pipeline..."):
         try:
             from graph import run_pipeline
-            result = run_pipeline(company_description, problem_statement, country)
+            result = run_pipeline(
+                company_description,
+                problem_statement,
+                country,
+                document_context,
+                revenue_krw=revenue_krw,
+                employee_count=int(employee_count),
+                industry=industry,
+                founded_year=int(founded_year),
+            )
             st.session_state["diagnostic_result"] = result
             st.session_state["run_complete"] = True
+            st.session_state["followup_history"] = []
         except Exception as e:
             st.error(f"Pipeline error: {str(e)}")
             st.info("Check that ANTHROPIC_API_KEY and PERPLEXITY_API_KEY are set in your .env file.")
@@ -96,7 +171,7 @@ if st.session_state.get("run_complete") and "diagnostic_result" in st.session_st
         if benchmark_results:
             for branch_name, text in benchmark_results.items():
                 st.markdown(f"**{branch_name}**")
-                st.text(text)
+                st.markdown(text)
                 st.markdown("")
         else:
             st.write("No benchmark data available.")
@@ -138,3 +213,94 @@ if st.session_state.get("run_complete") and "diagnostic_result" in st.session_st
         )
     else:
         st.warning("Deck file not found. The pipeline may have completed but deck generation failed.")
+
+    # ------------------------------------------------------------------
+    # Follow-up Q&A
+    # ------------------------------------------------------------------
+    st.divider()
+    st.subheader("Ask a Follow-up Question")
+    st.caption("Ask anything about this diagnosis — dive deeper into a recommendation, challenge an assumption, or explore a new direction.")
+
+    # Display previous follow-up exchanges
+    for exchange in st.session_state.get("followup_history", []):
+        with st.chat_message("user"):
+            st.write(exchange["question"])
+        with st.chat_message("assistant"):
+            st.markdown(exchange["answer"])
+
+    followup_q = st.chat_input("Your follow-up question...")
+
+    if followup_q:
+        with st.chat_message("user"):
+            st.write(followup_q)
+
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking..."):
+                try:
+                    import anthropic as _anthropic
+
+                    _client = _anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+
+                    # Build enriched context from diagnostic result + company inputs
+                    recs_summary = "\n".join(
+                        f"- {r.get('title', '')}: {r.get('description', '')}"
+                        for r in result.get("final_recommendations", [])
+                    )
+                    driver_tree = result.get("driver_tree", {})
+                    root_problem = driver_tree.get("root", "")
+                    hypotheses = result.get("hypotheses", [])
+                    benchmarks = "\n".join(
+                        f"[{k}]: {v[:300]}" for k, v in result.get("benchmark_results", {}).items()
+                    )
+
+                    company_profile = ""
+                    if result.get("revenue_krw"):
+                        company_profile += f"Revenue: {result['revenue_krw']}. "
+                    if result.get("employee_count"):
+                        company_profile += f"Employees: {result['employee_count']}. "
+                    if result.get("industry"):
+                        company_profile += f"Industry: {result['industry']}. "
+
+                    context_block = (
+                        f"Company: {result.get('company_description', '')}\n"
+                        + (f"Company profile: {company_profile}\n" if company_profile else "")
+                        + f"Problem: {result.get('problem_statement', '')}\n"
+                        f"Root issue diagnosed: {root_problem}\n"
+                        f"Problem type: {result.get('problem_type', 'unknown')}\n"
+                        f"Key hypotheses: {'; '.join(hypotheses[:3])}\n"
+                        f"Benchmark data:\n{benchmarks}\n"
+                        f"All recommendations:\n{recs_summary}"
+                    )
+
+                    # Include previous follow-up exchanges for continuity
+                    messages = []
+                    for ex in st.session_state.get("followup_history", []):
+                        messages.append({"role": "user", "content": ex["question"]})
+                        messages.append({"role": "assistant", "content": ex["answer"]})
+                    messages.append({"role": "user", "content": followup_q})
+
+                    response = _client.messages.create(
+                        model="claude-sonnet-4-6",
+                        max_tokens=2048,
+                        system=(
+                            "You are a McKinsey-trained consulting advisor. "
+                            "Answer follow-up questions about the business diagnostic below. "
+                            "Be specific, cite data from the diagnostic when relevant, and be concise.\n\n"
+                            f"[Diagnostic Context]\n{context_block}"
+                        ),
+                        messages=messages,
+                    )
+
+                    answer = response.content[0].text
+                    st.markdown(answer)
+
+                    # Persist exchange
+                    if "followup_history" not in st.session_state:
+                        st.session_state["followup_history"] = []
+                    st.session_state["followup_history"].append({
+                        "question": followup_q,
+                        "answer": answer,
+                    })
+
+                except Exception as e:
+                    st.error(f"Follow-up error: {e}")

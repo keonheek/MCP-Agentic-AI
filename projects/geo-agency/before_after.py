@@ -31,6 +31,8 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 PERPLEXITY_URL = "https://api.perplexity.ai/chat/completions"
 TIMEOUT = 15
 
+_DEFAULT_MODEL = "claude-haiku-4-5-20251001"
+
 
 def _perplexity(prompt: str, model: str = "sonar") -> str:
     if not PERPLEXITY_API_KEY:
@@ -59,7 +61,7 @@ def _anthropic(prompt: str, system: str = "") -> str:
         import anthropic
         client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
         msg = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model=_DEFAULT_MODEL,
             max_tokens=512,
             system=system or "You are a GEO optimization expert.",
             messages=[{"role": "user", "content": prompt}],
