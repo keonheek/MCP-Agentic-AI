@@ -428,3 +428,9 @@ Format: [YYYY-MM-DD] DECISION: ... | REASONING: ... | CONTEXT: ...
 [2026-05-11] DECISION: Naver blog publish path = Kakao paste-to-client (not Playwright auto-post) | REASONING: TOS-safe. Playwright auto-post against Naver blog risks client account ban from bot detection. Kakao paste-to-client: agency generates polished post, sends to client via Kakao, client pastes manually. Slower but defensible and scales to retainer pricing. | CONTEXT: Decision lock session.
 
 [2026-05-11] DECISION: Cold DM channel = Instagram DM (not KakaoTalk, cold email, or LinkedIn) | REASONING: Korean skincare D2C brand decision-makers are on IG, not KakaoTalk channels. KakaoTalk works for warm leads, not cold. Cold email response rates in Korean B2B brutal (<2%). LinkedIn wrong pond for Korean cosmetics CMOs. Manual IG DM sending stays under spam thresholds. | CONTEXT: Decision lock session.
+
+[2026-05-12] DECISION: Agency brand name locked = "1stmover" (matches existing @1stmover.ai IG handle) | REASONING: Already used as IG handle, lowers branding overhead, single identity across content + agency. | CONTEXT: V manual flagged brand name as D-1 blocker. Decided + locked.
+
+[2026-05-12] DECISION: All three agencies V + A + W are active. Not Service A only. | REASONING: Keonhee confirmed running V + A + W in parallel after earlier scope narrowing. Service W revived from BACKLOG. Evolution loop must cover all three. | CONTEXT: Scope reframe 2026-05-12.
+
+[2026-05-12] DECISION: Hagwon (학원) product track added: 3 products bundled as 학원 stack | REASONING: Research surfaced Hagwon as strongest non-skincare ICP. Bundle = 학원 알림톡 AI 비서 + 정부지원사업 신청서 AI 초안 + 학원 수강료 결제 자동화. Parallel track to skincare D2C, not replacement. | CONTEXT: Per research/extra-automation-products-2026.md Top 5 + Products 1/5/13 bundle.

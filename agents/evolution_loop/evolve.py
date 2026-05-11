@@ -52,7 +52,7 @@ DATA_DIR = _HERE / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 sys.path.insert(0, str(_HERE))
-from strands import speed_to_lead, automation_workflows, saas_integrations, pipa_tier_p, geo_seo_blog, service_v
+from strands import speed_to_lead, automation_workflows, saas_integrations, pipa_tier_p, geo_seo_blog, service_v, service_w, hagwon_stack
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -177,7 +177,8 @@ def _git_commit(commit_message: str) -> bool:
             ["git", "add",
              "agents/evolution_loop/data/",
              "agents/evolution_loop/strands/",
-             "projects/ai-agency/services/video/"],
+             "projects/ai-agency/services/video/",
+             "projects/ai-agency/services/website/"],
             cwd=str(REPO_ROOT),
             check=True,
             capture_output=True,
@@ -210,6 +211,8 @@ STRANDS = [
     ("pipa_tier_p", pipa_tier_p.run),
     ("geo_seo_blog", geo_seo_blog.run),
     ("service_v", service_v.run),
+    ("service_w", service_w.run),
+    ("hagwon_stack", hagwon_stack.run),
 ]
 
 # Budget: max 6 file changes per strand per night

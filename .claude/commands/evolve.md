@@ -1,5 +1,5 @@
 ---
-description: Run nightly evolution loop across all 5 Service A products + Service V. Reads service state, applies 1 improvement per strand, commits if green.
+description: Run nightly evolution loop across all 5 Service A products + Service V + Service W + Hagwon Stack (8 strands total). Reads service state, applies 1 improvement per strand, commits if green.
 ---
 
 # /evolve
@@ -27,7 +27,7 @@ from pathlib import Path
 DATA_DIR = Path("C:/Users/keonh/Dev/MCP_Agentic_AI/agents/evolution_loop/data")
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-from strands import speed_to_lead, automation_workflows, saas_integrations, pipa_tier_p, geo_seo_blog, service_v
+from strands import speed_to_lead, automation_workflows, saas_integrations, pipa_tier_p, geo_seo_blog, service_v, service_w, hagwon_stack
 
 results = {}
 for name, fn in [
@@ -37,6 +37,8 @@ for name, fn in [
     ("pipa_tier_p", pipa_tier_p.run),
     ("geo_seo_blog", geo_seo_blog.run),
     ("service_v", service_v.run),
+    ("service_w", service_w.run),
+    ("hagwon_stack", hagwon_stack.run),
 ]:
     results[name] = fn(DATA_DIR)
     print(f"{name}: {results[name].get('summary', results[name])}")
@@ -73,6 +75,8 @@ Evolution ran: <date>
 [PIPA Tier P] <summary> (<status>)
 [GEO/SEO Blog] <summary> (<status>)
 [Service V] <summary> (<status>)
+[Service W] <summary> (<status>)
+[Hagwon Stack] <summary> (<status>)
 
 Flagged items requiring your attention:
 - <list only if flag_for_report=true>

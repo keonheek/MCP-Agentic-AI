@@ -2,8 +2,9 @@
 ## AI 영상 광고 에이전시
 
 **Last updated:** 2026-05-11  
-**Status:** Pre-launch (API keys pending)  
-**Owner:** Keonhee  
+**Status:** Pre-launch (API keys pending)
+**Brand:** 1stmover
+**Owner:** Keonhee
 **Primary audience:** Korean D2C cosmetics/skincare brands
 
 ---
@@ -654,17 +655,11 @@ Clients will ask: "Is this legal to post?" Here's your reference.
 
 **Pre-launch blockers (currently holding launch):**
 
-1. **Agency brand name not decided**
-   - Affects: all cold DM copy, Notion client DB branding, Service V landing page
-   - Impact: HIGH (communication confusion with 영범, client professionalism)
-   - Timeline: decide by EOD Tuesday 2026-05-12
-   - Recommendation: 3-letter name (VID, ADS, PLIX, or Korean equivalent)
-
-2. **Stack API keys not yet secured**
+1. **Stack API keys not yet secured**
    - Affects: integration tests, dogfood reel
    - Impact: CRITICAL (blocks all launch tasks)
-   - Timeline: must complete by EOD Monday 2026-05-12
-   - Owner: You (Keonhee)
+   - Timeline: must complete this week
+   - Owner: Keonhee
 
 **Post-launch risks:**
 

@@ -868,6 +868,74 @@ EVERY FRIDAY:
 
 ---
 
+## 15. Hagwon Track
+
+Agency brand: 1stmover. Three hagwon-specific products under Service A. Sell as a bundle or standalone.
+
+### Product Overview
+
+| Product | What It Does | ICP | Setup | Monthly |
+|---|---|---|---|---|
+| Product 1: 학원 알림톡 AI 비서 | GPT-4o generates parent alimtalk from EMR events | 1-5 person 학원, 교습소 | ₩300K-500K | ₩100K-150K |
+| Product 5: 정부지원사업 신청서 AI 초안 | RAG + GPT-4o drafts full grant applications in 24h | 예비/초기 창업자, 소상공인 | ₩500K-1M per engagement | ₩200K/월 (monitoring) |
+| Product 13: 학원 수강료 결제 자동화 | Toss billing key auto-charges + dunning alimtalk | 1-10 person 학원 | ₩200K-400K | ₩70K-100K |
+
+### Bundle Pricing
+
+- Product 1 + Product 13 together: ₩300K setup discount (₩300K combined setup + ₩150K/월 for both)
+- Full hagwon stack (1 + 5 + 13): lead with Product 1 demo, upsell 13, close with grant application if timing aligns with 소진공 공고
+
+### Sales Motion for Hagwon Track
+
+Cold DM approach: 학원 원장 networks (학관노 Naver Cafe, Naver Band for 학원 원장).
+
+Pitch angle: "원장님 하루 2시간 학부모 알림톡 + 수강료 확인을 자동화해드립니다. ₩100K/월부터 시작하고, 효과 없으면 첫 달 100% 환불."
+
+Qualifier questions:
+1. "하루에 학부모 알림톡 몇 건 보내세요?"
+2. "수강료 미납 확인에 매달 얼마나 시간 쓰세요?"
+3. "지금 사이다페이 쓰고 계신가요?"
+
+Decision tree:
+- 알림톡 pain 크면: Product 1 demo
+- 결제 pain 크면: Product 13 demo
+- 사이다페이 쓰면: Product 13 비용 비교표 제시 (정액 ₩70K vs 수수료 ₩225K+)
+- 지원사업 신청 계획 있으면: Product 5 건별 견적
+
+### Product 1 Demo Script
+
+Location: `projects/ai-agency/products/hagwon-parent-comms/demo-script.md`
+
+Quick summary: 15분, ngrok + demo_hagwon.py, 카카오 알림톡 직접 수신 체험, 클로징은 DEMO (₩500K) 또는 STANDARD (₩500K 설치 + ₩150K/월).
+
+### Product 13 Demo Script
+
+Location: `projects/ai-agency/products/hagwon-tuition-billing/demo-script.md`
+
+Quick summary: 10분, demo_billing.py simulate, 사이다페이 비용 비교 즉석 계산, 클로징은 STANDARD (₩400K 설치 + ₩100K/월).
+
+### Product 5 Delivery Flow
+
+Not a recurring SaaS: per-engagement. Deliver within 24h of Tally form submission.
+
+1. Client submits Tally form (30 min)
+2. RAG search: find 3 similar approved applications
+3. GPT-4o draft: all questions in target program format
+4. Internal QA: logic, spelling, evaluation criteria coverage
+5. DOCX + budget table delivered
+6. 1 revision round (24h)
+7. Final check + handoff
+
+### Regulatory Tailwind (2026)
+
+학원법 시행령 2026 amendment: digital parent notification now explicitly accepted as legal notification method. Pitch angle for Product 1: "이제 카카오 알림톡이 법적으로 인정됩니다. 의무를 자동화하세요."
+
+Toss Payments billing key: ₩0 setup fee as of March 2026. Product 13 setup cost drops accordingly.
+
+Kakao Alimtalk partner program Q1 2026: per-message fee under ₩10. Product 1 operating cost remains negligible.
+
+---
+
 **End of Operating Manual**
 
-Generated: 2026-05-11 | Owner: Keonhee | Partner: 영범
+Generated: 2026-05-11 | Updated: 2026-05-12 (Hagwon Track added) | Owner: Keonhee | Brand: 1stmover | Partner: 영범
