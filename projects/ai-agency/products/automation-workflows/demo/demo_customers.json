@@ -1,0 +1,121 @@
+{
+  "brand": {
+    "name": "스킨로직",
+    "instagram": "skinlogic_kr",
+    "founder_phone": "01099990000",
+    "review_url": "https://skinlogic.co.kr/review",
+    "product_url": "https://skinlogic.co.kr/toner"
+  },
+  "customers": [
+    {
+      "customer_id": "D001",
+      "name": "김민지",
+      "phone": "01011111111",
+      "email": "minji@demo.com",
+      "birthday": "1997-05-18",
+      "last_purchase_at": "2026-02-09",
+      "scenario": "abandoned_cart",
+      "product": "수분 토너 200ml",
+      "cart_abandoned_minutes_ago": 35
+    },
+    {
+      "customer_id": "D002",
+      "name": "이수진",
+      "phone": "01022222222",
+      "email": "sujin@demo.com",
+      "birthday": "1999-08-03",
+      "last_purchase_at": "2026-04-03",
+      "scenario": "review_request",
+      "product": "레티놀 세럼 30ml",
+      "delivered_days_ago": 8
+    },
+    {
+      "customer_id": "D003",
+      "name": "박지은",
+      "phone": "01033333333",
+      "email": "jieun@demo.com",
+      "birthday": "2000-11-22",
+      "last_purchase_at": "2026-01-10",
+      "scenario": "winback_inactive",
+      "product": "진정 앰플 50ml",
+      "days_inactive": 121
+    },
+    {
+      "customer_id": "D004",
+      "name": "최수민",
+      "phone": "01044444444",
+      "email": "sumin@demo.com",
+      "birthday": "1998-05-18",
+      "last_purchase_at": "2026-03-15",
+      "scenario": "birthday_discount",
+      "product": "수분 크림 50ml",
+      "days_until_birthday": 7
+    },
+    {
+      "customer_id": "D005",
+      "name": "정하은",
+      "phone": "01055555555",
+      "email": "haeun@demo.com",
+      "birthday": "2001-03-10",
+      "last_purchase_at": "2026-05-01",
+      "scenario": "restock_alert",
+      "product": "라벤더 미스트 (품절)",
+      "restock_product_id": "PROD-MIST-001"
+    },
+    {
+      "customer_id": "D006",
+      "name": "강민서",
+      "phone": "01066666666",
+      "email": "minseo@demo.com",
+      "birthday": "1999-07-14",
+      "last_purchase_at": "2026-04-20",
+      "scenario": "abandoned_cart",
+      "product": "비타민 C 세럼",
+      "cart_abandoned_minutes_ago": 1450
+    },
+    {
+      "customer_id": "D007",
+      "name": "윤지호",
+      "phone": "01077777777",
+      "email": "jiho@demo.com",
+      "birthday": "2000-05-18",
+      "last_purchase_at": "2026-04-28",
+      "scenario": "review_request_negative",
+      "product": "나이트 크림 30ml",
+      "delivered_days_ago": 9
+    },
+    {
+      "customer_id": "D008",
+      "name": "임채원",
+      "phone": "01088888888",
+      "email": "chaewon@demo.com",
+      "birthday": "1997-12-01",
+      "last_purchase_at": "2025-12-30",
+      "scenario": "winback_inactive",
+      "product": "클렌징 오일",
+      "days_inactive": 132
+    },
+    {
+      "customer_id": "D009",
+      "name": "한소희",
+      "phone": "01099999999",
+      "email": "sohee@demo.com",
+      "birthday": "2002-02-14",
+      "last_purchase_at": "2026-02-09",
+      "scenario": "restock_alert",
+      "product": "핑크 토닝 패드 (품절)",
+      "restock_product_id": "PROD-PAD-002"
+    },
+    {
+      "customer_id": "D010",
+      "name": "신예은",
+      "phone": "01010101010",
+      "email": "yeeun@demo.com",
+      "birthday": "1998-09-30",
+      "last_purchase_at": "2026-05-10",
+      "scenario": "post_purchase_new",
+      "product": "선크림 SPF50+",
+      "delivered_days_ago": 0
+    }
+  ]
+}

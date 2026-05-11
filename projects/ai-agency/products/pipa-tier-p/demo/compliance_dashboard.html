@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIPA Tier P - 컴플라이언스 대시보드</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+      background: #0f0f0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #222;
+    }
+    .header h1 { font-size: 20px; font-weight: 600; color: #fff; }
+    .header .badge {
+      background: #1a3a2a;
+      color: #4caf50;
+      border: 1px solid #2d5a3d;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .deadline-banner {
+      background: #1a1a00;
+      border: 1px solid #3a3a00;
+      border-left: 4px solid #f0c000;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #f0c000;
+    }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+    .card {
+      background: #161616;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .card-title {
+      font-size: 11px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .card-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .card-sub { font-size: 12px; color: #666; }
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .dot-green { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
+    .dot-yellow { background: #f0c000; box-shadow: 0 0 6px #f0c000; }
+    .dot-red { background: #f44336; box-shadow: 0 0 6px #f44336; }
+    .dot-gray { background: #555; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #999;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      text-align: left;
+      padding: 8px 12px;
+      color: #555;
+      font-weight: 500;
+      border-bottom: 1px solid #222;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    td { padding: 10px 12px; border-bottom: 1px solid #1a1a1a; color: #ccc; }
+    tr:hover td { background: #1a1a1a; }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .pill-green { background: #0d2a15; color: #4caf50; border: 1px solid #1a4a25; }
+    .pill-yellow { background: #2a2200; color: #f0c000; border: 1px solid #4a3a00; }
+    .pill-red { background: #2a0a08; color: #f44336; border: 1px solid #4a1a15; }
+    .pill-blue { background: #0a1a2a; color: #42a5f5; border: 1px solid #1a3a5a; }
+    .progress-bar {
+      height: 6px;
+      background: #222;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1s ease;
+    }
+    .article-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .article-card {
+      background: #161616;
+      border: 1px solid #222;
+      border-radius: 6px;
+      padding: 14px;
+    }
+    .article-num { font-size: 11px; color: #555; margin-bottom: 4px; }
+    .article-name { font-size: 12px; font-weight: 600; color: #ccc; margin-bottom: 8px; }
+    .article-status { font-size: 11px; }
+    .footer {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid #1a1a1a;
+      font-size: 11px;
+      color: #444;
+      display: flex;
+      justify-content: space-between;
+    }
+    #countdown { font-size: 11px; color: #666; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>PIPA Tier P - 컴플라이언스 대시보드</h1>
+    <div style="font-size:12px;color:#555;margin-top:4px;">스킨테라피 주식회사 | 1stmover AI Agency 제공</div>
+  </div>
+  <div class="badge">LIVE</div>
+</div>
+
+<div class="deadline-banner">
+  D-day: 2026.09.11 PIPA 개정 발효까지 <strong id="countdown">계산 중...</strong> 남음.
+  9월 11일 이전에 모든 체크리스트를 완료해야 합니다.
+</div>
+
+<div class="grid-3">
+  <div class="card">
+    <div class="card-title">전체 준수율</div>
+    <div class="card-value" style="color:#4caf50;">78%</div>
+    <div class="card-sub">목표: 100% (2026.09.11 기준)</div>
+    <div class="progress-bar">
+      <div class="progress-fill" style="width:78%;background:#4caf50;"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">미비 항목</div>
+    <div class="card-value" style="color:#f0c000;">4</div>
+    <div class="card-sub">High 2건, Medium 2건</div>
+  </div>
+  <div class="card">
+    <div class="card-title">열람/삭제 요청 대기</div>
+    <div class="card-value" style="color:#42a5f5;">2</div>
+    <div class="card-sub">10 영업일 기한 내 처리 필요</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="section-title">PIPA 조문별 준수 현황</div>
+    <div class="article-grid">
+      <div class="article-card">
+        <div class="article-num">제15조</div>
+        <div class="article-name">수집/이용</div>
+        <div class="article-status"><span class="status-dot dot-green"></span><span class="pill pill-green">완료</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제17조</div>
+        <div class="article-name">제3자 제공</div>
+        <div class="article-status"><span class="status-dot dot-green"></span><span class="pill pill-green">완료</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제22조</div>
+        <div class="article-name">동의 방법</div>
+        <div class="article-status"><span class="status-dot dot-yellow"></span><span class="pill pill-yellow">진행중</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제23조</div>
+        <div class="article-name">민감정보</div>
+        <div class="article-status"><span class="status-dot dot-yellow"></span><span class="pill pill-yellow">진행중</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제26조</div>
+        <div class="article-name">처리위탁</div>
+        <div class="article-status"><span class="status-dot dot-green"></span><span class="pill pill-green">완료</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제28조의2</div>
+        <div class="article-name">국외 이전</div>
+        <div class="article-status"><span class="status-dot dot-red"></span><span class="pill pill-red">미비</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제29조</div>
+        <div class="article-name">안전조치</div>
+        <div class="article-status"><span class="status-dot dot-green"></span><span class="pill pill-green">완료</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제34조</div>
+        <div class="article-name">침해신고</div>
+        <div class="article-status"><span class="status-dot dot-red"></span><span class="pill pill-red">미비</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제35조</div>
+        <div class="article-name">열람청구</div>
+        <div class="article-status"><span class="status-dot dot-green"></span><span class="pill pill-green">완료</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제37조</div>
+        <div class="article-name">처리정지</div>
+        <div class="article-status"><span class="status-dot dot-green"></span><span class="pill pill-green">완료</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제37조의2</div>
+        <div class="article-name">자동결정설명</div>
+        <div class="article-status"><span class="status-dot dot-yellow"></span><span class="pill pill-yellow">검토중</span></div>
+      </div>
+      <div class="article-card">
+        <div class="article-num">제39조</div>
+        <div class="article-name">손해배상</div>
+        <div class="article-status"><span class="status-dot dot-green"></span><span class="pill pill-green">완료</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">데이터 흐름 현황</div>
+    <table>
+      <thead>
+        <tr>
+          <th>서비스</th>
+          <th>국가</th>
+          <th>목적</th>
+          <th>상태</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>NCP Seoul</td>
+          <td>KR</td>
+          <td>기본 저장소</td>
+          <td><span class="pill pill-green">적합</span></td>
+        </tr>
+        <tr>
+          <td>Anthropic API</td>
+          <td>US</td>
+          <td>AI 처리</td>
+          <td><span class="pill pill-yellow">고지 필요</span></td>
+        </tr>
+        <tr>
+          <td>Make.com</td>
+          <td>EU</td>
+          <td>자동화</td>
+          <td><span class="pill pill-yellow">고지 필요</span></td>
+        </tr>
+        <tr>
+          <td>Google Workspace</td>
+          <td>US</td>
+          <td>이메일</td>
+          <td><span class="pill pill-yellow">고지 필요</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">열람/삭제 요청 현황 (PIPA 제35-36조)</div>
+  <table>
+    <thead>
+      <tr>
+        <th>요청번호</th>
+        <th>유형</th>
+        <th>접수일</th>
+        <th>기한</th>
+        <th>남은 기간</th>
+        <th>상태</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="font-family:monospace;color:#888;">REQ-A8F3D21C</td>
+        <td>열람</td>
+        <td>2026-05-08</td>
+        <td>2026-05-22</td>
+        <td style="color:#f0c000;">11일</td>
+        <td><span class="pill pill-blue">처리중</span></td>
+      </tr>
+      <tr>
+        <td style="font-family:monospace;color:#888;">REQ-B2E9A471</td>
+        <td>삭제</td>
+        <td>2026-05-10</td>
+        <td>2026-05-24</td>
+        <td style="color:#4caf50;">13일</td>
+        <td><span class="pill pill-yellow">본인확인중</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer">
+  <span>1stmover AI Agency | PIPA Tier P | keonhee3337@gmail.com</span>
+  <span>PIPA 제34조 기준 - 침해 의심 시 즉시 연락 필요 (72h 기한)</span>
+  <span>마지막 업데이트: <span id="last-updated"></span></span>
+</div>
+
+<script>
+  // Countdown to D-day
+  function updateCountdown() {
+    const dday = new Date('2026-09-11T00:00:00+09:00');
+    const now = new Date();
+    const diff = dday - now;
+    if (diff <= 0) {
+      document.getElementById('countdown').textContent = '발효됨';
+      return;
+    }
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    document.getElementById('countdown').textContent = `${days}일 ${hours}시간`;
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+
+  // Last updated
+  document.getElementById('last-updated').textContent = new Date().toLocaleString('ko-KR');
+</script>
+
+</body>
+</html>

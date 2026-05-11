@@ -1,0 +1,165 @@
+{
+  "brand": "글로우랩 (GlowLab) 화장품",
+  "inquiries": [
+    {
+      "id": "D001",
+      "category": "견적",
+      "user_key": "user_demo_001",
+      "utterance": "세럼 10개 구매하면 도매가로 살 수 있나요? 가격표 보내주세요.",
+      "expected_reply_keywords": ["가격", "문의", "도매"],
+      "cached_reply": "안녕하세요! 글로우랩입니다. 10개 이상 대량 구매 시 도매가 협의 가능합니다. 자세한 견적은 담당자가 오늘 중으로 연락드릴게요. 잠시만 기다려 주세요!"
+    },
+    {
+      "id": "D002",
+      "category": "제품문의",
+      "user_key": "user_demo_002",
+      "utterance": "히알루론산 세럼이 민감성 피부에도 사용해도 되나요? 성분이 궁금해요.",
+      "expected_reply_keywords": ["민감성", "성분", "사용"],
+      "cached_reply": "안녕하세요! 글로우랩 히알루론산 세럼은 민감성 피부에도 사용 가능하도록 저자극 설계되어 있어요. 주요 성분: 히알루론산 3중 구조, 판테놀, 알란토인. 패치 테스트 후 사용을 권장드립니다."
+    },
+    {
+      "id": "D003",
+      "category": "재구매",
+      "user_key": "user_demo_003",
+      "utterance": "저번에 샀던 토너 한 번 더 사고 싶어요. 재주문 어떻게 하면 되나요?",
+      "expected_reply_keywords": ["재주문", "링크", "결제"],
+      "cached_reply": "재구매 감사합니다! 스마트스토어 링크로 바로 주문 가능해요: smartstore.naver.com/glowlab. '이전 구매 내역'에서 같은 상품 바로 재주문하실 수 있습니다."
+    },
+    {
+      "id": "D004",
+      "category": "예약",
+      "user_key": "user_demo_004",
+      "utterance": "이번 주 금요일 배송 예약 가능한가요?",
+      "expected_reply_keywords": ["배송", "금요일", "날짜"],
+      "cached_reply": "안녕하세요! 금요일 배송 예약 가능합니다. 수요일 오후 2시 이전 주문 시 금요일 도착 가능해요. 지금 주문하시면 맞춰드릴 수 있습니다!"
+    },
+    {
+      "id": "D005",
+      "category": "기타",
+      "user_key": "user_demo_005",
+      "utterance": "인스타그램 계정이 어디에요?",
+      "expected_reply_keywords": ["인스타", "@"],
+      "cached_reply": "저희 인스타그램은 @glowlab.official 입니다! 팔로우하시면 신제품 출시 소식과 할인 정보를 가장 먼저 받아보실 수 있어요."
+    },
+    {
+      "id": "D006",
+      "category": "견적",
+      "user_key": "user_demo_006",
+      "utterance": "립밤 세트 5개 도매가 가능한가요?",
+      "expected_reply_keywords": ["립밤", "도매", "가격"],
+      "cached_reply": "안녕하세요! 립밤 세트 5개 도매 문의 주셔서 감사합니다. 5개 이상 주문 시 10% 할인 적용 가능합니다. 정확한 견적은 담당자가 오늘 중 연락드릴게요!"
+    },
+    {
+      "id": "D007",
+      "category": "제품문의",
+      "user_key": "user_demo_007",
+      "utterance": "비타민C 앰플 임산부도 사용해도 되나요?",
+      "expected_reply_keywords": ["임산부", "확인", "안내"],
+      "cached_reply": "임산부 사용 여부는 피부과 전문의 상담을 권장드립니다. 저희 비타민C 앰플의 전 성분은 smartstore 상세 페이지에서 확인하실 수 있으며, 담당자가 추가 안내 드릴게요."
+    },
+    {
+      "id": "D008",
+      "category": "재구매",
+      "user_key": "user_demo_008",
+      "utterance": "지난번 구매한 크림이 너무 좋아서 두 개 더 살게요.",
+      "expected_reply_keywords": ["감사", "주문", "크림"],
+      "cached_reply": "재구매 감사드립니다! 스마트스토어에서 바로 주문 가능해요. 이번에 두 개 이상 구매 시 무료 샘플 증정 이벤트 중입니다. 많이 애용해 주셔서 감사해요!"
+    },
+    {
+      "id": "D009",
+      "category": "예약",
+      "user_key": "user_demo_009",
+      "utterance": "다음 주 월요일까지 받을 수 있나요? 선물용으로 급해요.",
+      "expected_reply_keywords": ["빠른", "배송", "가능"],
+      "cached_reply": "안녕하세요! 오늘 오후 3시 이전 주문 시 내일(금) 출고, 월요일 도착 가능합니다. 선물 포장도 무료 제공되니 주문 시 요청 사항에 적어주세요!"
+    },
+    {
+      "id": "D010",
+      "category": "기타",
+      "user_key": "user_demo_010",
+      "utterance": "반품은 어떻게 해요?",
+      "expected_reply_keywords": ["반품", "환불", "정책"],
+      "cached_reply": "반품은 수령 후 7일 이내 가능합니다. 미개봉 상품에 한해 무료 반품 처리해 드립니다. 스마트스토어 구매 내역에서 반품 신청하거나 이 채널로 문의 주시면 바로 도와드릴게요!"
+    },
+    {
+      "id": "D011",
+      "category": "제품문의",
+      "user_key": "user_demo_011",
+      "utterance": "세럼이랑 앰플 같이 써도 되나요? 순서가 어떻게 되나요?",
+      "expected_reply_keywords": ["순서", "앰플", "세럼"],
+      "cached_reply": "함께 사용 가능합니다! 추천 순서: 토너 → 앰플 → 세럼 → 크림. 앰플을 먼저 사용하고 세럼으로 마무리하면 영양 흡수가 더 효과적이에요."
+    },
+    {
+      "id": "D012",
+      "category": "견적",
+      "user_key": "user_demo_012",
+      "utterance": "기업 구매인데요 50개 주문하면 견적 뽑아줄 수 있나요",
+      "expected_reply_keywords": ["기업", "50개", "견적"],
+      "cached_reply": "기업 구매 문의 감사합니다! 50개 이상 대량 주문은 별도 견적 가능합니다. 담당자가 영업일 기준 24시간 이내 연락드릴게요. 회사명과 연락처를 남겨주시면 빠르게 처리해 드립니다."
+    },
+    {
+      "id": "D013",
+      "category": "재구매",
+      "user_key": "user_demo_013",
+      "utterance": "정기배송 신청하면 할인되나요?",
+      "expected_reply_keywords": ["정기배송", "할인", "%"],
+      "cached_reply": "정기배송 구독 시 매월 15% 할인 적용됩니다! 스마트스토어에서 '정기배송' 옵션 선택 후 주문하시면 돼요. 언제든지 해지 가능합니다."
+    },
+    {
+      "id": "D014",
+      "category": "기타",
+      "user_key": "user_demo_014",
+      "utterance": "유통기한이 어떻게 되나요?",
+      "expected_reply_keywords": ["유통기한", "개월", "확인"],
+      "cached_reply": "미개봉 기준 제조일로부터 36개월, 개봉 후 12개월 사용을 권장드립니다. 제품 하단에 제조일자가 표기되어 있으며, 상세 페이지에서도 확인 가능해요!"
+    },
+    {
+      "id": "D015",
+      "category": "예약",
+      "user_key": "user_demo_015",
+      "utterance": "제주도도 배송 되나요?",
+      "expected_reply_keywords": ["제주", "배송", "가능"],
+      "cached_reply": "제주도 배송 가능합니다! 도서산간 지역 추가 배송비 3,000원이 적용됩니다. 보통 1-2일 추가 소요될 수 있어요."
+    },
+    {
+      "id": "D016",
+      "category": "제품문의",
+      "user_key": "user_demo_016",
+      "utterance": "알러지가 있는데 테스트 샘플 받을 수 있을까요?",
+      "expected_reply_keywords": ["샘플", "알러지", "테스트"],
+      "cached_reply": "샘플 요청 감사합니다! 민감한 피부를 위해 샘플 키트를 제공하고 있어요. 담당자에게 연락처를 남겨주시면 무료 샘플을 발송해 드릴게요. 어떤 성분에 알러지가 있으신가요?"
+    },
+    {
+      "id": "D017",
+      "category": "견적",
+      "user_key": "user_demo_017",
+      "utterance": "네이버페이 할인쿠폰 있나요?",
+      "expected_reply_keywords": ["쿠폰", "할인", "네이버"],
+      "cached_reply": "현재 스마트스토어에서 첫 구매 고객 대상 10% 할인 쿠폰 제공 중입니다! 장바구니에서 쿠폰 적용 후 결제하시면 돼요. 할인 기간: 이번 달 말까지입니다."
+    },
+    {
+      "id": "D018",
+      "category": "재구매",
+      "user_key": "user_demo_018",
+      "utterance": "회원 포인트로도 결제 가능한가요?",
+      "expected_reply_keywords": ["포인트", "결제", "사용"],
+      "cached_reply": "네, 스마트스토어 포인트 및 네이버페이 포인트 모두 사용 가능합니다! 결제 시 포인트 사용 옵션에서 선택하시면 됩니다."
+    },
+    {
+      "id": "D019",
+      "category": "기타",
+      "user_key": "user_demo_019",
+      "utterance": "피부 트러블이 생겼어요. 환불 되나요?",
+      "expected_reply_keywords": ["트러블", "환불", "담당자"],
+      "cached_reply": "불편을 드려 정말 죄송합니다. 피부 트러블 관련 사항은 담당자가 직접 안내드리는 게 좋을 것 같아요. 연락처를 남겨주시면 오늘 중으로 연락드리겠습니다."
+    },
+    {
+      "id": "D020",
+      "category": "제품문의",
+      "user_key": "user_demo_020",
+      "utterance": "남성도 쓸 수 있는 제품인가요?",
+      "expected_reply_keywords": ["남성", "사용", "가능"],
+      "cached_reply": "물론입니다! 글로우랩 제품은 성별 구분 없이 모든 피부 타입에 사용 가능해요. 특히 히알루론산 세럼과 수분 크림은 남성 고객분들께도 인기가 많습니다."
+    }
+  ]
+}

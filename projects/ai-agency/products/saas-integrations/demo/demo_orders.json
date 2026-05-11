@@ -1,0 +1,98 @@
+{
+  "scenario": "skincare_d2c_order_paid",
+  "description": "Sample order paid events across all 4 platforms. Same business event, different shapes.",
+  "cafe24": {
+    "order_id": "20260301-C001",
+    "buyer": {
+      "member_id": "member_cafe001",
+      "name": "김민서",
+      "email": "minseo@skincare.co.kr",
+      "phone": "010-1234-5678"
+    },
+    "order_status": "paid",
+    "order_price_amount": { "order_price": 89000 },
+    "items": [
+      { "product_no": "P001", "product_name": "히알루론산 세럼 50ml", "quantity": 1, "price": 49000 },
+      { "product_no": "P002", "product_name": "수분 크림 50g", "quantity": 1, "price": 40000 }
+    ],
+    "created_date": "2026-03-01T14:30:00+09:00",
+    "shipping_address": {
+      "name": "김민서",
+      "address1": "서울시 강남구 테헤란로 123",
+      "zipcode": "06142"
+    }
+  },
+  "imweb": {
+    "orderCode": "IW-2026030100001",
+    "memberCode": "MEM_IW001",
+    "memberInfo": {
+      "name": "박지수",
+      "email": "jisoo@beauty.co.kr"
+    },
+    "orderPhone": "010-9876-5432",
+    "orderStatus": "pay_done",
+    "payPrice": 67000,
+    "prodList": [
+      { "prodCode": "IW-P001", "prodName": "비타민C 앰플 30ml", "quantity": 1, "price": 67000 }
+    ],
+    "addTime": "2026-03-01T15:00:00",
+    "deliveryInfo": {
+      "name": "박지수",
+      "addr": "부산시 해운대구 마린시티2로 33",
+      "postCode": "48115"
+    }
+  },
+  "smartstore": {
+    "productOrderId": "2026030100000001",
+    "productOrderStatus": "PAYMENT_DONE",
+    "productId": "NS-SKU-001",
+    "productName": "레티놀 나이트 크림 50ml",
+    "quantity": 2,
+    "unitPrice": 55000,
+    "totalPaymentAmount": 110000,
+    "paymentDate": "2026-03-01T16:00:00+09:00",
+    "order": {
+      "ordererId": "NAVER_MBR_001",
+      "ordererName": "이준혁",
+      "ordererEmail": "junhyuk@naver.com",
+      "ordererTel": "010-5555-6666"
+    },
+    "shippingAddress": {
+      "name": "이준혁",
+      "baseAddress": "경기도 성남시 분당구 판교로 234",
+      "detailAddress": "101동 1502호",
+      "zipCode": "13493"
+    }
+  },
+  "shopify": {
+    "id": 5555001,
+    "email": "chaeyeon@beautyshop.kr",
+    "financial_status": "paid",
+    "total_price": "45000.00",
+    "currency": "KRW",
+    "created_at": "2026-03-01T17:00:00+09:00",
+    "customer": {
+      "id": 8001,
+      "first_name": "채연",
+      "last_name": "정",
+      "email": "chaeyeon@beautyshop.kr",
+      "phone": "+821077778888"
+    },
+    "line_items": [
+      {
+        "product_id": 3001,
+        "variant_id": 4001,
+        "title": "선크림 SPF50+ PA++++ 50ml",
+        "quantity": 1,
+        "price": "45000.00"
+      }
+    ],
+    "shipping_address": {
+      "name": "정채연",
+      "address1": "서울시 마포구 홍익로5길 11",
+      "zip": "04066",
+      "city": "서울",
+      "country": "South Korea"
+    }
+  }
+}
