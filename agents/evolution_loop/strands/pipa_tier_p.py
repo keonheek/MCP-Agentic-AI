@@ -1,9 +1,11 @@
 """
 Evolution Strand: PIPA Tier P
-Pure data module. No LLM calls. No API calls.
 
-Menu: PIPC news scan (static), refresh training deck, add case study,
-strengthen src with edge case.
+Priority order per run:
+1. WebSearch for live PIPC regulatory signal
+2. If signal found: log as pipc_news with action_required=True, flag_for_report=True
+3. Else: pick from pre-banked PIPC news / case studies / edge case patches
+4. If pre-banked exhausted: skip with "no signal this hour"
 """
 
 import json
@@ -13,6 +15,13 @@ from datetime import date
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+
+from strands.websearch import search_any
+
+LIVE_SEARCH_QUERIES = [
+    "PIPA 2026 amendment enforcement Korea",
+    "PIPC guidance May 2026 personal data",
+]
 
 STRAND_NAME = "pipa_tier_p"
 PRODUCT_DIR = Path("C:/Users/keonh/Dev/MCP_Agentic_AI/projects/ai-agency/products/pipa-tier-p")
@@ -158,6 +167,46 @@ def run(data_dir: Path) -> dict:
 
     if state.get("last_run_date") == today_str:
         return {"skipped": True, "reason": "already ran today", "strand": STRAND_NAME}
+
+    # --- Fix 1: Try live WebSearch signal first ---
+    live = search_any(LIVE_SEARCH_QUERIES)
+    if live:
+        log_file = data_dir / "pipc_news_log.json"
+        existing = []
+        if log_file.exists():
+            try:
+                existing = json.loads(log_file.read_text(encoding="utf-8"))
+            except Exception:
+                existing = []
+        news = {
+            "id": f"pipc_live_{today_str}",
+            "date": today_str,
+            "source": live["url"],
+            "headline": f"[LIVE] {live['title']}",
+            "summary": live["snippet"],
+            "impact_on_service": "Live regulatory signal, verify at pipc.go.kr before acting",
+            "training_deck_section": "2. 직원이 반드시 지켜야 할 5가지",
+            "action_required": True,
+            "live_signal": True,
+            "search_query": live["query"],
+            "logged_date": today_str,
+        }
+        existing.append(news)
+        state["last_run_date"] = today_str
+        state["last_improvement"] = "log_pipc_news"
+        _save_state(data_dir, state)
+        return {
+            "improvement_type": "log_pipc_news",
+            "strand": STRAND_NAME,
+            "idempotent_key": f"pipc_live_{today_str}",
+            "file_path": "agents/evolution_loop/data/pipc_news_log.json",
+            "write_content": json.dumps(existing, ensure_ascii=False, indent=2),
+            "summary": f"[LIVE] PIPC signal: {live['title'][:80]}",
+            "dry_run_passed": True,
+            "live_signal": True,
+            "commit_message": f"chore(evolution): pipa-tier-p live PIPC signal {today_str}",
+            "flag_for_report": True,
+        }
 
     improvement = _select_menu_item(state)
 

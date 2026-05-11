@@ -1,9 +1,11 @@
 """
 Evolution Strand: GEO/SEO Blog
-Pure data module. No LLM calls. No API calls.
 
-Menu: scan new brand (static result bank), update keyword bank,
-log query shift observation, add GEO schema pattern.
+Priority order per run:
+1. WebSearch for live Naver SEO / Korean skincare AI visibility signal
+2. If signal found: log as query_shift observation with live_signal=True
+3. Else: pick from pre-banked menu (brand scan, keywords, query shift, schema pattern)
+4. If pre-banked exhausted: skip with "no signal this hour"
 """
 
 import json
@@ -13,6 +15,13 @@ from datetime import date
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+
+from strands.websearch import search_any
+
+LIVE_SEARCH_QUERIES = [
+    "Naver SEO algorithm update 2026",
+    "Korean cosmetics brand AI visibility 2026",
+]
 
 STRAND_NAME = "geo_seo_blog"
 PRODUCT_DIR = Path("C:/Users/keonh/Dev/MCP_Agentic_AI/projects/ai-agency/products/geo-seo-blog")
@@ -242,6 +251,44 @@ def run(data_dir: Path) -> dict:
 
     if state.get("last_run_date") == today_str:
         return {"skipped": True, "reason": "already ran today", "strand": STRAND_NAME}
+
+    # --- Fix 1: Try live WebSearch signal first ---
+    live = search_any(LIVE_SEARCH_QUERIES)
+    if live:
+        log_file = data_dir / "query_shift_log.json"
+        existing = []
+        if log_file.exists():
+            try:
+                existing = json.loads(log_file.read_text(encoding="utf-8"))
+            except Exception:
+                existing = []
+        obs = {
+            "id": f"geo_live_{today_str}",
+            "date": today_str,
+            "platform": "WebSearch (live)",
+            "query": live["query"],
+            "observation": live["snippet"],
+            "action_hint": "Verify manually and update brand scan or schema recommendations",
+            "live_signal": True,
+            "source": live["url"],
+            "logged_date": today_str,
+        }
+        existing.append(obs)
+        state["last_run_date"] = today_str
+        state["last_improvement"] = "log_query_shift"
+        _save_state(data_dir, state)
+        return {
+            "improvement_type": "log_query_shift",
+            "strand": STRAND_NAME,
+            "idempotent_key": f"geo_live_{today_str}",
+            "file_path": "agents/evolution_loop/data/query_shift_log.json",
+            "write_content": json.dumps(existing, ensure_ascii=False, indent=2),
+            "summary": f"[LIVE] GEO signal: {live['title'][:80]}",
+            "dry_run_passed": True,
+            "live_signal": True,
+            "commit_message": f"chore(evolution): geo-seo-blog live signal {today_str}",
+            "flag_for_report": False,
+        }
 
     improvement = _select_menu_item(state)
 

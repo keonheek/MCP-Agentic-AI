@@ -1,9 +1,11 @@
 """
 Evolution Strand: SaaS Integrations
-Pure data module. No LLM calls. No API calls.
 
-Rotates through platform changelog checks, error handler additions,
-README updates, and unified interface test stubs.
+Priority order per run:
+1. WebSearch live signal (rotate: Cafe24/Imweb/SmartStore/Shopify/Channel.io changelog 2026)
+2. If signal found: log as live platform entry, flag_for_report if "breaking" in snippet
+3. Else: rotate through pre-banked platform changelog + error handler
+4. If pre-banked exhausted: skip with "no signal this hour"
 """
 
 import json
@@ -13,6 +15,17 @@ from datetime import date
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+
+from strands.websearch import search_any
+
+# Rotate per strand state (platform index)
+LIVE_SEARCH_QUERY_SETS = [
+    ["Cafe24 API changelog 2026", "Cafe24 developer update 2026"],
+    ["Imweb API changelog 2026", "Imweb developer update 2026"],
+    ["SmartStore API changelog 2026", "Naver Commerce API 2026"],
+    ["Shopify API changelog 2026", "Shopify developer release notes 2026"],
+    ["Channel.io API changelog 2026", "Channel Talk API update 2026"],
+]
 
 STRAND_NAME = "saas_integrations"
 PRODUCT_DIR = Path("C:/Users/keonh/Dev/MCP_Agentic_AI/projects/ai-agency/products/saas-integrations")
@@ -187,6 +200,53 @@ def run(data_dir: Path) -> dict:
 
     if state.get("last_run_date") == today_str:
         return {"skipped": True, "reason": "already ran today", "strand": STRAND_NAME}
+
+    # --- Fix 1: Try live WebSearch signal first (platform-matched rotation) ---
+    last_platform_idx = state.get("last_platform_idx", -1)
+    live_query_idx = (last_platform_idx + 1) % len(LIVE_SEARCH_QUERY_SETS)
+    live_queries = LIVE_SEARCH_QUERY_SETS[live_query_idx]
+    platform_names = ["cafe24", "imweb", "smartstore", "shopify", "channelio"]
+    live_platform = platform_names[live_query_idx]
+
+    live = search_any(live_queries)
+    if live:
+        live_log = data_dir / "saas_live_signals.json"
+        existing_live = []
+        if live_log.exists():
+            try:
+                existing_live = json.loads(live_log.read_text(encoding="utf-8"))
+            except Exception:
+                existing_live = []
+        snippet_lower = live["snippet"].lower()
+        is_breaking = any(w in snippet_lower for w in ["breaking", "deprecated", "removed", "migration required", "end-of-life"])
+        entry = {
+            "date": today_str,
+            "platform": live_platform,
+            "source": live["url"],
+            "title": live["title"],
+            "snippet": live["snippet"],
+            "search_query": live["query"],
+            "breaking_change": is_breaking,
+            "live_signal": True,
+        }
+        existing_live.append(entry)
+        state["last_run_date"] = today_str
+        state["last_platform_idx"] = live_query_idx
+        state["last_improvement"] = "live_signal"
+        _save_state(data_dir, state)
+        return {
+            "improvement_type": "live_signal",
+            "strand": STRAND_NAME,
+            "idempotent_key": f"saas_live_{live_platform}_{today_str}",
+            "file_path": "agents/evolution_loop/data/saas_live_signals.json",
+            "write_content": json.dumps(existing_live, ensure_ascii=False, indent=2),
+            "summary": f"[LIVE] {live_platform} signal: {live['title'][:70]}",
+            "dry_run_passed": True,
+            "live_signal": True,
+            "commit_message": f"chore(evolution): saas-integrations live signal {live_platform} {today_str}",
+            "flag_for_report": is_breaking,
+            "breaking_change": is_breaking,
+        }
 
     # Tonight: check one platform changelog (rotation)
     platform_log_file = data_dir / "platform_changelog_log.json"

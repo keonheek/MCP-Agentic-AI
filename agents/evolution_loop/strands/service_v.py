@@ -1,10 +1,11 @@
 """
 Evolution Strand: Service V (pre-launch)
-Pure data module. No LLM calls. No API calls.
 
-Menu: log Higgsfield/Veo 3/ElevenLabs/Suno changelog update,
-log Korean cosmetics ad observation, update STACK_STATUS.md,
-track API key acquisition.
+Priority order per run:
+1. WebSearch for live Higgsfield / Veo 3 signal
+2. If signal found: log as tool_changelog entry with live_signal=True, flag_for_report=True
+3. Else: pick from pre-banked menu (tool changelog, ad observation, stack status)
+4. If pre-banked exhausted: skip with "no signal this hour"
 """
 
 import json
@@ -13,6 +14,13 @@ from datetime import date
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+
+from strands.websearch import search_any
+
+LIVE_SEARCH_QUERIES = [
+    "Higgsfield Pro update 2026",
+    "Veo 3 Korean text rendering 2026",
+]
 
 STRAND_NAME = "service_v"
 SERVICES_DIR = Path("C:/Users/keonh/Dev/MCP_Agentic_AI/projects/ai-agency/services/video")
@@ -189,6 +197,46 @@ def run(data_dir: Path) -> dict:
 
     if state.get("last_run_date") == today_str:
         return {"skipped": True, "reason": "already ran today", "strand": STRAND_NAME}
+
+    # --- Fix 1: Try live WebSearch signal first ---
+    live = search_any(LIVE_SEARCH_QUERIES)
+    if live:
+        log_file = data_dir / "service_v_changelog_log.json"
+        existing_changelogs = []
+        if log_file.exists():
+            try:
+                existing_changelogs = json.loads(log_file.read_text(encoding="utf-8"))
+            except Exception:
+                existing_changelogs = []
+        entry = {
+            "id": f"service_v_live_{today_str}",
+            "tool": "Live Signal",
+            "update_date": today_str,
+            "headline": f"[LIVE] {live['title']}",
+            "detail": live["snippet"],
+            "pricing_note": "",
+            "impact": "Verify manually before updating pipeline",
+            "source": live["url"],
+            "search_query": live["query"],
+            "live_signal": True,
+            "logged_date": today_str,
+        }
+        existing_changelogs.append(entry)
+        state["last_run_date"] = today_str
+        state["last_improvement"] = "log_tool_changelog"
+        _save_state(data_dir, state)
+        return {
+            "improvement_type": "log_tool_changelog",
+            "strand": STRAND_NAME,
+            "idempotent_key": f"service_v_live_{today_str}",
+            "file_path": "agents/evolution_loop/data/service_v_changelog_log.json",
+            "write_content": json.dumps(existing_changelogs, ensure_ascii=False, indent=2),
+            "summary": f"[LIVE] Service V signal: {live['title'][:80]}",
+            "dry_run_passed": True,
+            "live_signal": True,
+            "commit_message": f"chore(evolution): service-v live signal {today_str}",
+            "flag_for_report": True,
+        }
 
     improvement = _select_menu_item(state)
 

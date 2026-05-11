@@ -1,9 +1,11 @@
 """
 Evolution Strand: Speed-to-Lead
-Pure data module. No LLM calls. No API calls.
 
-Reads current state, selects one improvement from the menu,
-returns a structured result dict for evolve.py to apply.
+Priority order per run:
+1. WebSearch for live signal (KakaoTalk API / Korean D2C automation news)
+2. If signal found and quality gate passes: apply as live_signal improvement
+3. Else: pick from pre-banked menu
+4. If pre-banked menu also exhausted: log "no signal this hour" and skip
 """
 
 import json
@@ -13,6 +15,13 @@ from datetime import date
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+
+from strands.websearch import search_any
+
+LIVE_SEARCH_QUERIES = [
+    "KakaoTalk Channel API changelog 2026",
+    "Korean skincare D2C customer service automation 2026",
+]
 
 STRAND_NAME = "speed_to_lead"
 PRODUCT_DIR = Path("C:/Users/keonh/Dev/MCP_Agentic_AI/projects/ai-agency/products/speed-to-lead")
@@ -179,6 +188,7 @@ def run(data_dir: Path) -> dict:
       idempotent_key: used to skip if already applied
       dry_run_passed: bool
       summary: one-line human-readable description
+      live_signal: bool (True if improvement came from WebSearch)
     """
     state = _load_state(data_dir)
     today_str = date.today().isoformat()
@@ -189,6 +199,42 @@ def run(data_dir: Path) -> dict:
             "skipped": True,
             "reason": "already ran today",
             "strand": STRAND_NAME,
+        }
+
+    # --- Fix 1: Try live WebSearch signal first ---
+    live = search_any(LIVE_SEARCH_QUERIES)
+    if live:
+        changelog_log = data_dir / "kakao_changelog_log.json"
+        existing_notes = []
+        if changelog_log.exists():
+            try:
+                existing_notes = json.loads(changelog_log.read_text(encoding="utf-8"))
+            except Exception:
+                existing_notes = []
+        note = {
+            "date": today_str,
+            "source": live["url"],
+            "feature": f"[LIVE] {live['title']}: {live['snippet'][:120]}",
+            "impact": "Live search signal, verify manually before acting",
+            "action_required": False,
+            "live_signal": True,
+            "search_query": live["query"],
+        }
+        existing_notes.append({**note, "logged_date": today_str})
+        state["last_run_date"] = today_str
+        state["last_improvement"] = "log_kakao_changelog"
+        _save_state(data_dir, state)
+        return {
+            "improvement_type": "log_kakao_changelog",
+            "strand": STRAND_NAME,
+            "idempotent_key": f"kakao_live_{today_str}",
+            "file_path": "agents/evolution_loop/data/kakao_changelog_log.json",
+            "write_content": json.dumps(existing_notes, ensure_ascii=False, indent=2),
+            "summary": f"[LIVE] KakaoTalk signal: {live['title'][:80]}",
+            "dry_run_passed": True,
+            "live_signal": True,
+            "commit_message": f"chore(evolution): speed-to-lead live signal {today_str}",
+            "flag_for_report": True,
         }
 
     improvement = _select_menu_item(state)

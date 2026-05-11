@@ -14,6 +14,33 @@ import datetime
 import subprocess
 from pathlib import Path
 
+# ---------------------------------------------------------------------------
+# Hour-aware phase constants (UTC, since cron runs in UTC)
+# KST = UTC+9
+# 11pm KST = UTC 14:00  -> PHASE_SCAN
+# 12am-4am KST = UTC 15:00-19:00 -> PHASE_EXECUTE
+# 5am KST = UTC 20:00  -> PHASE_HOUSEKEEPING
+# 6am KST = UTC 21:00  -> PHASE_CLEANUP
+# ---------------------------------------------------------------------------
+PHASE_SCAN = "scan"
+PHASE_EXECUTE = "execute"
+PHASE_HOUSEKEEPING = "housekeeping"
+PHASE_CLEANUP = "cleanup"
+
+
+def _current_phase() -> str:
+    utc_hour = datetime.datetime.utcnow().hour
+    if utc_hour == 14:
+        return PHASE_SCAN
+    elif 15 <= utc_hour <= 19:
+        return PHASE_EXECUTE
+    elif utc_hour == 20:
+        return PHASE_HOUSEKEEPING
+    elif utc_hour == 21:
+        return PHASE_CLEANUP
+    else:
+        return PHASE_EXECUTE  # default: execute if called outside schedule
+
 sys.stdout.reconfigure(encoding="utf-8")
 
 # ---------------------------------------------------------------------------
@@ -106,6 +133,42 @@ def _run_tests(strand_name: str) -> tuple[bool, str]:
         return False, f"test runner error: {e}"
 
 
+def _quality_gate(result: dict) -> tuple[bool, str]:
+    """
+    Fix 2: Quality gate. All three conditions must pass before committing.
+
+    Returns (passed, reason_if_failed).
+    """
+    # Condition 1: meaningful change (>5 lines or live signal)
+    is_live = result.get("live_signal", False)
+    if not is_live:
+        writes = result.get("multi_write", [])
+        if not writes and "write_content" in result:
+            content = result.get("write_content", "") or result.get("append_content", "")
+        elif writes:
+            content = " ".join(w.get("write_content", "") + w.get("append_content", "") for w in writes)
+        else:
+            content = ""
+        # Count non-blank, non-comment lines
+        meaningful_lines = [
+            ln for ln in content.splitlines()
+            if ln.strip() and not ln.strip().startswith("#")
+        ]
+        if len(meaningful_lines) <= 5:
+            return False, f"skipped: change is {len(meaningful_lines)} meaningful lines (threshold >5)"
+
+    # Condition 2: live signal OR pre-banked item present
+    improvement_type = result.get("improvement_type", "")
+    summary = result.get("summary", "")
+    if not improvement_type and not summary:
+        return False, "skipped: no improvement_type or summary (empty result)"
+
+    # Condition 3: tests will be run by caller. This gate only checks static conditions.
+    # (Test pass/fail is checked after apply in main loop, before commit.)
+
+    return True, "ok"
+
+
 def _git_commit(commit_message: str) -> bool:
     """Stage all changes and commit. Returns True on success."""
     try:
@@ -153,10 +216,48 @@ STRANDS = [
 MAX_FILE_CHANGES_PER_STRAND = 6
 
 
+def _dedupe_jsonl(path: Path) -> int:
+    """Deduplicate JSONL by (date, strand, reason). Returns lines removed."""
+    if not path.exists():
+        return 0
+    lines = path.read_text(encoding="utf-8").splitlines()
+    seen = set()
+    unique = []
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            obj = json.loads(line)
+            key = (obj.get("date"), obj.get("strand"), obj.get("reason", "")[:40])
+        except Exception:
+            key = line
+        if key not in seen:
+            seen.add(key)
+            unique.append(line)
+    removed = len(lines) - len(unique)
+    if removed > 0:
+        path.write_text("\n".join(unique) + "\n", encoding="utf-8")
+    return removed
+
+
 def main():
     today_str = datetime.date.today().isoformat()
-    print(f"[EVOLVE] Starting evolution loop for {today_str}")
+    phase = _current_phase()
+    print(f"[EVOLVE] Starting evolution loop for {today_str} (phase: {phase})")
     print()
+
+    # Housekeeping phase: dedupe JSONL and exit
+    if phase == PHASE_HOUSEKEEPING:
+        skip_log = DATA_DIR / "evolution_skips.jsonl"
+        removed = _dedupe_jsonl(skip_log)
+        print(f"[EVOLVE] Housekeeping: deduped evolution_skips.jsonl, removed {removed} duplicate lines.")
+        print("[EVOLVE] Morning rundown data is ready. /evolve-report will read it at 7am.")
+        return
+
+    if phase == PHASE_CLEANUP:
+        print("[EVOLVE] Cleanup phase: nothing extra to do. Exiting cleanly.")
+        return
 
     # Idempotency at top level: check if evolution already ran today
     out_path = DATA_DIR / f"evolution_{today_str}.json"
@@ -176,6 +277,25 @@ def main():
             if result.get("skipped"):
                 print(f"  [SKIP] {result.get('reason')}")
                 summary_lines.append(f"[{strand_name}] SKIPPED: {result.get('reason')}")
+                continue
+
+            # Fix 2: Quality gate before apply
+            gate_passed, gate_reason = _quality_gate(result)
+            if not gate_passed:
+                result["applied"] = False
+                result["quality_gate_failed"] = True
+                result["quality_gate_reason"] = gate_reason
+                summary_lines.append(f"[{strand_name}] QUALITY GATE: {gate_reason}")
+                print(f"  [QUALITY GATE] {gate_reason}")
+                # Write JSONL skip log
+                skip_log = DATA_DIR / "evolution_skips.jsonl"
+                import json as _json
+                with skip_log.open("a", encoding="utf-8") as f:
+                    f.write(_json.dumps({
+                        "date": datetime.date.today().isoformat(),
+                        "strand": strand_name,
+                        "reason": gate_reason,
+                    }, ensure_ascii=False) + "\n")
                 continue
 
             applied = _apply_result(result)
@@ -201,9 +321,18 @@ def main():
                         result["committed"] = False
                         status = "TEST_FAIL"
                         print(f"  [FAIL] Tests failed: {test_output[-200:]}")
+                        # Log to JSONL
+                        skip_log = DATA_DIR / "evolution_skips.jsonl"
+                        with skip_log.open("a", encoding="utf-8") as f:
+                            f.write(json.dumps({
+                                "date": datetime.date.today().isoformat(),
+                                "strand": strand_name,
+                                "reason": f"tests failed: {test_output[-100:]}",
+                            }, ensure_ascii=False) + "\n")
 
                     flag = " [FLAG]" if result.get("flag_for_report") else ""
-                    summary_lines.append(f"[{strand_name}] {result.get('summary', 'applied')}{flag} ({status})")
+                    live_tag = " [LIVE]" if result.get("live_signal") else ""
+                    summary_lines.append(f"[{strand_name}] {result.get('summary', 'applied')}{live_tag}{flag} ({status})")
                     print(f"  -> {status}: {result.get('summary', '')}")
             else:
                 result["applied"] = False
